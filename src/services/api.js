@@ -9,7 +9,10 @@ api.interceptors.request.use(async config => {
   const headers = { Authorization: `Bearer ${JWT}` };
   // eslint-disable-next-line no-param-reassign
   config = { ...config, baseURL: `${API_URL}/app` };
-
+  console.log(
+    'dont know why but on devlopment API_URL only works with this console.log',
+    API_URL
+  );
   if (JWT) {
     return { ...config, headers };
   }
