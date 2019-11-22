@@ -33,4 +33,7 @@ export const ScrollerTitleText = styled.Text`
 
 export const List = styled.FlatList.attrs({
   showsHorizontalScrollIndicator: false,
+  contentContainerStyle: {
+    alignItems: 'flex-start',
+  },
 })``;
