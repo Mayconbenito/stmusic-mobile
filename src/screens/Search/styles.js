@@ -37,6 +37,7 @@ export const List = styled.ScrollView.attrs({
     paddingHorizontal: 10,
     paddingVertical: 10,
   },
+  keyboardShouldPersistTaps: 'always',
 })``;
 
 export const SectionTitle = styled.Text`
