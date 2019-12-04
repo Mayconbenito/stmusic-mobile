@@ -72,7 +72,7 @@ function Playlists({ navigation }) {
             />
           )}
           onEndReached={endReached}
-          onEndReachedThreshold={0.1}
+          onEndReachedThreshold={0.4}
         />
       )}
     </Container>

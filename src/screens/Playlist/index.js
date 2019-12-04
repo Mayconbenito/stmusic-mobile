@@ -71,7 +71,7 @@ function Playlist({ navigation }) {
   }, []);
 
   function endReached() {
-    if (tracksMeta.total > tracks.length) {
+    if (tracksMeta.total > tracks.length && !tracksMeta.loading) {
       fetchTracks();
     }
   }
@@ -106,7 +106,7 @@ function Playlist({ navigation }) {
             keyExtractor={item => `key-${item.id}`}
             renderItem={({ item }) => <TrackItem data={item} margin />}
             onEndReached={endReached}
-            onEndReachedThreshold={0.1}
+            onEndReachedThreshold={0.4}
           />
         </Container>
       )}

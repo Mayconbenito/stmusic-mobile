@@ -51,7 +51,7 @@ function Artists({ navigation }) {
               />
             )}
             onEndReached={endReached}
-            onEndReachedThreshold={0.1}
+            onEndReachedThreshold={0.4}
           />
         ) : (
           <WarningText>Você ainda não segue nenhuma artista.</WarningText>
