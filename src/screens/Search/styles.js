@@ -26,6 +26,7 @@ export const Input = styled.TextInput.attrs({
   padding-vertical: 15;
   padding-horizontal: 10;
   color: #d99207;
+  font-size: 15;
   font-weight: bold;
 `;
 
