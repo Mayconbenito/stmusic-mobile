@@ -1,7 +1,6 @@
 import { FlatList } from 'react-native';
-import styled from 'styled-components/native';
-
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import styled from 'styled-components/native';
 
 import ImageFallback from '~/components/ImageFallback';
 
@@ -45,15 +44,13 @@ export const Buttons = styled.View`
 export const Button = styled.TouchableOpacity.attrs({
   activeOpacity: 0.5,
 })`
+  padding-horizontal: 20;
   margin-top: 10;
-  height: 30;
+  height: 35;
   border-radius: 15;
   background-color: #d99207;
   justify-content: center;
   align-items: center;
-  margin-horizontal: 5;
-  padding-vertical: ${hp(2.4)};
-  padding-horizontal: ${hp(3.4)};
 `;
 
 export const TextButton = styled.Text`

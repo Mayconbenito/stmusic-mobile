@@ -13,14 +13,12 @@ export const CreatePlaylistButton = styled.TouchableOpacity.attrs({
   activeOpacity: 0.5,
 })`
   max-width: ${wp(40)};
-  margin-top: 10;
-  height: 30;
-  border-radius: 20;
+  height: 35;
+  border-radius: 15;
   background-color: #d99207;
   justify-content: center;
   align-items: center;
-  padding-vertical: ${hp(2.3)};
-  padding-horizontal: ${hp(3.4)};
+  margin-top: 10;
 `;
 
 export const CreatePlaylistButtonText = styled.Text`
