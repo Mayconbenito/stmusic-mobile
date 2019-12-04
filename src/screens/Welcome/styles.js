@@ -24,25 +24,23 @@ export const Button = styled.TouchableOpacity.attrs({
   activeOpacity: 0.5,
 })`
   width: ${wp(70)};
-  border-radius: 20;
   height: 40;
+  border-radius: 15;
   background-color: #d99207;
-  margin-top: 10;
-  align-items: center;
   justify-content: center;
-  padding-horizontal: 30;
-  padding-vertical: 10;
+  align-items: center;
+  margin-bottom: 10;
 `;
 
 export const TextButton = styled.Text`
   font-size: ${hp(2.4)};
-  color: #fff;
+  color: #000;
   font-weight: bold;
   text-align: center;
 `;
 
 export const Description = styled.Text`
-  width: ${wp('70%')};
+  width: ${wp(70)};
   margin-bottom: 50;
   font-size: ${hp(3)};
   font-weight: bold;
