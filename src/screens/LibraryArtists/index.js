@@ -28,30 +28,34 @@ function Artists({ navigation }) {
     }
   }
 
+  const showLoadingSpinner = function() {
+    if (libraryArtist.loading && libraryArtist.page === 1) {
+      return true;
+    }
+    return false;
+  };
+
   return (
     <Container playerHeight={playerHeight}>
-      {libraryArtist.loading && <Loading />}
+      {showLoadingSpinner() && <Loading />}
 
-      {!libraryArtist.loading && (
-        <>
-          {libraryArtist.data.length > 0 ? (
-            <FlatList
-              data={libraryArtist.data}
-              keyExtractor={item => `key-${item.id}`}
-              renderItem={({ item }) => (
-                <ArtistItem
-                  data={item}
-                  onPress={() => navigation.navigate('Artist', { id: item.id })}
-                />
-              )}
-              onEndReached={endReached}
-              onEndReachedThreshold={0.1}
-            />
-          ) : (
-            <WarningText>Você ainda não segue nenhuma artista.</WarningText>
-          )}
-        </>
-      )}
+      {!showLoadingSpinner() &&
+        (libraryArtist.data.length > 0 ? (
+          <FlatList
+            data={libraryArtist.data}
+            keyExtractor={item => `key-${item.id}`}
+            renderItem={({ item }) => (
+              <ArtistItem
+                data={item}
+                onPress={() => navigation.navigate('Artist', { id: item.id })}
+              />
+            )}
+            onEndReached={endReached}
+            onEndReachedThreshold={0.4}
+          />
+        ) : (
+          <WarningText>Você ainda não segue nenhuma artista.</WarningText>
+        ))}
     </Container>
   );
 }

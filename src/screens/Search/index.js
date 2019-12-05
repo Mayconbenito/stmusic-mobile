@@ -57,7 +57,7 @@ function Search({ navigation }) {
   return (
     <Container playerHeight={playerHeight}>
       <InputContainer>
-        <MaterialIcons name="search" size={26} color="#d99207" />
+        <MaterialIcons name="search" size={30} color="#d99207" />
         <Input
           value={query}
           onChangeText={onInputChange}
@@ -66,7 +66,7 @@ function Search({ navigation }) {
         />
         {query !== '' && (
           <TouchableOpacity onPress={clearQuery}>
-            <MaterialIcons name="clear" size={26} color="#d99207" />
+            <MaterialIcons name="clear" size={30} color="#d99207" />
           </TouchableOpacity>
         )}
       </InputContainer>

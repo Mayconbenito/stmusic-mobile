@@ -1,4 +1,5 @@
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { Header } from 'react-navigation-stack';
 import styled from 'styled-components/native';
 
 export const Container = styled.View`
@@ -11,6 +12,7 @@ export const InputContainer = styled.View`
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
+  height: ${Header.HEIGHT};
   padding-horizontal: 10px;
   border-bottom-width: 2;
   border-bottom-color: #000;
@@ -21,10 +23,10 @@ export const Input = styled.TextInput.attrs({
   selectionColor: '#d99207',
 })`
   flex: 1;
-  height: 64;
-  padding-vertical: 5;
+  padding-vertical: 15;
   padding-horizontal: 10;
   color: #d99207;
+  font-size: 15;
   font-weight: bold;
 `;
 
@@ -35,6 +37,7 @@ export const List = styled.ScrollView.attrs({
     paddingHorizontal: 10,
     paddingVertical: 10,
   },
+  keyboardShouldPersistTaps: 'always',
 })``;
 
 export const SectionTitle = styled.Text`

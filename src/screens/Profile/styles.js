@@ -34,14 +34,13 @@ export const Name = styled.Text`
 export const LogoutButton = styled.TouchableOpacity.attrs({
   activeOpacity: 0.5,
 })`
-  border-radius: 20;
-  width: ${wp(50)};
-  height: 40;
+  width: ${wp(40)};
+  border-radius: 15;
+  height: 35;
   background-color: #d99207;
-  align-items: center;
   justify-content: center;
-  padding-horizontal: 30;
-  padding-vertical: 10;
+  align-items: center;
+  margin-bottom: 10;
 `;
 
 export const LogoutButtonText = styled.Text`

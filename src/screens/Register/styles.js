@@ -56,18 +56,18 @@ export const Button = styled.TouchableOpacity.attrs({
   activeOpacity: 0.5,
 })`
   width: ${wp(70)};
-  border-radius: 20;
+  border-radius: 25;
   height: 40;
+  border-radius: 15;
   background-color: #d99207;
-  align-items: center;
   justify-content: center;
-  padding-horizontal: 30;
-  padding-vertical: 10;
+  align-items: center;
+  margin-bottom: 10;
 `;
 
 export const TextButton = styled.Text`
   font-size: ${hp(2.4)};
-  color: #fff;
+  color: #000;
   font-weight: bold;
   text-align: center;
 `;

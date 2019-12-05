@@ -23,7 +23,7 @@ export const InputDescription = styled.Text`
 `;
 
 export const Input = styled.TextInput.attrs({
-  selectionColor: '#fff',
+  selectionColor: '#000',
   autoFocus: true,
 })`
   height: 40;
@@ -32,24 +32,23 @@ export const Input = styled.TextInput.attrs({
   border-bottom-width: 2;
   border-bottom-color: #000;
   margin-bottom: 5;
-  color: #fff;
+  color: #d99207;
   border-radius: 2;
 `;
 
 export const Submit = styled.TouchableOpacity.attrs({
   activeOpacity: 0.5,
 })`
+  margin-top: 10;
   height: 40;
-  padding-horizontal: 10;
-  padding-vertical: 10;
-  align-items: center;
-  justify-content: center;
+  border-radius: 15;
   background-color: #d99207;
-  border-radius: 20;
+  justify-content: center;
+  align-items: center;
 `;
 
 export const SubmitText = styled.Text`
-  color: #fff;
+  color: #000;
   font-size: 16;
   font-weight: bold;
 `;

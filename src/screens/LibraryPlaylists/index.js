@@ -25,6 +25,11 @@ function Playlists({ navigation }) {
   }, []);
 
   function endReached() {
+    console.log(
+      libraryPlaylist.total,
+      libraryPlaylist.data.length,
+      libraryPlaylist.loading
+    );
     if (
       libraryPlaylist.total > libraryPlaylist.data.length &&
       !libraryPlaylist.loading
@@ -32,41 +37,43 @@ function Playlists({ navigation }) {
       dispatch(fetchPlaylists(libraryPlaylist.page));
     }
   }
+
+  const showLoadingSpinner = function() {
+    if (libraryPlaylist.loading && libraryPlaylist.page === 1) {
+      return true;
+    }
+    return false;
+  };
   return (
     <Container playerHeight={playerHeight}>
-      {libraryPlaylist.loading && <Loading />}
-
-      {!libraryPlaylist.loading && (
-        <>
-          <FlatList
-            ListHeaderComponent={
-              <>
-                <CreatePlaylistButton
-                  onPress={() => navigation.navigate('CreatePlaylist')}
-                >
-                  <CreatePlaylistButtonText>
-                    Criar Playlist
-                  </CreatePlaylistButtonText>
-                </CreatePlaylistButton>
-                {!libraryPlaylist.data.length > 0 && (
-                  <WarningText>
-                    Você ainda não tem nenhuma playlist.
-                  </WarningText>
-                )}
-              </>
-            }
-            data={libraryPlaylist.data}
-            keyExtractor={item => `key-${item.id}`}
-            renderItem={({ item }) => (
-              <PlaylistItem
-                onPress={() => navigation.navigate('Playlist', { id: item.id })}
-                data={item}
-              />
-            )}
-            onEndReached={endReached}
-            onEndReachedThreshold={0.1}
-          />
-        </>
+      {showLoadingSpinner() && <Loading />}
+      {!showLoadingSpinner() && (
+        <FlatList
+          ListHeaderComponent={
+            <>
+              <CreatePlaylistButton
+                onPress={() => navigation.navigate('CreatePlaylist')}
+              >
+                <CreatePlaylistButtonText>
+                  Criar Playlist
+                </CreatePlaylistButtonText>
+              </CreatePlaylistButton>
+              {!libraryPlaylist.data.length > 0 && (
+                <WarningText>Você ainda não tem nenhuma playlist.</WarningText>
+              )}
+            </>
+          }
+          data={libraryPlaylist.data}
+          keyExtractor={item => `key-${item.id}`}
+          renderItem={({ item }) => (
+            <PlaylistItem
+              onPress={() => navigation.navigate('Playlist', { id: item.id })}
+              data={item}
+            />
+          )}
+          onEndReached={endReached}
+          onEndReachedThreshold={0.4}
+        />
       )}
     </Container>
   );
