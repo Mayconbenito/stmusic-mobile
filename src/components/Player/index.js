@@ -238,7 +238,7 @@ export default function Player() {
                       <Control onPress={() => dispatch(resume())}>
                         <MaterialIcons
                           name="play-arrow"
-                          size={50}
+                          size={60}
                           color="#d99207"
                         />
                       </Control>
