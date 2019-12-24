@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
@@ -12,7 +12,6 @@ import { Container, InputContainer, Input, List, SectionTitle } from './styles';
 
 function Search({ navigation }) {
   const playerHeight = getPlayerHeight();
-  const isInitialMount = useRef(true);
   const [query, setQuery] = useState('');
   const [results, setResults] = useState({
     artists: [],
@@ -20,31 +19,21 @@ function Search({ navigation }) {
     tracks: [],
   });
 
-  useEffect(() => {
-    async function fetchSearch() {
-      try {
-        const response = await api.get(`/search/${query}`, {
-          params: {
-            limit: 10,
-            type: 'artist,album,track',
-          },
-        });
+  async function fetchSearch() {
+    try {
+      const response = await api.get(`/search/${query}`, {
+        params: {
+          limit: 10,
+          type: 'artist,album,track',
+        },
+      });
 
-        setResults({ artists: [], albums: [], tracks: [] });
-        setResults(response.data.results);
-      } catch (e) {
-        console.log(e);
-      }
-    }
-
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-    } else if (query !== '') {
-      fetchSearch();
-    } else {
       setResults({ artists: [], albums: [], tracks: [] });
+      setResults(response.data.results);
+    } catch (e) {
+      console.log(e);
     }
-  }, [query]);
+  }
 
   function onInputChange(txt) {
     setQuery(txt);
@@ -52,6 +41,7 @@ function Search({ navigation }) {
 
   function clearQuery() {
     setQuery('');
+    setResults({ artists: [], albums: [], tracks: [] });
   }
 
   return (
@@ -61,6 +51,8 @@ function Search({ navigation }) {
         <Input
           value={query}
           onChangeText={onInputChange}
+          onSubmitEditing={fetchSearch}
+          returnKeyType="search"
           placeholder="Buscar por artistas e músicas"
           autoFocus
         />
