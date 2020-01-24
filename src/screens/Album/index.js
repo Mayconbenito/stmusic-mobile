@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
+import Fallback from '~/assets/images/fallback-square.png';
 import HeaderBackButton from '~/components/HeaderBackButton';
 import Loading from '~/components/Loading';
 import TrackItem from '~/components/TrackItem';
@@ -52,6 +53,7 @@ function Album({ navigation }) {
 
   async function fetchTracks() {
     try {
+      setTracksMeta({ ...tracksMeta, loading: true });
       const response = await api.get(`/albums/${albumId}/tracks`, {
         params: {
           page: tracksMeta.page,
@@ -86,17 +88,14 @@ function Album({ navigation }) {
 
   return (
     <ParentContainer>
-      {loading && tracksMeta.loading && <Loading />}
-      {!loading && !tracksMeta.loading && (
+      {loading && <Loading />}
+      {!loading && (
         <Container playerHeight={playerHeight}>
           <List
             ListHeaderComponent={
               <>
                 <Details>
-                  <Image
-                    source={{ uri: album.picture }}
-                    fallback={require('~/assets/images/fallback-square.png')}
-                  />
+                  <Image source={{ uri: album.picture }} fallback={Fallback} />
                   <DetailsTitle>{album.name}</DetailsTitle>
                   <Buttons>
                     <Button onPress={handlePlaylistPlay}>
@@ -111,6 +110,10 @@ function Album({ navigation }) {
             renderItem={({ item }) => <TrackItem data={item} margin />}
             onEndReached={endReached}
             onEndReachedThreshold={0.4}
+            ListFooterComponent={tracksMeta.loading && <Loading size={24} />}
+            ListFooterComponentStyle={{
+              marginTop: 10,
+            }}
           />
         </Container>
       )}

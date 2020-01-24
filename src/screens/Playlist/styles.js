@@ -26,6 +26,7 @@ export const Image = styled(ImageFallback)`
   width: 90;
   height: 90;
   border-radius: 2;
+  background-color: #000;
 `;
 
 export const DetailsTitle = styled.Text`

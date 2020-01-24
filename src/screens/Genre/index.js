@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
+import Fallback from '~/assets/images/fallback-square.png';
 import HeaderBackButton from '~/components/HeaderBackButton';
 import Loading from '~/components/Loading';
 import TrackItem from '~/components/TrackItem';
@@ -26,7 +27,7 @@ function Genre({ navigation }) {
   const genreId = navigation.state.params.id;
 
   const [loading, setLoading] = useState(true);
-  const [genre, setGenre] = useState();
+  const [genre, setGenre] = useState({});
   const [tracks, setTracks] = useState([]);
   const [tracksMeta, setTracksMeta] = useState({
     loading: true,
@@ -49,6 +50,7 @@ function Genre({ navigation }) {
 
   async function fetchTracks() {
     try {
+      setTracksMeta({ ...tracksMeta, loading: true });
       const response = await api.get(`/genres/${genreId}/tracks`, {
         params: {
           page: tracksMeta.page,
@@ -83,15 +85,13 @@ function Genre({ navigation }) {
 
   return (
     <ParentContainer>
-      {loading && tracksMeta.loading && <Loading />}
-      {!loading && !tracksMeta.loading && (
+      {loading && tracksMeta.page === 1 && <Loading />}
+      {!loading && (
         <Container playerHeight={playerHeight}>
           <List
             ListHeaderComponent={
               <Details>
-                <Image
-                  source={require('~/assets/images/fallback-square.png')}
-                />
+                <Image source={Fallback} />
                 <DetailsTitle>{genre.name} </DetailsTitle>
                 {tracks.length > 0 ? (
                   <Button onPress={handlePlaylistPlay}>
@@ -107,6 +107,10 @@ function Genre({ navigation }) {
             renderItem={({ item }) => <TrackItem data={item} margin />}
             onEndReached={endReached}
             onEndReachedThreshold={0.4}
+            ListFooterComponent={tracksMeta.loading && <Loading size={24} />}
+            ListFooterComponentStyle={{
+              marginTop: 10,
+            }}
           />
         </Container>
       )}

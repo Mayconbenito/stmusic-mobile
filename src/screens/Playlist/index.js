@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
+import Fallback from '~/assets/images/fallback-square.png';
 import HeaderBackButton from '~/components/HeaderBackButton';
 import Loading from '~/components/Loading';
 import TrackItem from '~/components/TrackItem';
@@ -48,6 +49,7 @@ function Playlist({ navigation }) {
 
   async function fetchTracks() {
     try {
+      setTracksMeta({ ...tracksMeta, loading: true });
       const response = await api.get(`/playlists/${playlistId}/tracks`, {
         params: {
           page: tracksMeta.page,
@@ -82,16 +84,13 @@ function Playlist({ navigation }) {
 
   return (
     <ParentContainer>
-      {loading && tracksMeta.loading && <Loading />}
-      {!loading && !tracksMeta.loading && (
+      {loading && <Loading />}
+      {!loading && (
         <Container playerHeight={playerHeight}>
           <List
             ListHeaderComponent={
               <Details>
-                <Image
-                  source={{ uri: playlist.picture }}
-                  fallback={require('~/assets/images/fallback-horizontal.png')}
-                />
+                <Image source={{ uri: playlist.picture }} fallback={Fallback} />
                 <DetailsTitle>{playlist.name} </DetailsTitle>
                 {tracks.length > 0 ? (
                   <Button onPress={handlePlaylistPlay}>
@@ -107,6 +106,10 @@ function Playlist({ navigation }) {
             renderItem={({ item }) => <TrackItem data={item} margin />}
             onEndReached={endReached}
             onEndReachedThreshold={0.4}
+            ListFooterComponent={tracksMeta.loading && <Loading size={24} />}
+            ListFooterComponentStyle={{
+              marginTop: 10,
+            }}
           />
         </Container>
       )}
