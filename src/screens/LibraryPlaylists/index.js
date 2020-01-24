@@ -73,6 +73,10 @@ function Playlists({ navigation }) {
           )}
           onEndReached={endReached}
           onEndReachedThreshold={0.4}
+          ListFooterComponent={libraryPlaylist.loading && <Loading size={24} />}
+          ListFooterComponentStyle={{
+            marginTop: 10,
+          }}
         />
       )}
     </Container>

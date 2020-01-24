@@ -52,6 +52,10 @@ function Artists({ navigation }) {
             )}
             onEndReached={endReached}
             onEndReachedThreshold={0.4}
+            ListFooterComponent={libraryArtist.loading && <Loading size={24} />}
+            ListFooterComponentStyle={{
+              marginTop: 10,
+            }}
           />
         ) : (
           <WarningText>Você ainda não segue nenhuma artista.</WarningText>
