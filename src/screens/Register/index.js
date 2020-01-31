@@ -1,10 +1,11 @@
-import AsyncStorage from '@react-native-community/async-storage';
 import React, { useState, useRef } from 'react';
 import { View } from 'react-native';
+import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
 
 import HeaderBackButton from '~/components/HeaderBackButton';
 import api from '~/services/api';
+import { Creators as SessionActions } from '~/store/ducks/session';
 
 import {
   Container,
@@ -18,6 +19,7 @@ import {
 } from './styles';
 
 function Register(props) {
+  const dispatch = useDispatch();
   const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
@@ -51,11 +53,11 @@ function Register(props) {
 
       if (response.status === 200) {
         setLoading(false);
-
-        await AsyncStorage.setItem('@STMusic:JWT', response.data.jwt);
-        await AsyncStorage.setItem(
-          '@STMusic:user',
-          JSON.stringify(response.data.user)
+        dispatch(
+          SessionActions.createSession({
+            jwt: response.data.jwt,
+            ...response.data.user,
+          })
         );
 
         props.navigation.navigate('AppStack');
