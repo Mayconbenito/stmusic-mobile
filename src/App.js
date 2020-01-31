@@ -8,6 +8,7 @@ import PlaylistModal from '~/components/PlaylistModal';
 import UpdateModal from '~/components/UpdateModal';
 
 import Routes from './routes';
+import NavigationService from './services/navigation';
 
 YellowBox.ignoreWarnings([
   'Warning: componentWillReceiveProps has been renamed',
@@ -62,7 +63,11 @@ function App() {
   return (
     <>
       <StatusBar backgroundColor="#000000" barStyle="light-content" />
-      <Routes />
+      <Routes
+        ref={navigatorRef => {
+          NavigationService.setTopLevelNavigator(navigatorRef);
+        }}
+      />
       <Player />
       {playlistModal.open && <PlaylistModal />}
 

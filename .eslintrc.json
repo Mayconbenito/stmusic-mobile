@@ -35,29 +35,17 @@
     "react/jsx-filename-extension": [
       "error",
       {
-        "extensions": [
-          ".js",
-          ".jsx"
-        ]
+        "extensions": [".js", ".jsx"]
       }
     ],
+    "import/no-cycle": "off",
     "import/prefer-default-export": "off",
     "import/order": "off",
     "import-helpers/order-imports": [
       "warn",
       {
         "newlinesBetween": "always",
-        "groups": [
-          [
-            "module"
-          ],
-          "/^~/",
-          [
-            "parent",
-            "sibling",
-            "index"
-          ]
-        ],
+        "groups": [["module"], "/^~/", ["parent", "sibling", "index"]],
         "alphabetize": {
           "order": "asc",
           "ignoreCase": true
