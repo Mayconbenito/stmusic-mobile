@@ -6,7 +6,7 @@ export const Container = styled.View`
   flex: 1;
   background-color: #141414;
   padding-top: 10;
-  padding-bottom: ${props => 10 + props.playerHeight};
+  padding-bottom: ${props => (props.theme.showPlayer ? 57 + 10 : 10)};
 `;
 
 export const ScrollerContainer = styled.View`

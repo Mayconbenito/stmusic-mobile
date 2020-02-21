@@ -6,7 +6,6 @@ import Fallback from '~/assets/images/fallback-square.png';
 import HeaderBackButton from '~/components/HeaderBackButton';
 import Loading from '~/components/Loading';
 import TrackItem from '~/components/TrackItem';
-import getPlayerHeight from '~/helpers/getPlayerHeight';
 import api from '~/services/api';
 import { Creators as PlayerActions } from '~/store/ducks/player';
 
@@ -34,8 +33,6 @@ function Genre({ navigation }) {
     total: 0,
     page: 1,
   });
-
-  const playerHeight = getPlayerHeight();
 
   async function fetchGenre() {
     try {
@@ -87,7 +84,7 @@ function Genre({ navigation }) {
     <ParentContainer>
       {loading && tracksMeta.page === 1 && <Loading />}
       {!loading && (
-        <Container playerHeight={playerHeight}>
+        <Container>
           <List
             ListHeaderComponent={
               <Details>

@@ -6,7 +6,6 @@ import Fallback from '~/assets/images/fallback-square.png';
 import HeaderBackButton from '~/components/HeaderBackButton';
 import Loading from '~/components/Loading';
 import TrackItem from '~/components/TrackItem';
-import getPlayerHeight from '~/helpers/getPlayerHeight';
 import api from '~/services/api';
 import { Creators as PlayerActions } from '~/store/ducks/player';
 
@@ -25,7 +24,6 @@ import {
 function Playlist({ navigation }) {
   const playlistId = navigation.state.params.id;
   const dispatch = useDispatch();
-  const playerHeight = getPlayerHeight();
 
   const [loading, setLoading] = useState(true);
   const [playlist, setPlaylist] = useState();
@@ -86,7 +84,7 @@ function Playlist({ navigation }) {
     <ParentContainer>
       {loading && <Loading />}
       {!loading && (
-        <Container playerHeight={playerHeight}>
+        <Container>
           <List
             ListHeaderComponent={
               <Details>

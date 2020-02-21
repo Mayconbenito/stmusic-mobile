@@ -5,13 +5,11 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AlbumItem from '~/components/AlbumItem';
 import ArtistItem from '~/components/ArtistItem';
 import TrackItem from '~/components/TrackItem';
-import getPlayerHeight from '~/helpers/getPlayerHeight';
 import api from '~/services/api';
 
 import { Container, InputContainer, Input, List, SectionTitle } from './styles';
 
 function Search({ navigation }) {
-  const playerHeight = getPlayerHeight();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState({
     artists: [],
@@ -45,7 +43,7 @@ function Search({ navigation }) {
   }
 
   return (
-    <Container playerHeight={playerHeight}>
+    <Container>
       <InputContainer>
         <MaterialIcons name="search" size={30} color="#d99207" />
         <Input

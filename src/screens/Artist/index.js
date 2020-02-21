@@ -6,7 +6,6 @@ import BigAlbumItem from '~/components/BigAlbumItem';
 import HeaderBackButton from '~/components/HeaderBackButton';
 import Loading from '~/components/Loading';
 import TrackItem from '~/components/TrackItem';
-import getPlayerHeight from '~/helpers/getPlayerHeight';
 import api from '~/services/api';
 import { Creators as LibraryArtistsActions } from '~/store/ducks/libraryArtist';
 import { Creators as PlayerActions } from '~/store/ducks/player';
@@ -46,8 +45,6 @@ function Artist({ navigation }) {
     total: 0,
     page: 1,
   });
-
-  const playerHeight = getPlayerHeight();
 
   async function fetchArtist() {
     try {
@@ -169,7 +166,7 @@ function Artist({ navigation }) {
   }
 
   return (
-    <ParentContainer playerHeight={playerHeight}>
+    <ParentContainer>
       {loading && <Loading />}
       {!loading && (
         <Container>

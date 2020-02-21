@@ -6,7 +6,6 @@ import Fallback from '~/assets/images/fallback-square.png';
 import HeaderBackButton from '~/components/HeaderBackButton';
 import Loading from '~/components/Loading';
 import TrackItem from '~/components/TrackItem';
-import getPlayerHeight from '~/helpers/getPlayerHeight';
 import api from '~/services/api';
 import { Creators as PlayerActions } from '~/store/ducks/player';
 
@@ -37,8 +36,6 @@ function Album({ navigation }) {
     total: 0,
     page: 1,
   });
-
-  const playerHeight = getPlayerHeight();
 
   async function fetchAlbum() {
     try {
@@ -90,7 +87,7 @@ function Album({ navigation }) {
     <ParentContainer>
       {loading && <Loading />}
       {!loading && (
-        <Container playerHeight={playerHeight}>
+        <Container>
           <List
             ListHeaderComponent={
               <>

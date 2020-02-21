@@ -18,7 +18,7 @@ export const Container = styled.View`
   flex: 1;
   bottom: ${props => (props.showBigPlayer ? 0 : 54)};
   flex-direction: column;
-  opacity: ${props => (props.showPlayer ? 1 : 0)};
+  opacity: ${props => (props.theme.showPlayer ? 1 : 0)};
 `;
 
 export const BigPlayerContainer = styled.View`

@@ -5,7 +5,7 @@ import styled from 'styled-components/native';
 export const Container = styled.View`
   flex: 1;
   background-color: #141414;
-  padding-bottom: ${props => props.playerHeight};
+  padding-bottom: ${props => (props.theme.showPlayer ? 57 : 0)};
 `;
 
 export const InputContainer = styled.View`
