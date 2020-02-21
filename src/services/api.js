@@ -11,10 +11,6 @@ api.interceptors.request.use(async config => {
   config.headers.Authorization = `Bearer ${jwt}`;
 
   config = { ...config, baseURL: `${API_URL}/app` };
-  console.log(
-    'dont know why but on devlopment API_URL only works with this console.log',
-    API_URL
-  );
 
   return config;
 });
