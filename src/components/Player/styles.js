@@ -106,10 +106,15 @@ export const BigPlayerProgressBar = styled(ProgressBar)`
 `;
 
 export const BigPlayerControls = styled.View`
-  width: 100%;
   flex-direction: row;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
+`;
+
+export const BigPlayerMainControls = styled.View`
+  flex-direction: row;
+  align-items: center;
+  align-self: center;
 `;
 
 export const SmallPlayerContainer = styled.View`
