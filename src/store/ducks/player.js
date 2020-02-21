@@ -11,6 +11,7 @@ export const { Types, Creators } = createActions(
     stop: [],
     prev: [],
     next: [],
+    showPlayer: ['show'],
     clearState: [],
   },
   {
@@ -51,6 +52,7 @@ const playPlaylist = (state = initialState, action) => ({
   isPlaying: 'PLAYING',
   active: action.playlist.tracks[0],
   playlist: action.playlist,
+  showPlayer: true,
 });
 
 const play = (state = initialState, action) => ({
@@ -58,6 +60,7 @@ const play = (state = initialState, action) => ({
   isPlaying: 'PLAYING',
   playlist: false,
   active: action.track,
+  showPlayer: true,
 });
 
 const pause = (state = initialState) => ({
@@ -118,6 +121,11 @@ const next = (state = initialState) => {
   return state;
 };
 
+const showPlayer = (state = initialState, action) => ({
+  ...state,
+  showPlayer: action.show,
+});
+
 const clearState = () => initialState;
 
 export default createReducer(initialState, {
@@ -129,5 +137,6 @@ export default createReducer(initialState, {
   [Types.STOP]: stop,
   [Types.PREV]: prev,
   [Types.NEXT]: next,
+  [Types.SHOW_PLAYER]: showPlayer,
   [Types.CLEAR_STATE]: clearState,
 });

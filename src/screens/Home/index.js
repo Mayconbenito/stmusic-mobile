@@ -5,7 +5,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import BigTrackItem from '~/components/BigTrackItem';
 import HeaderIcon from '~/components/HeaderIcon';
 import Loading from '~/components/Loading';
-import getPlayerHeight from '~/helpers/getPlayerHeight';
 import { Creators as BrowseActions } from '~/store/ducks/browse';
 import { Creators as PlayerActions } from '~/store/ducks/player';
 
@@ -23,7 +22,6 @@ import {
 function Home({ navigation }) {
   const browse = useSelector(state => state.browse);
   const dispatch = useDispatch();
-  const playerHeight = getPlayerHeight();
 
   const {
     fetchGenres,
@@ -53,7 +51,7 @@ function Home({ navigation }) {
   }
 
   return (
-    <Container playerHeight={playerHeight}>
+    <Container>
       {loading() === true && <Loading />}
       {!loading() && (
         <ScrollView>

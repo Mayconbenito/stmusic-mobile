@@ -7,8 +7,8 @@ import Video from 'react-native-video';
 import { useSelector, useDispatch } from 'react-redux';
 
 import api from '~/services/api';
+import { Creators as PlayerActions } from '~/store/ducks/player';
 
-import { Creators as PlayerActions } from '../../store/ducks/player';
 import {
   Container,
   BigPlayerContainer,
@@ -37,12 +37,11 @@ import {
 } from './styles';
 
 export default function Player() {
-  const { pause, resume, prev, next } = PlayerActions;
+  const { pause, resume, prev, next, showPlayer } = PlayerActions;
 
   const player = useSelector(state => state.player);
   const dispatch = useDispatch();
 
-  const [showPlayer, setShowPlayer] = useState(true);
   const [showBigPlayer, setShowBigPlayer] = useState(false);
   const [playCountStatus, setPlayCountStatus] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -53,11 +52,11 @@ export default function Player() {
 
   useEffect(() => {
     Keyboard.addListener('keyboardDidShow', () => {
-      setShowPlayer(false);
+      dispatch(showPlayer(false));
     });
 
     Keyboard.addListener('keyboardDidHide', () => {
-      setShowPlayer(true);
+      dispatch(showPlayer(true));
     });
 
     MusicControl.enableBackgroundMode(true);
@@ -169,7 +168,7 @@ export default function Player() {
   return (
     <>
       {!!player.active && (
-        <Container showPlayer={showPlayer} showBigPlayer={showBigPlayer}>
+        <Container showBigPlayer={showBigPlayer}>
           <BigPlayerContainer showBigPlayer={showBigPlayer}>
             <BigPlayerHeader>
               <TouchableOpacity onPress={() => setShowBigPlayer(false)}>

@@ -2,7 +2,6 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import HeaderIcon from '~/components/HeaderIcon';
-import getPlayerHeight from '~/helpers/getPlayerHeight';
 import { Creators as PlayerActions } from '~/store/ducks/player';
 import { Creators as SessionActions } from '~/store/ducks/session';
 
@@ -16,7 +15,6 @@ import {
 } from './styles';
 
 function Profile() {
-  const playerHeight = getPlayerHeight();
   const session = useSelector(state => state.session);
   const dispatch = useDispatch();
 
@@ -26,7 +24,7 @@ function Profile() {
   }
 
   return (
-    <Container playerHeight={playerHeight}>
+    <Container>
       <User>
         <Image source={require('~/assets/images/fallback-square.png')} />
         <Name>{session.name}</Name>

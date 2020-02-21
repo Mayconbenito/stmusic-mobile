@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { YellowBox, StatusBar, Alert } from 'react-native';
 import { useSelector } from 'react-redux';
 import * as UpdateAPK from 'rn-update-apk';
+import { ThemeProvider } from 'styled-components';
 
 import Player from '~/components/Player';
 import PlaylistModal from '~/components/PlaylistModal';
@@ -20,6 +21,7 @@ YellowBox.ignoreWarnings([
 ]);
 
 function App() {
+  const player = useSelector(state => state.player);
   const playlistModal = useSelector(state => state.playlistModal);
   const [progress, setProgress] = useState(0);
   const [updateModal, setUpdateModal] = useState(false);
@@ -60,27 +62,33 @@ function App() {
     updater.checkUpdate();
   }, []);
 
+  const theme = {
+    showPlayer: player.active ? player.showPlayer : false,
+  };
+
   return (
     <>
       <StatusBar backgroundColor="#000000" barStyle="light-content" />
-      <Routes
-        ref={navigatorRef => {
-          NavigationService.setTopLevelNavigator(navigatorRef);
-        }}
-      />
-      <Player />
-      {playlistModal.open && <PlaylistModal />}
-
-      {!!updateModal && (
-        <UpdateModal
-          title={
-            updateModal === 'forceUpdate'
-              ? 'Atualização Obrigatória'
-              : 'Atualização'
-          }
-          progress={progress}
+      <ThemeProvider theme={theme}>
+        <Routes
+          ref={navigatorRef => {
+            NavigationService.setTopLevelNavigator(navigatorRef);
+          }}
         />
-      )}
+        <Player />
+        {playlistModal.open && <PlaylistModal />}
+
+        {!!updateModal && (
+          <UpdateModal
+            title={
+              updateModal === 'forceUpdate'
+                ? 'Atualização Obrigatória'
+                : 'Atualização'
+            }
+            progress={progress}
+          />
+        )}
+      </ThemeProvider>
     </>
   );
 }
