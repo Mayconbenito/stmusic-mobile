@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { TouchableOpacity, Keyboard } from 'react-native';
+import { View, TouchableOpacity, Keyboard } from 'react-native';
 import { STREAMER_URL } from 'react-native-dotenv';
 import MusicControl from 'react-native-music-control';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import api from '~/services/api';
 import { Creators as PlayerActions } from '~/store/ducks/player';
+import { Creators as PlaylistModalActions } from '~/store/ducks/playlistModal';
 
 import {
   Container,
@@ -23,6 +24,7 @@ import {
   BigPlayerProgressTime,
   BigPlayerProgressBar,
   BigPlayerControls,
+  BigPlayerMainControls,
   SmallPlayerContainer,
   Details,
   Image,
@@ -220,30 +222,49 @@ export default function Player() {
                 )}
 
                 <BigPlayerControls>
-                  <Control onPress={() => dispatch(prev())}>
-                    <MaterialIcons
-                      name="skip-previous"
-                      size={40}
-                      color="#d99207"
-                    />
-                  </Control>
-                  {player.isPlaying === 'PLAYING' && (
-                    <Control onPress={() => dispatch(pause())}>
-                      <MaterialIcons name="pause" size={60} color="#d99207" />
+                  <View style={{ width: 40, height: 40 }} />
+                  <BigPlayerMainControls>
+                    <Control onPress={() => dispatch(prev())}>
+                      <MaterialIcons
+                        name="skip-previous"
+                        size={40}
+                        color="#d99207"
+                      />
                     </Control>
-                  )}
-                  {player.isPlaying === 'PLAYING' ||
-                    ('STOPPED' && (
-                      <Control onPress={() => dispatch(resume())}>
-                        <MaterialIcons
-                          name="play-arrow"
-                          size={60}
-                          color="#d99207"
-                        />
+                    {player.isPlaying === 'PLAYING' && (
+                      <Control onPress={() => dispatch(pause())}>
+                        <MaterialIcons name="pause" size={60} color="#d99207" />
                       </Control>
-                    ))}
-                  <Control onPress={() => dispatch(next())}>
-                    <MaterialIcons name="skip-next" size={40} color="#d99207" />
+                    )}
+                    {player.isPlaying === 'PLAYING' ||
+                      ('STOPPED' && (
+                        <Control onPress={() => dispatch(resume())}>
+                          <MaterialIcons
+                            name="play-arrow"
+                            size={60}
+                            color="#d99207"
+                          />
+                        </Control>
+                      ))}
+                    <Control onPress={() => dispatch(next())}>
+                      <MaterialIcons
+                        name="skip-next"
+                        size={40}
+                        color="#d99207"
+                      />
+                    </Control>
+                  </BigPlayerMainControls>
+
+                  <Control
+                    onPress={() =>
+                      dispatch(PlaylistModalActions.openModal(player.active.id))
+                    }
+                  >
+                    <MaterialIcons
+                      name="playlist-add"
+                      size={40}
+                      color="#D99207"
+                    />
                   </Control>
                 </BigPlayerControls>
               </BigPlayerBottom>
