@@ -9,7 +9,7 @@ export const Container = styled.View`
   background-color: #141414;
   align-items: center;
   justify-content: space-around;
-  padding-bottom: ${props => props.playerHeight};
+  padding-bottom: ${props => (props.theme.showPlayer ? 57 : 0)};
 `;
 
 export const User = styled.View`

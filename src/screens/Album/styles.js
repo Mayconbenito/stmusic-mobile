@@ -12,7 +12,7 @@ export const ParentContainer = styled.View`
 export const Container = styled.View`
   flex: 1;
   background-color: #141414;
-  padding-bottom: ${props => props.playerHeight};
+  padding-bottom: ${props => (props.theme.showPlayer ? 57 : 0)};
 `;
 
 export const Details = styled.View`
@@ -26,6 +26,7 @@ export const Image = styled(ImageFallback)`
   width: 100;
   height: 100;
   border-radius: 100;
+  background-color: #000;
 `;
 
 export const DetailsTitle = styled.Text`

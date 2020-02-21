@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
+import Fallback from '~/assets/images/fallback-square.png';
 import HeaderBackButton from '~/components/HeaderBackButton';
 import Loading from '~/components/Loading';
 import TrackItem from '~/components/TrackItem';
-import getPlayerHeight from '~/helpers/getPlayerHeight';
 import api from '~/services/api';
 import { Creators as PlayerActions } from '~/store/ducks/player';
 
@@ -37,8 +37,6 @@ function Album({ navigation }) {
     page: 1,
   });
 
-  const playerHeight = getPlayerHeight();
-
   async function fetchAlbum() {
     try {
       const response = await api.get(`/albums/${albumId}`);
@@ -52,6 +50,7 @@ function Album({ navigation }) {
 
   async function fetchTracks() {
     try {
+      setTracksMeta({ ...tracksMeta, loading: true });
       const response = await api.get(`/albums/${albumId}/tracks`, {
         params: {
           page: tracksMeta.page,
@@ -86,17 +85,14 @@ function Album({ navigation }) {
 
   return (
     <ParentContainer>
-      {loading && tracksMeta.loading && <Loading />}
-      {!loading && !tracksMeta.loading && (
-        <Container playerHeight={playerHeight}>
+      {loading && <Loading />}
+      {!loading && (
+        <Container>
           <List
             ListHeaderComponent={
               <>
                 <Details>
-                  <Image
-                    source={{ uri: album.picture }}
-                    fallback={require('~/assets/images/fallback-square.png')}
-                  />
+                  <Image source={{ uri: album.picture }} fallback={Fallback} />
                   <DetailsTitle>{album.name}</DetailsTitle>
                   <Buttons>
                     <Button onPress={handlePlaylistPlay}>
@@ -111,6 +107,10 @@ function Album({ navigation }) {
             renderItem={({ item }) => <TrackItem data={item} margin />}
             onEndReached={endReached}
             onEndReachedThreshold={0.4}
+            ListFooterComponent={tracksMeta.loading && <Loading size={24} />}
+            ListFooterComponentStyle={{
+              marginTop: 10,
+            }}
           />
         </Container>
       )}

@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import Loading from '~/components/Loading';
 import PlaylistItem from '~/components/PlaylistItem';
-import getPlayerHeight from '~/helpers/getPlayerHeight';
 import { Creators as LibraryPlaylistActions } from '~/store/ducks/libraryPlaylist';
 
 import {
@@ -18,18 +17,12 @@ function Playlists({ navigation }) {
   const { fetchPlaylists } = LibraryPlaylistActions;
   const libraryPlaylist = useSelector(state => state.libraryPlaylist);
   const dispatch = useDispatch();
-  const playerHeight = getPlayerHeight();
 
   useEffect(() => {
     if (libraryPlaylist.data.length === 0) dispatch(fetchPlaylists());
   }, []);
 
   function endReached() {
-    console.log(
-      libraryPlaylist.total,
-      libraryPlaylist.data.length,
-      libraryPlaylist.loading
-    );
     if (
       libraryPlaylist.total > libraryPlaylist.data.length &&
       !libraryPlaylist.loading
@@ -45,7 +38,7 @@ function Playlists({ navigation }) {
     return false;
   };
   return (
-    <Container playerHeight={playerHeight}>
+    <Container>
       {showLoadingSpinner() && <Loading />}
       {!showLoadingSpinner() && (
         <FlatList
@@ -73,6 +66,10 @@ function Playlists({ navigation }) {
           )}
           onEndReached={endReached}
           onEndReachedThreshold={0.4}
+          ListFooterComponent={libraryPlaylist.loading && <Loading size={24} />}
+          ListFooterComponentStyle={{
+            marginTop: 10,
+          }}
         />
       )}
     </Container>

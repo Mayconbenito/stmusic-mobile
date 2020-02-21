@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import ArtistItem from '~/components/ArtistItem';
 import Loading from '~/components/Loading';
-import getPlayerHeight from '~/helpers/getPlayerHeight';
 import { Creators as LibraryArtistActions } from '~/store/ducks/libraryArtist';
 
 import { Container, WarningText } from './styles';
@@ -13,7 +12,6 @@ function Artists({ navigation }) {
   const { fetchArtists } = LibraryArtistActions;
   const libraryArtist = useSelector(state => state.libraryArtist);
   const dispatch = useDispatch();
-  const playerHeight = getPlayerHeight();
 
   useEffect(() => {
     if (libraryArtist.data.length === 0) dispatch(fetchArtists());
@@ -36,7 +34,7 @@ function Artists({ navigation }) {
   };
 
   return (
-    <Container playerHeight={playerHeight}>
+    <Container>
       {showLoadingSpinner() && <Loading />}
 
       {!showLoadingSpinner() &&
@@ -52,6 +50,10 @@ function Artists({ navigation }) {
             )}
             onEndReached={endReached}
             onEndReachedThreshold={0.4}
+            ListFooterComponent={libraryArtist.loading && <Loading size={24} />}
+            ListFooterComponentStyle={{
+              marginTop: 10,
+            }}
           />
         ) : (
           <WarningText>Você ainda não segue nenhuma artista.</WarningText>

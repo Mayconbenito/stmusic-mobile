@@ -13,9 +13,9 @@ export const Container = styled.TouchableOpacity.attrs({
 `;
 
 export const Image = styled(ImageFallback)`
-  width: 50px;
-  height: 50px;
-  border-radius: 50px;
+  width: 130px;
+  height: 130px;
+  border-radius: 130px;
 `;
 
 export const Name = styled.Text`

@@ -7,8 +7,8 @@ export const Container = styled.TouchableOpacity.attrs({
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 230;
-  height: 129.38;
+  width: 130;
+  height: 130;
   background-color: #4d120f;
   margin-right: 5;
 `;

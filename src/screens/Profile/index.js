@@ -1,10 +1,9 @@
-import AsyncStorage from '@react-native-community/async-storage';
-import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import HeaderIcon from '~/components/HeaderIcon';
-import getPlayerHeight from '~/helpers/getPlayerHeight';
 import { Creators as PlayerActions } from '~/store/ducks/player';
+import { Creators as SessionActions } from '~/store/ducks/session';
 
 import {
   Container,
@@ -15,31 +14,20 @@ import {
   LogoutButtonText,
 } from './styles';
 
-function Profile({ navigation }) {
-  const playerHeight = getPlayerHeight();
+function Profile() {
+  const session = useSelector(state => state.session);
   const dispatch = useDispatch();
-
-  const [user, setUser] = useState(false);
-
-  useEffect(() => {
-    async function getUserData() {
-      const userStore = await AsyncStorage.getItem('@STMusic:user');
-      setUser(JSON.parse(userStore));
-    }
-    getUserData();
-  }, []);
 
   async function handleLogout() {
     dispatch(PlayerActions.clearState());
-    await AsyncStorage.removeItem('@STMusic:JWT');
-    navigation.navigate('AuthStack');
+    dispatch(SessionActions.deleteSession());
   }
 
   return (
-    <Container playerHeight={playerHeight}>
+    <Container>
       <User>
         <Image source={require('~/assets/images/fallback-square.png')} />
-        <Name>{user.name}</Name>
+        <Name>{session.name}</Name>
       </User>
       <LogoutButton onPress={handleLogout}>
         <LogoutButtonText>Encerrar Sessão</LogoutButtonText>
