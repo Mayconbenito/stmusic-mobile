@@ -23,9 +23,9 @@ export const Details = styled.View`
 `;
 
 export const Image = styled(ImageFallback)`
-  width: 100;
-  height: 100;
-  border-radius: 100;
+  width: 90;
+  height: 90;
+  border-radius: 2;
 `;
 
 export const DetailsTitle = styled.Text`
@@ -33,6 +33,7 @@ export const DetailsTitle = styled.Text`
   color: #d99207;
   font-weight: bold;
   margin-top: 10;
+  text-align: center;
 `;
 
 export const Button = styled.TouchableOpacity.attrs({

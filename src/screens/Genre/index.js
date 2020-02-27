@@ -88,7 +88,7 @@ function Genre({ navigation }) {
           <List
             ListHeaderComponent={
               <Details>
-                <Image source={Fallback} />
+                <Image source={Fallback} local />
                 <DetailsTitle>{genre.name} </DetailsTitle>
                 {tracks.length > 0 ? (
                   <Button onPress={handlePlaylistPlay}>
