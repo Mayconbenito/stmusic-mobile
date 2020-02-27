@@ -34,6 +34,7 @@ export const DetailsTitle = styled.Text`
   color: #d99207;
   font-weight: bold;
   margin-top: 10;
+  text-align: center;
 `;
 
 export const Button = styled.TouchableOpacity.attrs({

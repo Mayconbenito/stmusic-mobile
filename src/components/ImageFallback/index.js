@@ -1,8 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Image } from 'react-native';
+import FastImage from 'react-native-fast-image';
 
-function ImageFallback({ style, source, resizeMode, fallback }) {
+function ImageFallback({
+  style,
+  source,
+  resizeMode = 'contain',
+  fallback,
+  local = false,
+}) {
   const [image, setImage] = useState();
+  const [resize, setResize] = useState();
+  const [showFallback, setShowfallback] = useState(false);
 
   function loadFallback() {
     setImage(fallback);
@@ -16,17 +25,49 @@ function ImageFallback({ style, source, resizeMode, fallback }) {
 
     if (source.uri === null) {
       loadFallback();
+      setShowfallback(true);
       return;
+    }
+
+    switch (resizeMode) {
+      case 'contain':
+        setResize(FastImage.resizeMode.contain);
+        break;
+      case 'cover':
+        setResize(FastImage.resizeMode.cover);
+        break;
+      case 'stretch':
+        setResize(FastImage.resizeMode.stretch);
+        break;
+      case 'center':
+        setResize(FastImage.resizeMode.center);
+        break;
+      default:
+        setResize(FastImage.resizeMode.contain);
     }
 
     setImage(source);
   }, []);
 
+  if (local || showFallback) {
+    return (
+      <Image
+        style={style}
+        source={image}
+        resizeMode={resizeMode}
+        onError={loadFallback}
+      />
+    );
+  }
+
   return (
-    <Image
+    <FastImage
       style={style}
-      source={image}
-      resizeMode={resizeMode}
+      source={{
+        ...image,
+        priority: FastImage.priority.high,
+      }}
+      resizeMode={resize}
       onError={loadFallback}
     />
   );
