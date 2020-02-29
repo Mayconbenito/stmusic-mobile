@@ -7155,6 +7155,13 @@ react-native-gesture-handler@^1.4.1:
     invariant "^2.2.4"
     prop-types "^15.7.2"
 
+react-native-material-menu@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-material-menu/-/react-native-material-menu-1.0.0.tgz#bf3d366f7d7044accae1bc6fffe1cf13ac8d88ec"
+  integrity sha512-VUygQvyQQrtM5HBiDLHo0JGoWjegAw/IxpwgXbL9sJfPMDHizx9saZck+IkbTwTvL6PjpnwjI2fuCldoqvDGzQ==
+  dependencies:
+    prop-types "^15.6.0"
+
 react-native-music-control@^0.10.7:
   version "0.10.7"
   resolved "https://registry.yarnpkg.com/react-native-music-control/-/react-native-music-control-0.10.7.tgz#6a88679671b94ab7e4be9afc00766ff10ab50b7d"
