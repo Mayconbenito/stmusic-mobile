@@ -8,7 +8,7 @@ function PlaylistItem({ data, onPress, imageBorder }) {
       <Image
         imageBorder={imageBorder}
         source={{ uri: data.picture }}
-        fallback={require('~/assets/images/fallback-horizontal.png')}
+        fallback={require('~/assets/images/fallback-square.png')}
       />
       <Details>
         <Title>{data.name}</Title>

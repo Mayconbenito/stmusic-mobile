@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import Fallback from '~/assets/images/fallback-square.png';
@@ -9,6 +8,7 @@ import TrackItem from '~/components/TrackItem';
 import api from '~/services/api';
 import { Creators as PlayerActions } from '~/store/ducks/player';
 
+import HeaderToolBar from './components/HeaderToolBar';
 import {
   ParentContainer,
   Container,
@@ -124,7 +124,12 @@ Playlist.navigationOptions = ({ navigation }) => ({
     textTransform: 'uppercase',
   },
   headerLeft: <HeaderBackButton onPress={() => navigation.goBack()} />,
-  headerRight: <View />,
+  headerRight: (
+    <HeaderToolBar
+      playlistId={navigation.state.params.id}
+      navigation={navigation}
+    />
+  ),
 });
 
 export default Playlist;
