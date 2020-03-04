@@ -6,7 +6,9 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
+    "release:android": "cd android && ./gradlew bundleRelease",
     "build:android": "react-native run-android --variant=release",
+    "clean-gradlew": "cd android && ./gradlew clean",
     "test": "jest",
     "lint": "eslint ."
   },
@@ -20,6 +22,7 @@
     "react-native-fast-image": "^7.0.2",
     "react-native-fs": "^2.16.1",
     "react-native-gesture-handler": "^1.4.1",
+    "react-native-material-menu": "^1.0.0",
     "react-native-music-control": "^0.10.7",
     "react-native-paper": "^2.16.0",
     "react-native-reanimated": "^1.2.0",
