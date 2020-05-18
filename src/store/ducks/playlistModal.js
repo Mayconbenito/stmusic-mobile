@@ -13,7 +13,7 @@ export const { Types, Creators } = createActions(
 
 const initialState = {
   open: false,
-  trackId: 1,
+  trackId: null,
 };
 
 const openModal = (state = initialState, action) => ({
