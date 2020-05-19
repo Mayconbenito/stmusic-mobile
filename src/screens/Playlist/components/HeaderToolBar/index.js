@@ -43,6 +43,7 @@ export default function HeaderToolBar({ playlistId, navigation }) {
           <MaterialIcons name="more-vert" size={26} color="#fff" />
         </TouchableOpacity>
       }
+      animationDuration={0}
     >
       <MenuItem textStyle={{ color: '#fff' }} onPress={handleDeletePlaylist}>
         Excluir Playlist
