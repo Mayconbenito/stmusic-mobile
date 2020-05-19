@@ -23,6 +23,17 @@ YellowBox.ignoreWarnings([
 function App() {
   const player = useSelector(state => state.player);
   const playlistModal = useSelector(state => state.playlistModal);
+
+  const [theme, setTheme] = useState({
+    showPlayer: false,
+  });
+
+  useEffect(() => {
+    setTheme({
+      showPlayer: player.active ? player.showPlayer : false,
+    });
+  }, [player.active]);
+
   const [progress, setProgress] = useState(0);
   const [updateModal, setUpdateModal] = useState(false);
 
@@ -62,19 +73,17 @@ function App() {
     updater.checkUpdate();
   }, []);
 
-  const theme = {
-    showPlayer: player.active ? player.showPlayer : false,
-  };
-
   return (
     <>
       <StatusBar backgroundColor="#000000" barStyle="light-content" />
+
       <ThemeProvider theme={theme}>
         <Routes
           ref={navigatorRef => {
             NavigationService.setTopLevelNavigator(navigatorRef);
           }}
         />
+
         <Player />
         {playlistModal.open && <PlaylistModal />}
 

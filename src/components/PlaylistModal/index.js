@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BackHandler } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
+import Loading from '~/components/Loading';
 import PlaylistItem from '~/components/PlaylistItem';
 import api from '~/services/api';
 import { Creators as LibraryPlaylistActions } from '~/store/ducks/libraryPlaylist';
@@ -16,26 +17,35 @@ import {
   List,
 } from './styles';
 
-export default function PlaylistModal() {
+function PlaylistModal() {
   const dispatch = useDispatch();
-  const playlistModalState = useSelector(state => state.playlistModal);
-  const [playlists, setPlaylists] = useState([]);
-  const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0);
+  const playlistModal = useSelector(state => state.playlistModal);
+
+  const playlistInitialState = {
+    data: [],
+    total: 0,
+    page: 1,
+    loading: true,
+  };
+
+  const [playlist, setPlaylist] = useState(playlistInitialState);
 
   async function fetchPlaylists() {
     try {
       const response = await api.get('/me/playlists', {
         params: {
-          page,
+          page: playlist.page,
         },
       });
 
-      setPage(page + 1);
-      setPlaylists([...playlists, ...response.data.playlists]);
-      setTotal(response.data.meta.total);
-    } catch (e) {
-      console.log(e);
+      setPlaylist({
+        data: [...playlist.data, ...response.data.playlists],
+        page: playlist.page + 1,
+        total: response.data.meta.total,
+        loading: false,
+      });
+    } catch (err) {
+      console.log(err);
     }
   }
 
@@ -46,7 +56,9 @@ export default function PlaylistModal() {
 
   useEffect(() => {
     fetchPlaylists();
+  }, []);
 
+  useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', handleBackPress);
 
     return () => {
@@ -55,7 +67,7 @@ export default function PlaylistModal() {
   }, []);
 
   function endReached() {
-    if (total > playlists.length) {
+    if (playlist.total > playlist.data.length) {
       fetchPlaylists();
     }
   }
@@ -68,7 +80,7 @@ export default function PlaylistModal() {
     try {
       handleCloseModal();
       const response = await api.post(`/playlists/${playlistId}/tracks`, {
-        tracks: [playlistModalState.trackId],
+        tracks: [playlistModal.trackId],
       });
 
       if (response.status === 204) {
@@ -87,9 +99,10 @@ export default function PlaylistModal() {
         <Header>
           <HeaderText>Escolha a Playlist</HeaderText>
         </Header>
-        {playlists.length > 0 && (
+        {playlist.loading && <Loading />}
+        {playlist.data.length > 0 && !playlist.loading && (
           <List
-            data={playlists}
+            data={playlist.data}
             keyExtractor={item => `item-${item.id}`}
             renderItem={({ item }) => (
               <PlaylistItem
@@ -106,3 +119,5 @@ export default function PlaylistModal() {
     </Container>
   );
 }
+
+export default PlaylistModal;
