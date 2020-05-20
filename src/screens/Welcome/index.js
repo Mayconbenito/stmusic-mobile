@@ -4,6 +4,9 @@ import { View } from 'react-native';
 import { Container, Logo, Description, Button, TextButton } from './styles';
 
 function Welcome({ navigation }) {
+  navigation.setOptions({
+    headerShown: false,
+  });
   return (
     <Container>
       <Logo />
@@ -21,9 +24,5 @@ function Welcome({ navigation }) {
     </Container>
   );
 }
-
-Welcome.navigationOptions = () => ({
-  header: null,
-});
 
 export default Welcome;

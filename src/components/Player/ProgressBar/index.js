@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 
-export default function ProgressBar({ style, value }) {
+function ProgressBar({ style, value }) {
   return (
     <View style={style}>
       <View
@@ -14,3 +14,5 @@ export default function ProgressBar({ style, value }) {
     </View>
   );
 }
+
+export default ProgressBar;

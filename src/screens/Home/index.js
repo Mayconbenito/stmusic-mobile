@@ -23,6 +23,13 @@ function Home({ navigation }) {
   const browse = useSelector(state => state.browse);
   const dispatch = useDispatch();
 
+  navigation.setOptions({
+    headerStyle: {
+      backgroundColor: '#000',
+    },
+    headerTitle: () => <HeaderIcon />,
+  });
+
   const {
     fetchGenres,
     fetchRecentlyPlayed,
@@ -179,12 +186,5 @@ function Home({ navigation }) {
     </Container>
   );
 }
-
-Home.navigationOptions = () => ({
-  headerStyle: {
-    backgroundColor: '#000',
-  },
-  headerTitle: <HeaderIcon />,
-});
 
 export default Home;

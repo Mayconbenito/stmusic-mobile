@@ -26,9 +26,22 @@ import {
   ScrollerTitleText,
 } from './styles';
 
-function Artist({ navigation }) {
+function Artist({ navigation, route }) {
   const dispatch = useDispatch();
-  const artistId = navigation.state.params.id;
+
+  navigation.setOptions({
+    title: 'Artista',
+    headerTitleStyle: {
+      flex: 1,
+      textAlign: 'center',
+      color: '#FFF',
+      textTransform: 'uppercase',
+    },
+    headerLeft: () => <HeaderBackButton onPress={() => navigation.goBack()} />,
+    headerRight: () => <View />,
+  });
+
+  const artistId = route.params.id;
   const [loading, setLoading] = useState(true);
   const [artist, setArtist] = useState({
     name: '',
@@ -264,17 +277,5 @@ function Artist({ navigation }) {
     </ParentContainer>
   );
 }
-
-Artist.navigationOptions = ({ navigation }) => ({
-  title: 'Artista',
-  headerTitleStyle: {
-    flex: 1,
-    textAlign: 'center',
-    color: '#FFF',
-    textTransform: 'uppercase',
-  },
-  headerLeft: <HeaderBackButton onPress={() => navigation.goBack()} />,
-  headerRight: <View />,
-});
 
 export default Artist;

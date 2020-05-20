@@ -1,5 +1,6 @@
-import { Header as RNHeader } from 'react-navigation-stack';
 import styled from 'styled-components/native';
+
+import { getHeaderHeight } from '~/helpers/headerDefaultHeight';
 
 export const Container = styled.View`
   width: 100%;
@@ -24,7 +25,7 @@ export const Selector = styled.View`
 `;
 
 export const Header = styled.View`
-  height: ${RNHeader.HEIGHT};
+  height: ${getHeaderHeight()};
   border-bottom-width: 1;
   border-bottom-color: #141414;
   align-items: center;

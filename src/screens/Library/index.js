@@ -6,8 +6,15 @@ import Artists from '../LibraryArtists';
 import Playlists from '../LibraryPlaylists';
 import { Container, MenuContainer, MenuItem, MenuText } from './styles';
 
-function Library({ navigation }) {
+function Library({ navigation, route }) {
   const [activeTab, setActiveTab] = useState('Playlists');
+
+  navigation.setOptions({
+    headerStyle: {
+      backgroundColor: '#000',
+    },
+    headerTitle: () => <HeaderIcon />,
+  });
 
   return (
     <Container>
@@ -27,17 +34,14 @@ function Library({ navigation }) {
         </MenuItem>
       </MenuContainer>
 
-      {activeTab === 'Playlists' && <Playlists navigation={navigation} />}
-      {activeTab === 'Artists' && <Artists navigation={navigation} />}
+      {activeTab === 'Playlists' && (
+        <Playlists navigation={navigation} route={route} />
+      )}
+      {activeTab === 'Artists' && (
+        <Artists navigation={navigation} route={route} />
+      )}
     </Container>
   );
 }
-
-Library.navigationOptions = () => ({
-  headerStyle: {
-    backgroundColor: '#000',
-  },
-  headerTitle: <HeaderIcon />,
-});
 
 export default Library;

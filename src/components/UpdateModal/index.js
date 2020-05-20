@@ -27,7 +27,7 @@ function ProgressBar({ progress }) {
   );
 }
 
-export default function UpdateModal({ title, progress }) {
+function UpdateModal({ title, progress }) {
   const [newsDescription, setNewsDescription] = useState(false);
   const updaterURL = 'http://android-app-update.stmusic.tk';
 
@@ -62,3 +62,5 @@ export default function UpdateModal({ title, progress }) {
     </Container>
   );
 }
+
+export default UpdateModal;
