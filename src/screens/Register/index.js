@@ -18,8 +18,30 @@ import {
   TextButton,
 } from './styles';
 
-function Register(props) {
+function Register({ navigation }) {
   const dispatch = useDispatch();
+
+  navigation.setOptions({
+    headerStyle: {
+      backgroundColor: '#141414',
+      shadowRadius: 0,
+      shadowOffset: {
+        height: 0,
+      },
+      shadowColor: 'transparent',
+      elevation: 0,
+    },
+    headerLeft: () => <HeaderBackButton onPress={() => navigation.goBack()} />,
+    title: 'Fazer Login',
+    headerTitleStyle: {
+      flex: 1,
+      textAlign: 'center',
+      color: '#FFF',
+      textTransform: 'uppercase',
+    },
+    headerRight: () => <View />,
+  });
+
   const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
@@ -59,10 +81,9 @@ function Register(props) {
             ...response.data.user,
           })
         );
-
-        props.navigation.navigate('AppStack');
       }
     } catch (err) {
+      console.log('err', err);
       setLoading(false);
       if (err.response.data.error.code === 'EmailAlreadyUsed') {
         setMessage('Endereço de email já cadastrado');
@@ -154,26 +175,5 @@ function Register(props) {
     </Container>
   );
 }
-
-Register.navigationOptions = ({ navigation }) => ({
-  headerStyle: {
-    backgroundColor: '#141414',
-    shadowRadius: 0,
-    shadowOffset: {
-      height: 0,
-    },
-    shadowColor: 'transparent',
-    elevation: 0,
-  },
-  headerLeft: <HeaderBackButton onPress={() => navigation.goBack()} />,
-  title: 'Registrar',
-  headerTitleStyle: {
-    flex: 1,
-    textAlign: 'center',
-    color: '#FFF',
-    textTransform: 'uppercase',
-  },
-  headerRight: <View />,
-});
 
 export default Register;

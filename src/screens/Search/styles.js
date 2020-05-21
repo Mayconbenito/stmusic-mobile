@@ -1,6 +1,7 @@
 import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import { Header } from 'react-navigation-stack';
 import styled from 'styled-components/native';
+
+import { getHeaderHeight } from '~/helpers/headerDefaultHeight';
 
 export const Container = styled.View`
   flex: 1;
@@ -12,7 +13,7 @@ export const InputContainer = styled.View`
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  height: ${Header.HEIGHT};
+  height: ${getHeaderHeight()};
   padding-horizontal: 10px;
   border-bottom-width: 2;
   border-bottom-color: #000;

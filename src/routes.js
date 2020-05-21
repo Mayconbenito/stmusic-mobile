@@ -1,12 +1,14 @@
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { createAppContainer, createSwitchNavigator } from 'react-navigation';
-import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs';
-import { createStackNavigator } from 'react-navigation-stack';
+import { useSelector } from 'react-redux';
+
+import HeaderIcon from '~/components/HeaderIcon';
 
 import Album from './screens/Album';
 import Artist from './screens/Artist';
-import AuthHandler from './screens/AuthHandler';
 import CreatePlaylist from './screens/CreatePlaylist';
 import Genre from './screens/Genre';
 import Home from './screens/Home';
@@ -17,145 +19,167 @@ import Profile from './screens/Profile';
 import Register from './screens/Register';
 import Search from './screens/Search';
 import Welcome from './screens/Welcome';
+import { navigationRef } from './services/navigation';
 
-const HomeStack = createStackNavigator(
-  {
-    Home,
-    Playlist,
-    Genre,
-    Artist,
-    Album,
-  },
-  {
-    initialRouteName: 'Home',
-    defaultNavigationOptions: {
-      headerStyle: {
-        backgroundColor: '#000',
-      },
-    },
-  }
-);
+const Stack = createStackNavigator();
+const Tab = createMaterialBottomTabNavigator();
 
-const SearchStack = createStackNavigator(
-  {
-    Search,
-    Playlist,
-    Genre,
-    Artist,
-    Album,
-  },
-  {
-    initialRouteName: 'Search',
-    defaultNavigationOptions: {
-      headerStyle: {
-        backgroundColor: '#000',
-      },
-    },
-  }
-);
+const HomeStack = createStackNavigator();
 
-const LibraryStack = createStackNavigator(
-  {
-    Library,
-    CreatePlaylist,
-    Playlist,
-    Genre,
-    Artist,
-    Album,
-  },
-  {
-    initialRouteName: 'Library',
-    defaultNavigationOptions: {
-      headerStyle: {
-        backgroundColor: '#000',
-      },
-    },
-  }
-);
+function HomeStackScreen() {
+  return (
+    <HomeStack.Navigator
+      screenOptions={{ headerStyle: { backgroundColor: '#000' } }}
+    >
+      <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen name="Playlist" component={Playlist} />
+      <Stack.Screen name="Genre" component={Genre} />
+      <Stack.Screen name="Artist" component={Artist} />
+      <Stack.Screen name="Album" component={Album} />
+    </HomeStack.Navigator>
+  );
+}
 
-const ProfileStack = createStackNavigator(
-  {
-    Profile,
-  },
-  {
-    initialRouteName: 'Profile',
-  }
-);
+const SearchStack = createStackNavigator();
 
-const AppStack = createMaterialBottomTabNavigator(
-  {
-    Home: {
-      screen: HomeStack,
-      navigationOptions: {
-        tabBarLabel: 'Inicio',
-        labeled: true,
-        tabBarIcon: ({ tintColor }) => (
-          <MaterialIcons name="home" color={tintColor} size={22} />
-        ),
-      },
-    },
-    Search: {
-      screen: SearchStack,
-      navigationOptions: {
-        tabBarLabel: 'Busca',
-        labeled: true,
-        tabBarIcon: ({ tintColor }) => (
-          <MaterialIcons name="search" color={tintColor} size={22} />
-        ),
-      },
-    },
-    Library: {
-      screen: LibraryStack,
-      navigationOptions: {
-        tabBarLabel: 'Biblioteca',
-        labeled: true,
-        tabBarIcon: ({ tintColor }) => (
-          <MaterialIcons name="library-music" color={tintColor} size={22} />
-        ),
-      },
-    },
-    Profile: {
-      screen: ProfileStack,
-      navigationOptions: {
-        tabBarLabel: 'Meu Perfil',
-        labeled: true,
-        tabBarIcon: ({ tintColor }) => (
-          <MaterialIcons name="person" color={tintColor} size={22} />
-        ),
-      },
-    },
-  },
-  {
-    initialRouteName: 'Home',
-    activeTintColor: '#D99207',
-    activeColor: '#D99207',
-    inactiveColor: '#fff',
-    labeled: true,
-    shifting: false,
-    barStyle: { backgroundColor: '#000' },
-  }
-);
+function SearchStackScreen() {
+  return (
+    <SearchStack.Navigator
+      screenOptions={{ headerStyle: { backgroundColor: '#000' } }}
+    >
+      <Stack.Screen name="Search" component={Search} />
+      <Stack.Screen name="Playlist" component={Playlist} />
+      <Stack.Screen name="Genre" component={Genre} />
+      <Stack.Screen name="Artist" component={Artist} />
+      <Stack.Screen name="Album" component={Album} />
+    </SearchStack.Navigator>
+  );
+}
 
-const AuthStack = createStackNavigator(
-  {
-    Welcome,
-    Login,
-    Register,
-  },
-  {
-    initialRouteName: 'Welcome',
-  }
-);
+const LibraryStack = createStackNavigator();
 
-const SwitchNavigator = createSwitchNavigator(
-  {
-    AuthHandler,
-    AuthStack,
-    AppStack,
-  },
-  {
-    initialRouteName: 'AuthHandler',
-  }
-);
+function LibraryStackScreen() {
+  return (
+    <LibraryStack.Navigator
+      screenOptions={{ headerStyle: { backgroundColor: '#000' } }}
+    >
+      <Stack.Screen
+        name="Library"
+        component={Library}
+        options={{
+          headerTitle: props => <HeaderIcon {...props} />,
+          headerStyle: {
+            backgroundColor: '#000',
+          },
+        }}
+      />
+      <Stack.Screen name="CreatePlaylist" component={CreatePlaylist} />
+      <Stack.Screen name="Playlist" component={Playlist} />
+      <Stack.Screen name="Genre" component={Genre} />
+      <Stack.Screen name="Artist" component={Artist} />
+      <Stack.Screen name="Album" component={Album} />
+    </LibraryStack.Navigator>
+  );
+}
 
-export default createAppContainer(SwitchNavigator);
+const ProfileStack = createStackNavigator();
+
+function ProfileStackScreen() {
+  return (
+    <ProfileStack.Navigator
+      screenOptions={{ headerStyle: { backgroundColor: '#000' } }}
+    >
+      <Stack.Screen
+        name="Profile"
+        component={Profile}
+        options={{
+          headerTitle: props => <HeaderIcon {...props} />,
+          headerStyle: {
+            backgroundColor: '#000',
+          },
+        }}
+      />
+    </ProfileStack.Navigator>
+  );
+}
+
+function Routes() {
+  const session = useSelector(state => state.session);
+
+  return (
+    <NavigationContainer ref={navigationRef}>
+      {session.jwt ? (
+        <>
+          <Tab.Navigator
+            activeColor="#d99207"
+            inactiveColor="#fff"
+            shifting={false}
+            barStyle={{ backgroundColor: '#000' }}
+            screenOptions={({ route }) => ({
+              tabBarIcon: ({ color, size = 22 }) => {
+                let iconName;
+
+                if (route.name === 'Home') {
+                  iconName = 'home';
+                }
+
+                if (route.name === 'Search') {
+                  iconName = 'search';
+                }
+
+                if (route.name === 'Library') {
+                  iconName = 'library-music';
+                }
+
+                if (route.name === 'Profile') {
+                  iconName = 'person';
+                }
+
+                return (
+                  <MaterialIcons name={iconName} color={color} size={size} />
+                );
+              },
+            })}
+            tabBarOptions={{
+              activeTintColor: '#d99207',
+              inactiveTintColor: '#fff',
+            }}
+          >
+            <Tab.Screen
+              name="Home"
+              component={HomeStackScreen}
+              options={{ title: 'Ínicio' }}
+            />
+            <Tab.Screen
+              name="Search"
+              component={SearchStackScreen}
+              options={{ title: 'Busca' }}
+            />
+            <Tab.Screen
+              name="Library"
+              component={LibraryStackScreen}
+              options={{ title: 'Biblioteca' }}
+            />
+            <Tab.Screen
+              name="Profile"
+              component={ProfileStackScreen}
+              options={{ title: 'Perfil' }}
+            />
+          </Tab.Navigator>
+        </>
+      ) : (
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Welcome"
+            component={Welcome}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Register" component={Register} />
+        </Stack.Navigator>
+      )}
+    </NavigationContainer>
+  );
+}
+
+export default Routes;

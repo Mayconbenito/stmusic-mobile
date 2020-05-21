@@ -38,7 +38,7 @@ import {
   SmallPlayerInfo,
 } from './styles';
 
-export default function Player() {
+function Player() {
   const { pause, resume, prev, next, showPlayer } = PlayerActions;
 
   const player = useSelector(state => state.player);
@@ -329,3 +329,5 @@ export default function Player() {
     </>
   );
 }
+
+export default Player;

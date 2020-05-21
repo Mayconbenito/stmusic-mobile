@@ -21,9 +21,22 @@ import {
   TextButton,
 } from './styles';
 
-function Album({ navigation }) {
+function Album({ navigation, route }) {
   const dispatch = useDispatch();
-  const albumId = navigation.state.params.id;
+
+  navigation.setOptions({
+    title: 'Album',
+    headerTitleStyle: {
+      flex: 1,
+      textAlign: 'center',
+      color: '#FFF',
+      textTransform: 'uppercase',
+    },
+    headerLeft: () => <HeaderBackButton onPress={() => navigation.goBack()} />,
+    headerRight: () => <View />,
+  });
+
+  const albumId = route.params.id;
   const [loading, setLoading] = useState(true);
   const [album, setAlbum] = useState({
     name: '',
@@ -117,17 +130,5 @@ function Album({ navigation }) {
     </ParentContainer>
   );
 }
-
-Album.navigationOptions = ({ navigation }) => ({
-  title: 'Album',
-  headerTitleStyle: {
-    flex: 1,
-    textAlign: 'center',
-    color: '#FFF',
-    textTransform: 'uppercase',
-  },
-  headerLeft: <HeaderBackButton onPress={() => navigation.goBack()} />,
-  headerRight: <View />,
-});
 
 export default Album;

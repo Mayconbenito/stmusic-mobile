@@ -21,9 +21,22 @@ import {
   WarningText,
 } from './styles';
 
-function Genre({ navigation }) {
+function Genre({ navigation, route }) {
   const dispatch = useDispatch();
-  const genreId = navigation.state.params.id;
+
+  navigation.setOptions({
+    title: 'Gênero',
+    headerTitleStyle: {
+      flex: 1,
+      textAlign: 'center',
+      color: '#FFF',
+      textTransform: 'uppercase',
+    },
+    headerLeft: () => <HeaderBackButton onPress={() => navigation.goBack()} />,
+    headerRight: () => <View />,
+  });
+
+  const genreId = route.params.id;
 
   const [loading, setLoading] = useState(true);
   const [genre, setGenre] = useState({});
@@ -114,17 +127,5 @@ function Genre({ navigation }) {
     </ParentContainer>
   );
 }
-
-Genre.navigationOptions = ({ navigation }) => ({
-  title: 'Gênero',
-  headerTitleStyle: {
-    flex: 1,
-    textAlign: 'center',
-    color: '#FFF',
-    textTransform: 'uppercase',
-  },
-  headerLeft: <HeaderBackButton onPress={() => navigation.goBack()} />,
-  headerRight: <View />,
-});
 
 export default Genre;

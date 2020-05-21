@@ -21,9 +21,23 @@ import {
   WarningText,
 } from './styles';
 
-function Playlist({ navigation }) {
-  const playlistId = navigation.state.params.id;
+function Playlist({ navigation, route }) {
+  const playlistId = route.params.id;
   const dispatch = useDispatch();
+
+  navigation.setOptions({
+    title: 'Playlist',
+    headerTitleStyle: {
+      flex: 1,
+      textAlign: 'center',
+      color: '#FFF',
+      textTransform: 'uppercase',
+    },
+    headerLeft: () => <HeaderBackButton onPress={() => navigation.goBack()} />,
+    headerRight: () => (
+      <HeaderToolBar playlistId={route.params.id} navigation={navigation} />
+    ),
+  });
 
   const [loading, setLoading] = useState(true);
   const [playlist, setPlaylist] = useState();
@@ -114,22 +128,5 @@ function Playlist({ navigation }) {
     </ParentContainer>
   );
 }
-
-Playlist.navigationOptions = ({ navigation }) => ({
-  title: 'Playlist',
-  headerTitleStyle: {
-    flex: 1,
-    textAlign: 'center',
-    color: '#FFF',
-    textTransform: 'uppercase',
-  },
-  headerLeft: <HeaderBackButton onPress={() => navigation.goBack()} />,
-  headerRight: (
-    <HeaderToolBar
-      playlistId={navigation.state.params.id}
-      navigation={navigation}
-    />
-  ),
-});
 
 export default Playlist;

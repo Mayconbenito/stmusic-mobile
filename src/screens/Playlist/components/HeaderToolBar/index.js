@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import api from '~/services/api';
 import { Creators as LibraryPlaylistActions } from '~/store/ducks/libraryPlaylist';
 
-export default function HeaderToolBar({ playlistId, navigation }) {
+function HeaderToolBar({ playlistId, navigation }) {
   const dispatch = useDispatch();
   const menuRef = useRef();
 
@@ -51,3 +51,5 @@ export default function HeaderToolBar({ playlistId, navigation }) {
     </Menu>
   );
 }
+
+export default HeaderToolBar;

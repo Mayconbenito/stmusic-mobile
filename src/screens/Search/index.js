@@ -10,6 +10,10 @@ import api from '~/services/api';
 import { Container, InputContainer, Input, List, SectionTitle } from './styles';
 
 function Search({ navigation }) {
+  navigation.setOptions({
+    headerShown: false,
+  });
+
   const [query, setQuery] = useState('');
   const [results, setResults] = useState({
     artists: [],
@@ -100,9 +104,5 @@ function Search({ navigation }) {
     </Container>
   );
 }
-
-Search.navigationOptions = () => ({
-  header: null,
-});
 
 export default Search;

@@ -3,8 +3,9 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import { Header } from 'react-navigation-stack';
 import styled from 'styled-components/native';
+
+import { getHeaderHeight } from '~/helpers/headerDefaultHeight';
 
 import ProgressBar from './ProgressBar';
 
@@ -35,7 +36,7 @@ export const BigPlayerContainer = styled.View`
 export const BigPlayerHeader = styled.View`
   background-color: #000;
   width: 100%;
-  height: ${Header.HEIGHT};
+  height: ${getHeaderHeight()};
   justify-content: center;
   align-items: flex-start;
   padding-horizontal: 10;

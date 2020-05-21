@@ -9,7 +9,6 @@ import PlaylistModal from '~/components/PlaylistModal';
 import UpdateModal from '~/components/UpdateModal';
 
 import Routes from './routes';
-import NavigationService from './services/navigation';
 
 YellowBox.ignoreWarnings([
   'Warning: componentWillReceiveProps has been renamed',
@@ -63,7 +62,7 @@ function App() {
         setProgress(progressCb);
       },
       downloadApkEnd: () => {
-        console.log('downloadApkEnd callback called');
+        console.log('Finished APK download');
       },
       onError: err => {
         console.log(err);
@@ -78,11 +77,7 @@ function App() {
       <StatusBar backgroundColor="#000000" barStyle="light-content" />
 
       <ThemeProvider theme={theme}>
-        <Routes
-          ref={navigatorRef => {
-            NavigationService.setTopLevelNavigator(navigatorRef);
-          }}
-        />
+        <Routes />
 
         <Player />
         {playlistModal.open && <PlaylistModal />}

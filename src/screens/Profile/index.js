@@ -14,9 +14,16 @@ import {
   LogoutButtonText,
 } from './styles';
 
-function Profile() {
+function Profile({ navigation }) {
   const session = useSelector(state => state.session);
   const dispatch = useDispatch();
+
+  navigation.setOptions({
+    headerStyle: {
+      backgroundColor: '#000',
+    },
+    headerTitle: () => <HeaderIcon />,
+  });
 
   async function handleLogout() {
     dispatch(PlayerActions.clearState());
@@ -35,12 +42,5 @@ function Profile() {
     </Container>
   );
 }
-
-Profile.navigationOptions = () => ({
-  headerStyle: {
-    backgroundColor: '#000',
-  },
-  headerTitle: <HeaderIcon />,
-});
 
 export default Profile;

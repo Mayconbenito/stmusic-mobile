@@ -18,8 +18,30 @@ import {
   TextButton,
 } from './styles';
 
-function Login(props) {
+function Login({ navigation }) {
   const dispatch = useDispatch();
+
+  navigation.setOptions({
+    headerStyle: {
+      backgroundColor: '#141414',
+      shadowRadius: 0,
+      shadowOffset: {
+        height: 0,
+      },
+      shadowColor: 'transparent',
+      elevation: 0,
+    },
+    headerLeft: () => <HeaderBackButton onPress={() => navigation.goBack()} />,
+    title: 'Fazer Login',
+    headerTitleStyle: {
+      flex: 1,
+      textAlign: 'center',
+      color: '#FFF',
+      textTransform: 'uppercase',
+    },
+    headerRight: () => <View />,
+  });
+
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [errors, setErrors] = useState();
@@ -52,8 +74,6 @@ function Login(props) {
             ...response.data.user,
           })
         );
-
-        props.navigation.navigate('AppStack');
       }
     } catch (err) {
       setLoading(false);
@@ -133,26 +153,5 @@ function Login(props) {
     </Container>
   );
 }
-
-Login.navigationOptions = ({ navigation }) => ({
-  headerStyle: {
-    backgroundColor: '#141414',
-    shadowRadius: 0,
-    shadowOffset: {
-      height: 0,
-    },
-    shadowColor: 'transparent',
-    elevation: 0,
-  },
-  headerLeft: <HeaderBackButton onPress={() => navigation.goBack()} />,
-  title: 'Fazer Login',
-  headerTitleStyle: {
-    flex: 1,
-    textAlign: 'center',
-    color: '#FFF',
-    textTransform: 'uppercase',
-  },
-  headerRight: <View />,
-});
 
 export default Login;

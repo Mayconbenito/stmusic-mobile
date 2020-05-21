@@ -17,6 +17,19 @@ import {
 
 function CreatePlaylist({ navigation }) {
   const dispatch = useDispatch();
+
+  navigation.setOptions({
+    headerLeft: () => <HeaderBackButton onPress={() => navigation.goBack()} />,
+    title: 'Criar Playlist',
+    headerTitleStyle: {
+      flex: 1,
+      textAlign: 'center',
+      color: '#FFF',
+      textTransform: 'uppercase',
+    },
+    headerRight: () => <View />,
+  });
+
   const [name, setName] = useState('');
 
   async function handleCreatePlaylist() {
@@ -50,17 +63,5 @@ function CreatePlaylist({ navigation }) {
     </Container>
   );
 }
-
-CreatePlaylist.navigationOptions = ({ navigation }) => ({
-  headerLeft: <HeaderBackButton onPress={() => navigation.goBack()} />,
-  title: 'Criar Playlist',
-  headerTitleStyle: {
-    flex: 1,
-    textAlign: 'center',
-    color: '#FFF',
-    textTransform: 'uppercase',
-  },
-  headerRight: <View />,
-});
 
 export default CreatePlaylist;

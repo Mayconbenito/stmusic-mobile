@@ -2,7 +2,7 @@ import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-export default function HeaderBackButton({ onPress }) {
+function HeaderBackButton({ onPress }) {
   return (
     <TouchableOpacity
       hitSlop={{ top: 50, left: 50, bottom: 50, right: 50 }}
@@ -14,3 +14,5 @@ export default function HeaderBackButton({ onPress }) {
     </TouchableOpacity>
   );
 }
+
+export default HeaderBackButton;

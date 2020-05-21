@@ -62,7 +62,9 @@
     "func-names": "off",
     "radix": "off",
     "consistent-return": "off",
-    "no-console": "off"
+    "no-console": "off",
+    "react/jsx-props-no-spreading": "off",
+    "no-unused-expressions": "off"
   },
   "settings": {
     "import/resolver": {
