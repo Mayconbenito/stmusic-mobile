@@ -63,16 +63,7 @@ function LibraryStackScreen() {
     <LibraryStack.Navigator
       screenOptions={{ headerStyle: { backgroundColor: '#000' } }}
     >
-      <Stack.Screen
-        name="Library"
-        component={Library}
-        options={{
-          headerTitle: props => <HeaderIcon {...props} />,
-          headerStyle: {
-            backgroundColor: '#000',
-          },
-        }}
-      />
+      <Stack.Screen name="Library" component={Library} />
       <Stack.Screen name="CreatePlaylist" component={CreatePlaylist} />
       <Stack.Screen name="Playlist" component={Playlist} />
       <Stack.Screen name="Genre" component={Genre} />

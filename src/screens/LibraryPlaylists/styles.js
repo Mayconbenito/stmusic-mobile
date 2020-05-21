@@ -6,6 +6,9 @@ import styled from 'styled-components/native';
 
 export const Container = styled.View`
   flex: 1;
+  background-color: #141414;
+  padding-horizontal: 10;
+  padding-vertical: 5;
   margin-bottom: ${props => (props.theme.showPlayer ? 57 : 0)};
 `;
 
@@ -18,7 +21,8 @@ export const CreatePlaylistButton = styled.TouchableOpacity.attrs({
   background-color: #d99207;
   justify-content: center;
   align-items: center;
-  margin-top: 10;
+  margin-top: 5;
+  margin-bottom: 5;
 `;
 
 export const CreatePlaylistButtonText = styled.Text`
