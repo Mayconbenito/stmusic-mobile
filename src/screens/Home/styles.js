@@ -19,7 +19,11 @@ export const ScrollerHeader = styled.View`
   align-items: center;
 `;
 
-export const ScrollerHeaderButton = styled(MaterialIcons).attrs({
+export const ScrollerHeaderButton = styled.TouchableOpacity.attrs({
+  activeOpacity: 0.5,
+})``;
+
+export const ScrollerHeaderButtonIcon = styled(MaterialIcons).attrs({
   size: hp(3.4),
   color: '#d99207',
   name: 'play-arrow',

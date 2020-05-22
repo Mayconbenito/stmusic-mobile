@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { ScrollView, TouchableOpacity } from 'react-native';
+import { ScrollView } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
 import BigTrackItem from '~/components/BigTrackItem';
@@ -15,6 +15,7 @@ import {
   ScrollerContainer,
   ScrollerHeader,
   ScrollerHeaderButton,
+  ScrollerHeaderButtonIcon,
   ScrollerTitleText,
   List,
 } from './styles';
@@ -30,43 +31,21 @@ function Home({ navigation }) {
     headerTitle: () => <HeaderIcon />,
   });
 
-  const {
-    fetchGenres,
-    fetchRecentlyPlayed,
-    fetchTrending,
-    fetchMostPlayed,
-    fetchMostFollowed,
-  } = BrowseActions;
   useEffect(() => {
-    dispatch(fetchGenres());
-    dispatch(fetchRecentlyPlayed());
-    dispatch(fetchTrending());
-    dispatch(fetchMostPlayed());
-    dispatch(fetchMostFollowed());
+    dispatch(BrowseActions.fetchBrowse());
   }, []);
-
-  function loading() {
-    if (
-      browse.loadingGenres ||
-      browse.loadingRecentlyPlayed ||
-      browse.loadingTrending ||
-      browse.loadingMostPlayed ||
-      browse.loadingMostFollowed
-    ) {
-      return true;
-    }
-  }
 
   return (
     <Container>
-      {loading() === true && <Loading />}
-      {!loading() && (
+      {browse.loading && <Loading />}
+
+      {!browse.loading && (
         <ScrollView>
           {browse.recentlyPlayed.length > 0 && (
             <ScrollerContainer>
               <ScrollerHeader>
                 <ScrollerTitleText>Ouvir novamente</ScrollerTitleText>
-                <TouchableOpacity
+                <ScrollerHeaderButton
                   onPress={() =>
                     dispatch(
                       PlayerActions.playPlaylist({
@@ -75,10 +54,9 @@ function Home({ navigation }) {
                       })
                     )
                   }
-                  activeOpacity={0.5}
                 >
-                  <ScrollerHeaderButton />
-                </TouchableOpacity>
+                  <ScrollerHeaderButtonIcon />
+                </ScrollerHeaderButton>
               </ScrollerHeader>
               <List
                 data={browse.recentlyPlayed}
@@ -93,7 +71,7 @@ function Home({ navigation }) {
             <ScrollerContainer>
               <ScrollerHeader>
                 <ScrollerTitleText>Em alta</ScrollerTitleText>
-                <TouchableOpacity
+                <ScrollerHeaderButton
                   onPress={() =>
                     dispatch(
                       PlayerActions.playPlaylist({
@@ -103,8 +81,8 @@ function Home({ navigation }) {
                     )
                   }
                 >
-                  <ScrollerHeaderButton />
-                </TouchableOpacity>
+                  <ScrollerHeaderButtonIcon />
+                </ScrollerHeaderButton>
               </ScrollerHeader>
 
               <List
@@ -140,7 +118,7 @@ function Home({ navigation }) {
             <ScrollerContainer>
               <ScrollerHeader>
                 <ScrollerTitleText>Músicas mais tocadas</ScrollerTitleText>
-                <TouchableOpacity
+                <ScrollerHeaderButton
                   onPress={() =>
                     dispatch(
                       PlayerActions.playPlaylist({
@@ -150,8 +128,8 @@ function Home({ navigation }) {
                     )
                   }
                 >
-                  <ScrollerHeaderButton />
-                </TouchableOpacity>
+                  <ScrollerHeaderButtonIcon />
+                </ScrollerHeaderButton>
               </ScrollerHeader>
               <List
                 data={browse.mostPlayed}
