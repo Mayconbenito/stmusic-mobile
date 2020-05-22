@@ -7,95 +7,54 @@ import {
   Creators as BrowseActions,
 } from '../ducks/browse';
 
-const {
-  successGenres,
-  failureGenres,
-  successRecentlyPlayed,
-  failureRecentlyPlayed,
-  successTrending,
-  failureTrending,
-  successMostPlayed,
-  failureMostPlayed,
-  successMostFollowed,
-  failureMostFollowed,
-} = BrowseActions;
+const { failure, setList } = BrowseActions;
 
-function* fetchGenres() {
+function* fetchBrowse() {
   try {
-    const response = yield call(api.get, '/genres');
-
-    yield put(successGenres(response.data.genres));
-  } catch (err) {
-    yield put(failureGenres(err));
-  }
-}
-
-function* fetchRecentlyPlayed() {
-  try {
-    const response = yield call(api.get, '/me/recently-played', {
+    const recentlyPlayed = yield call(api.get, '/me/recently-played', {
       params: {
         page: 1,
         limit: 60,
       },
     });
 
-    yield put(successRecentlyPlayed(response.data.tracks));
-  } catch (err) {
-    yield put(failureRecentlyPlayed(err));
-  }
-}
+    put(setList(recentlyPlayed.data.tracks, 'recentlyPlayed'));
 
-function* fetchTrending() {
-  try {
-    const response = yield call(api.get, '/browse/tracks/trending', {
+    const trending = yield call(api.get, '/browse/tracks/trending', {
       params: {
         page: 1,
         limit: 60,
       },
     });
 
-    yield put(successTrending(response.data.tracks));
-  } catch (err) {
-    yield put(failureTrending(err));
-  }
-}
+    yield put(setList(trending.data.tracks, 'trending'));
 
-function* fetchMostPlayed() {
-  try {
-    const response = yield call(api.get, '/browse/tracks/most-played', {
+    const genres = yield call(api.get, '/genres');
+
+    yield put(setList(genres.data.genres, 'genres'));
+
+    const mostPlayed = yield call(api.get, '/browse/tracks/most-played', {
       params: {
         page: 1,
         limit: 60,
       },
     });
 
-    yield put(successMostPlayed(response.data.tracks));
-  } catch (err) {
-    yield put(failureMostPlayed(err));
-  }
-}
+    yield put(setList(mostPlayed.data.tracks, 'mostPlayed'));
 
-function* fetchMostFollowed() {
-  try {
-    const response = yield call(api.get, '/browse/artists/most-followed', {
+    const mostFollowed = yield call(api.get, '/browse/artists/most-followed', {
       params: {
         page: 1,
         limit: 60,
       },
     });
 
-    yield put(successMostFollowed(response.data.artists));
+    yield put(setList(mostFollowed.data.artists, 'mostFollowed'));
   } catch (err) {
-    yield put(failureMostFollowed(err));
+    yield put(failure(err));
   }
 }
 
 export default function* browseSaga() {
-  yield all([
-    takeLatest(BrowseTypes.FETCH_GENRES, fetchGenres),
-    takeLatest(BrowseTypes.FETCH_RECENTLY_PLAYED, fetchRecentlyPlayed),
-    takeLatest(BrowseTypes.FETCH_TRENDING, fetchTrending),
-    takeLatest(BrowseTypes.FETCH_MOST_PLAYED, fetchMostPlayed),
-    takeLatest(BrowseTypes.FETCH_MOST_FOLLOWED, fetchMostFollowed),
-  ]);
+  yield all([takeLatest(BrowseTypes.FETCH_BROWSE, fetchBrowse)]);
 }
