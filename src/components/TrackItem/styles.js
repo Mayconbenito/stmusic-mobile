@@ -59,7 +59,3 @@ export const IconsContainer = styled.View`
   justify-content: space-between;
   align-items: center;
 `;
-
-export const IconButton = styled.TouchableOpacity.attrs({
-  hitSlop: { top: 50, left: 50, bottom: 50, right: 50 },
-})``;

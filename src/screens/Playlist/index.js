@@ -115,6 +115,26 @@ function Playlist({ navigation, route }) {
     }
   }
 
+  async function handleRemoveTrackFromPlaylist(trackId) {
+    try {
+      const response = await api.delete(`/playlists/${playlistId}/tracks`, {
+        data: { tracks: [trackId] },
+      });
+
+      if (response.status === 204) {
+        setState({
+          ...state,
+          tracks: {
+            ...state.tracks,
+            total: state.tracks.total - 1,
+            data: state.tracks.data.filter(track => track.id !== trackId),
+          },
+        });
+      }
+      // eslint-disable-next-line no-empty
+    } catch (err) {}
+  }
+
   function endReached() {
     if (
       state.tracks.total > state.tracks.data.length &&
@@ -152,7 +172,14 @@ function Playlist({ navigation, route }) {
             }
             data={state.tracks.data}
             keyExtractor={item => `key-${item.id}`}
-            renderItem={({ item }) => <TrackItem data={item} margin />}
+            renderItem={({ item }) => (
+              <TrackItem
+                data={item}
+                margin
+                isPlaylist
+                onRemoveTrackFromPlaylist={handleRemoveTrackFromPlaylist}
+              />
+            )}
             onEndReached={endReached}
             onEndReachedThreshold={0.4}
             ListFooterComponent={state.tracks.loading && <Loading size={24} />}
