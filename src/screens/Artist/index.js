@@ -42,107 +42,79 @@ function Artist({ navigation, route }) {
   });
 
   const artistId = route.params.id;
-  const [loading, setLoading] = useState(true);
-  const [artist, setArtist] = useState({
-    name: '',
-    followers: 0,
-    tracks: 0,
-    picture: '',
-    followingState: false,
-  });
-  const [mostPlayedTracks, setMostPlayedTracks] = useState([]);
-  const [tracks, setTracks] = useState([]);
-  const [albums, setAlbums] = useState([]);
-  const [albumsMeta, setAlbumsMeta] = useState({
+  const [state, setState] = useState({
+    error: false,
     loading: true,
-    total: 0,
-    page: 1,
+    data: {
+      name: '',
+      tracks: 0,
+      picture: '',
+    },
+    albums: {
+      data: [],
+    },
+    mostPlayedTracks: {
+      data: [],
+    },
+    tracks: {
+      data: [],
+    },
   });
-
-  async function fetchArtist() {
-    try {
-      const response = await api.get(`/artists/${artistId}`);
-
-      const followingState = await api.get(
-        `/me/following/artists/contains?artists=${artistId}`
-      );
-
-      setArtist({
-        ...response.data.artist,
-        followingState: followingState.data.artists.find(
-          itemId => itemId === parseInt(artistId)
-        ),
-      });
-      setLoading(false);
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  async function fetchAlbums() {
-    try {
-      const response = await api.get(`/artists/${artistId}/albums`, {
-        params: {
-          page: albumsMeta.page,
-        },
-      });
-
-      setAlbums([...albums, ...response.data.albums]);
-      setAlbumsMeta({
-        loading: false,
-        page: response.data.meta.page + 1,
-        total: response.data.meta.total,
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  async function fetchMostPlayedTracks() {
-    try {
-      const response = await api.get(
-        `/artists/${artistId}/most-played-tracks`,
-        {
-          params: {
-            page: 1,
-            limit: 5,
-          },
-        }
-      );
-
-      setMostPlayedTracks(response.data.tracks);
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  async function fetchTracks() {
-    try {
-      const response = await api.get(`/artists/${artistId}/tracks`, {
-        params: {
-          page: 1,
-          limit: 10,
-        },
-      });
-
-      setTracks(response.data.tracks);
-    } catch (err) {
-      console.log(err);
-    }
-  }
 
   useEffect(() => {
-    fetchArtist();
-    fetchAlbums();
-    fetchMostPlayedTracks();
-    fetchTracks();
-  }, []);
+    async function fetchArtist() {
+      try {
+        const [artist, albums, mostPlayedTracks, tracks] = await Promise.all([
+          api.get(`/artists/${artistId}`),
+          api.get(`/artists/${artistId}/albums`, {
+            params: {
+              page: 1,
+              limit: 100,
+            },
+          }),
+          api.get(`/artists/${artistId}/most-played-tracks`, {
+            params: {
+              page: 1,
+              limit: 10,
+            },
+          }),
+          api.get(`/artists/${artistId}/tracks`, {
+            params: {
+              page: 1,
+              limit: 15,
+            },
+          }),
+        ]);
 
-  function albumEndReached() {
-    if (albumsMeta.total > albums.length) {
-      fetchAlbums();
+        const followingState = await api.get(
+          `/me/following/artists/contains?artists=${artistId}`
+        );
+
+        setState({
+          ...state,
+          error: false,
+          loading: false,
+          data: {
+            ...artist.data.artist,
+            followingState: followingState.data.artists.find(
+              itemId => itemId === parseInt(artistId)
+            ),
+          },
+          albums: {
+            data: albums.data.albums,
+          },
+          mostPlayedTracks: {
+            data: mostPlayedTracks.data.tracks,
+          },
+          tracks: {
+            data: tracks.data.tracks,
+          },
+        });
+        // eslint-disable-next-line no-empty
+      } catch (err) {}
     }
-  }
+    fetchArtist();
+  }, []);
 
   async function handleArtistFollow() {
     try {
@@ -151,13 +123,12 @@ function Artist({ navigation, route }) {
       });
 
       if (response.status === 204) {
-        setArtist({ ...artist, followingState: true });
+        setState({ ...state, data: { ...state.data, followingState: true } });
         dispatch(LibraryArtistsActions.clearState());
         dispatch(LibraryArtistsActions.fetchArtists());
       }
-    } catch (err) {
-      console.log(err);
-    }
+      // eslint-disable-next-line no-empty
+    } catch (err) {}
   }
 
   async function handleArtistUnfollow() {
@@ -169,28 +140,27 @@ function Artist({ navigation, route }) {
       });
 
       if (response.status === 204) {
-        setArtist({ ...artist, followingState: false });
+        setState({ ...state, data: { ...state.data, followingState: false } });
         dispatch(LibraryArtistsActions.clearState());
         dispatch(LibraryArtistsActions.fetchArtists());
       }
-    } catch (err) {
-      console.log(err);
-    }
+      // eslint-disable-next-line no-empty
+    } catch (err) {}
   }
 
   return (
     <ParentContainer>
-      {loading && <Loading />}
-      {!loading && (
+      {state.loading && <Loading />}
+      {!state.loading && (
         <Container>
           <Details>
             <Image
-              source={{ uri: artist.picture }}
+              source={{ uri: state.data.picture }}
               fallback={require('~/assets/images/fallback-square.png')}
             />
-            <DetailsTitle>{artist.name}</DetailsTitle>
+            <DetailsTitle>{state.data.name}</DetailsTitle>
             <Buttons>
-              {artist.followingState ? (
+              {state.data.followingState ? (
                 <Button onPress={handleArtistUnfollow}>
                   <TextButton>Deixar de Seguir</TextButton>
                 </Button>
@@ -202,13 +172,13 @@ function Artist({ navigation, route }) {
             </Buttons>
           </Details>
 
-          {albums.length > 0 && (
+          {state.albums.data.length > 0 && (
             <ScrollerContainer style={{ marginTop: 0 }}>
               <ScrollerHeader>
                 <ScrollerTitleText>Albums</ScrollerTitleText>
               </ScrollerHeader>
               <List
-                data={albums}
+                data={state.albums.data}
                 keyExtractor={item => `key-${item.id}`}
                 renderItem={({ item }) => (
                   <BigAlbumItem
@@ -219,13 +189,11 @@ function Artist({ navigation, route }) {
                   />
                 )}
                 horizontal
-                onEndReachedThreshold={0.4}
-                onEndReached={albumEndReached}
               />
             </ScrollerContainer>
           )}
 
-          {mostPlayedTracks.length > 0 && (
+          {state.mostPlayedTracks.data.length > 0 && (
             <ScrollerContainer style={{ marginTop: 0 }}>
               <ScrollerHeader>
                 <ScrollerTitleText>Músicas mais tocadas</ScrollerTitleText>
@@ -233,8 +201,8 @@ function Artist({ navigation, route }) {
                   onPress={() =>
                     dispatch(
                       PlayerActions.playPlaylist({
-                        name: `Mais tocadas de ${artist.name}`,
-                        tracks: mostPlayedTracks,
+                        name: `Mais tocadas de ${state.data.name}`,
+                        tracks: state.mostPlayedTracks.data,
                       })
                     )
                   }
@@ -243,13 +211,13 @@ function Artist({ navigation, route }) {
                   <ScrollerHeaderButton />
                 </TouchableOpacity>
               </ScrollerHeader>
-              {mostPlayedTracks.map(item => (
+              {state.mostPlayedTracks.data.map(item => (
                 <TrackItem key={item.id} data={item} />
               ))}
             </ScrollerContainer>
           )}
 
-          {tracks.length > 0 && (
+          {state.tracks.data.length > 0 && (
             <ScrollerContainer style={{ marginTop: 0 }}>
               <ScrollerHeader>
                 <ScrollerTitleText>Músicas</ScrollerTitleText>
@@ -257,8 +225,8 @@ function Artist({ navigation, route }) {
                   onPress={() =>
                     dispatch(
                       PlayerActions.playPlaylist({
-                        name: artist.name,
-                        tracks,
+                        name: state.data.name,
+                        tracks: state.tracks.data,
                       })
                     )
                   }
@@ -267,7 +235,7 @@ function Artist({ navigation, route }) {
                   <ScrollerHeaderButton />
                 </TouchableOpacity>
               </ScrollerHeader>
-              {tracks.map(item => (
+              {state.tracks.data.map(item => (
                 <TrackItem key={item.id} data={item} />
               ))}
             </ScrollerContainer>

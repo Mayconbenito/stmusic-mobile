@@ -37,54 +37,87 @@ function Genre({ navigation, route }) {
   });
 
   const genreId = route.params.id;
-
-  const [loading, setLoading] = useState(true);
-  const [genre, setGenre] = useState({});
-  const [tracks, setTracks] = useState([]);
-  const [tracksMeta, setTracksMeta] = useState({
+  const [state, setState] = useState({
+    error: false,
     loading: true,
-    total: 0,
-    page: 1,
+    data: {
+      name: '',
+      tracks: 0,
+      picture: '',
+    },
+    tracks: {
+      error: false,
+      loading: true,
+      data: [],
+      total: 0,
+      page: 1,
+    },
   });
 
-  async function fetchGenre() {
-    try {
-      const response = await api.get(`/genres/${genreId}`);
+  useEffect(() => {
+    async function fetchGenre() {
+      try {
+        const [genre, tracks] = await Promise.all([
+          api.get(`/genres/${genreId}`),
+          api.get(`/genres/${genreId}/tracks`, {
+            params: {
+              page: state.tracks.page,
+            },
+          }),
+        ]);
 
-      setGenre(response.data.genre);
-      setLoading(false);
-    } catch (err) {
-      console.log(err);
+        setState({
+          ...state,
+          error: false,
+          loading: false,
+          data: genre.data.genre,
+          tracks: {
+            error: false,
+            loading: false,
+            data: tracks.data.tracks,
+            total: tracks.data.meta.total,
+            page: tracks.data.meta.page + 1,
+          },
+        });
+      } catch (err) {
+        setState({ ...state, error: true, loading: false });
+      }
     }
-  }
+    fetchGenre();
+  }, []);
 
   async function fetchTracks() {
     try {
-      setTracksMeta({ ...tracksMeta, loading: true });
-      const response = await api.get(`/genres/${genreId}/tracks`, {
+      setState({ ...state, tracks: { ...state.tracks, loading: true } });
+      const response = api.get(`/genres/${genreId}/tracks`, {
         params: {
-          page: tracksMeta.page,
+          page: state.tracks.page,
         },
       });
 
-      setTracks([...tracks, ...response.data.tracks]);
-      setTracksMeta({
-        loading: false,
-        page: response.data.meta.page + 1,
-        total: response.data.meta.total,
+      setState({
+        ...state,
+        tracks: {
+          error: false,
+          loading: false,
+          data: [...state.tracks.data, ...response.data.tracks],
+          total: response.data.meta.total,
+          page: response.data.meta.page + 1,
+        },
       });
     } catch (err) {
-      console.log(err);
+      setState({
+        ...state,
+        tracks: { ...state.tracks, error: true, loading: false },
+      });
     }
   }
 
-  useEffect(() => {
-    fetchGenre();
-    fetchTracks();
-  }, []);
-
   function endReached() {
-    if (tracksMeta.total > tracks.length && !tracksMeta.loading) {
+    if (
+      state.tracks.total > state.tracks.data.length &&
+      !state.tracks.loading
+    ) {
       fetchTracks();
     }
   }
@@ -95,15 +128,15 @@ function Genre({ navigation, route }) {
 
   return (
     <ParentContainer>
-      {loading && tracksMeta.page === 1 && <Loading />}
-      {!loading && (
+      {state.loading && state.tracks.page === 1 && <Loading />}
+      {!state.loading && (
         <Container>
           <List
             ListHeaderComponent={
               <Details>
                 <Image source={Fallback} local />
-                <DetailsTitle>{genre.name} </DetailsTitle>
-                {tracks.length > 0 ? (
+                <DetailsTitle>{state.data.name} </DetailsTitle>
+                {state.tracks.data.length > 0 ? (
                   <Button onPress={handlePlaylistPlay}>
                     <TextButton>Tocar</TextButton>
                   </Button>
@@ -112,12 +145,12 @@ function Genre({ navigation, route }) {
                 )}
               </Details>
             }
-            data={tracks}
+            data={state.tracks.data}
             keyExtractor={item => `key-${item.id}`}
             renderItem={({ item }) => <TrackItem data={item} margin />}
             onEndReached={endReached}
             onEndReachedThreshold={0.4}
-            ListFooterComponent={tracksMeta.loading && <Loading size={24} />}
+            ListFooterComponent={state.tracks.loading && <Loading size={24} />}
             ListFooterComponentStyle={{
               marginTop: 10,
             }}

@@ -6,6 +6,8 @@ import { store } from '~/store';
 
 const api = axios.create();
 
+console.log(API_URL);
+
 api.interceptors.request.use(async config => {
   const { jwt } = store.getState().session;
   config.headers.Authorization = `Bearer ${jwt}`;

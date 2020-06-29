@@ -8,7 +8,7 @@ import TrackItem from '~/components/TrackItem';
 import api from '~/services/api';
 import { Creators as PlayerActions } from '~/store/ducks/player';
 
-import HeaderToolBar from './components/HeaderToolBar';
+import HeaderToolBar from './HeaderToolBar';
 import {
   ParentContainer,
   Container,
@@ -39,53 +39,87 @@ function Playlist({ navigation, route }) {
     ),
   });
 
-  const [loading, setLoading] = useState(true);
-  const [playlist, setPlaylist] = useState();
-  const [tracks, setTracks] = useState([]);
-  const [tracksMeta, setTracksMeta] = useState({
+  const [state, setState] = useState({
+    error: false,
     loading: true,
-    total: 0,
-    page: 1,
+    data: {
+      name: '',
+      tracks: 0,
+      picture: '',
+    },
+    tracks: {
+      error: false,
+      loading: true,
+      data: [],
+      total: 0,
+      page: 1,
+    },
   });
 
-  async function fetchPlaylist() {
-    try {
-      const response = await api.get(`/playlists/${playlistId}`);
+  useEffect(() => {
+    async function fetchPlaylist() {
+      try {
+        const [playlist, tracks] = await Promise.all([
+          api.get(`/playlists/${playlistId}`),
+          api.get(`/playlists/${playlistId}/tracks`, {
+            params: {
+              page: state.tracks.page,
+            },
+          }),
+        ]);
 
-      setPlaylist(response.data.playlist);
-      setLoading(false);
-    } catch (err) {
-      console.log(err);
+        setState({
+          ...state,
+          error: false,
+          loading: false,
+          data: playlist.data.playlist,
+          tracks: {
+            error: false,
+            loading: false,
+            data: tracks.data.tracks,
+            total: tracks.data.meta.total,
+            page: tracks.data.meta.page + 1,
+          },
+        });
+      } catch (err) {
+        setState({ ...state, error: true, loading: false });
+      }
     }
-  }
+    fetchPlaylist();
+  }, []);
 
   async function fetchTracks() {
     try {
-      setTracksMeta({ ...tracksMeta, loading: true });
+      setState({ ...state, tracks: { ...state.tracks, loading: true } });
       const response = await api.get(`/playlists/${playlistId}/tracks`, {
         params: {
-          page: tracksMeta.page,
+          page: state.tracks.page,
         },
       });
 
-      setTracks([...tracks, ...response.data.tracks]);
-      setTracksMeta({
-        loading: false,
-        page: response.data.meta.page + 1,
-        total: response.data.meta.total,
+      setState({
+        ...state,
+        tracks: {
+          error: false,
+          loading: false,
+          data: [...state.tracks.data, ...response.data.tracks],
+          total: response.data.meta.total,
+          page: response.data.meta.page + 1,
+        },
       });
     } catch (err) {
-      console.log(err);
+      setState({
+        ...state,
+        tracks: { ...state.tracks, error: true, loading: false },
+      });
     }
   }
 
-  useEffect(() => {
-    fetchPlaylist();
-    fetchTracks();
-  }, []);
-
   function endReached() {
-    if (tracksMeta.total > tracks.length && !tracksMeta.loading) {
+    if (
+      state.tracks.total > state.tracks.data.length &&
+      !state.tracks.loading
+    ) {
       fetchTracks();
     }
   }
@@ -96,15 +130,18 @@ function Playlist({ navigation, route }) {
 
   return (
     <ParentContainer>
-      {loading && <Loading />}
-      {!loading && (
+      {state.loading && <Loading />}
+      {!state.loading && (
         <Container>
           <List
             ListHeaderComponent={
               <Details>
-                <Image source={{ uri: playlist.picture }} fallback={Fallback} />
-                <DetailsTitle>{playlist.name} </DetailsTitle>
-                {tracks.length > 0 ? (
+                <Image
+                  source={{ uri: state.data.picture }}
+                  fallback={Fallback}
+                />
+                <DetailsTitle>{state.data.name} </DetailsTitle>
+                {state.tracks.data.length > 0 ? (
                   <Button onPress={handlePlaylistPlay}>
                     <TextButton>Tocar</TextButton>
                   </Button>
@@ -113,12 +150,12 @@ function Playlist({ navigation, route }) {
                 )}
               </Details>
             }
-            data={tracks}
+            data={state.tracks.data}
             keyExtractor={item => `key-${item.id}`}
             renderItem={({ item }) => <TrackItem data={item} margin />}
             onEndReached={endReached}
             onEndReachedThreshold={0.4}
-            ListFooterComponent={tracksMeta.loading && <Loading size={24} />}
+            ListFooterComponent={state.tracks.loading && <Loading size={24} />}
             ListFooterComponentStyle={{
               marginTop: 10,
             }}
