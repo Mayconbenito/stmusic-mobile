@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import HeaderIcon from '~/components/HeaderIcon';
+import api from '~/services/api';
 import { Creators as PlayerActions } from '~/store/ducks/player';
 import { Creators as SessionActions } from '~/store/ducks/session';
 
@@ -25,6 +26,18 @@ function Profile({ navigation }) {
     headerTitle: () => <HeaderIcon />,
   });
 
+  async function fetchUser() {
+    try {
+      const response = await api.get('/me');
+      dispatch(SessionActions.updateUserData(response.data.user));
+      // eslint-disable-next-line no-empty
+    } catch (err) {}
+  }
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
   async function handleLogout() {
     dispatch(PlayerActions.clearState());
     dispatch(SessionActions.deleteSession());
@@ -34,7 +47,7 @@ function Profile({ navigation }) {
     <Container>
       <User>
         <Image source={require('~/assets/images/fallback-square.png')} />
-        <Name>{session.name}</Name>
+        <Name>{session.user?.name}</Name>
       </User>
       <LogoutButton onPress={handleLogout}>
         <LogoutButtonText>Encerrar Sessão</LogoutButtonText>

@@ -72,7 +72,7 @@ function Login({ navigation }) {
         dispatch(
           SessionActions.createSession({
             jwt: response.data.jwt,
-            ...response.data.user,
+            user: response.data.user,
           })
         );
       }
