@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
 
 import HeaderBackButton from '~/components/HeaderBackButton';
+import Loading from '~/components/Loading';
 import api from '~/services/api';
 import { Creators as SessionActions } from '~/store/ducks/session';
 
@@ -145,7 +146,11 @@ function Login({ navigation }) {
         </InputGroup>
 
         <Button onPress={handleSubmit}>
-          <TextButton>{loading ? 'Carregando...' : 'Entrar'}</TextButton>
+          {!loading ? (
+            <TextButton>Entrar</TextButton>
+          ) : (
+            <Loading animating size={24} color="#000" />
+          )}
         </Button>
 
         {message && <FormMessage>{message}</FormMessage>}
