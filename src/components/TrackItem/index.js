@@ -1,9 +1,7 @@
 import React from 'react';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch } from 'react-redux';
 
 import { Creators as PlayerActions } from '~/store/ducks/player';
-import { Creators as PlaylistModalActions } from '~/store/ducks/playlistModal';
 
 import {
   Container,
@@ -14,10 +12,15 @@ import {
   Type,
   ArtistName,
   IconsContainer,
-  IconButton,
 } from './styles';
+import ToolBar from './ToolBar';
 
-function TrackItem({ data, margin }) {
+function TrackItem({
+  data,
+  margin,
+  isPlaylist = false,
+  onRemoveTrackFromPlaylist,
+}) {
   const dispatch = useDispatch();
   return (
     <Container
@@ -41,12 +44,10 @@ function TrackItem({ data, margin }) {
       </Details>
 
       <IconsContainer>
-        <IconButton
-          style={{ marginRight: 10 }}
-          onPress={() => dispatch(PlaylistModalActions.openModal(data.id))}
-        >
-          <MaterialIcons name="playlist-add" size={26} color="#D99207" />
-        </IconButton>
+        <ToolBar
+          data={{ trackId: data.id, isPlaylist }}
+          onRemoveTrackFromPlaylist={onRemoveTrackFromPlaylist}
+        />
       </IconsContainer>
     </Container>
   );
