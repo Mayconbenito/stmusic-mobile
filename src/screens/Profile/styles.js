@@ -25,7 +25,7 @@ export const Image = styled.Image`
 
 export const Name = styled.Text`
   color: #d99207;
-  font-size: ${hp(2.8)};
+  font-size: ${hp(3)};
   font-weight: bold;
   margin-top: 10;
   text-align: center;
@@ -34,9 +34,9 @@ export const Name = styled.Text`
 export const LogoutButton = styled.TouchableOpacity.attrs({
   activeOpacity: 0.5,
 })`
-  width: ${wp(40)};
+  width: ${wp(55)};
   border-radius: 15;
-  height: 35;
+  height: 40;
   background-color: #d99207;
   justify-content: center;
   align-items: center;
@@ -44,8 +44,8 @@ export const LogoutButton = styled.TouchableOpacity.attrs({
 `;
 
 export const LogoutButtonText = styled.Text`
+  font-size: ${hp(2.4)};
   color: #000;
-  font-size: ${hp(2.1)};
   font-weight: bold;
   text-align: center;
 `;

@@ -79,12 +79,11 @@ function Register({ navigation }) {
         dispatch(
           SessionActions.createSession({
             jwt: response.data.jwt,
-            ...response.data.user,
+            user: response.data.user,
           })
         );
       }
     } catch (err) {
-      console.log('err', err);
       setLoading(false);
       if (err.response.data.error.code === 'EmailAlreadyUsed') {
         setMessage('Endereço de email já cadastrado');
