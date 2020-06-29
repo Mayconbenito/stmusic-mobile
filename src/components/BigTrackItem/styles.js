@@ -36,7 +36,7 @@ export const TextList = styled.Text.attrs({
   numberOfLines: 2,
 })`
   flex-direction: row;
-  height: 30;
+  height: 37;
 `;
 
 export const Type = styled.Text`

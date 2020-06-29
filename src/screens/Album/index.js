@@ -37,57 +37,87 @@ function Album({ navigation, route }) {
   });
 
   const albumId = route.params.id;
-  const [loading, setLoading] = useState(true);
-  const [album, setAlbum] = useState({
-    name: '',
-    tracks: 0,
-    picture: '',
-  });
-  const [tracks, setTracks] = useState([]);
-  const [tracksMeta, setTracksMeta] = useState({
+  const [state, setState] = useState({
+    error: false,
     loading: true,
-    total: 0,
-    page: 1,
+    data: {
+      name: '',
+      tracks: 0,
+      picture: '',
+    },
+    tracks: {
+      error: false,
+      loading: true,
+      data: [],
+      total: 0,
+      page: 1,
+    },
   });
 
-  async function fetchAlbum() {
-    try {
-      const response = await api.get(`/albums/${albumId}`);
+  useEffect(() => {
+    async function fetchAlbum() {
+      try {
+        const [album, tracks] = await Promise.all([
+          api.get(`/albums/${albumId}`),
+          api.get(`/albums/${albumId}/tracks`, {
+            params: {
+              page: state.tracks.page,
+            },
+          }),
+        ]);
 
-      setAlbum(response.data.album);
-      setLoading(false);
-    } catch (err) {
-      console.log(err);
+        setState({
+          ...state,
+          error: false,
+          loading: false,
+          data: album.data.album,
+          tracks: {
+            error: false,
+            loading: false,
+            data: tracks.data.tracks,
+            total: tracks.data.meta.total,
+            page: tracks.data.meta.page + 1,
+          },
+        });
+      } catch (err) {
+        setState({ ...state, error: true, loading: false });
+      }
     }
-  }
+    fetchAlbum();
+  }, []);
 
   async function fetchTracks() {
     try {
-      setTracksMeta({ ...tracksMeta, loading: true });
+      setState({ ...state, tracks: { ...state.tracks, loading: true } });
       const response = await api.get(`/albums/${albumId}/tracks`, {
         params: {
-          page: tracksMeta.page,
+          page: state.tracks.page,
         },
       });
 
-      setTracks([...tracks, ...response.data.tracks]);
-      setTracksMeta({
-        loading: false,
-        page: response.data.meta.page + 1,
-        total: response.data.meta.total,
+      setState({
+        ...state,
+        tracks: {
+          error: false,
+          loading: false,
+          data: [...state.tracks.data, ...response.data.tracks],
+          total: response.data.meta.total,
+          page: response.data.meta.page + 1,
+        },
       });
     } catch (err) {
-      console.log(err);
+      setState({
+        ...state,
+        tracks: { ...state.tracks, error: true, loading: false },
+      });
     }
   }
 
-  useEffect(() => {
-    fetchAlbum();
-    fetchTracks();
-  }, []);
-
   function endReached() {
-    if (tracksMeta.total > tracks.length && !tracksMeta.loading) {
+    if (
+      state.tracks.total > state.tracks.data.length &&
+      !state.tracks.loading
+    ) {
       fetchTracks();
     }
   }
@@ -98,15 +128,18 @@ function Album({ navigation, route }) {
 
   return (
     <ParentContainer>
-      {loading && <Loading />}
-      {!loading && (
+      {state.loading && <Loading />}
+      {!state.loading && (
         <Container>
           <List
             ListHeaderComponent={
               <>
                 <Details>
-                  <Image source={{ uri: album.picture }} fallback={Fallback} />
-                  <DetailsTitle>{album.name}</DetailsTitle>
+                  <Image
+                    source={{ uri: state.data.picture }}
+                    fallback={Fallback}
+                  />
+                  <DetailsTitle>{state.data.name}</DetailsTitle>
                   <Buttons>
                     <Button onPress={handlePlaylistPlay}>
                       <TextButton>Tocar</TextButton>
@@ -115,12 +148,12 @@ function Album({ navigation, route }) {
                 </Details>
               </>
             }
-            data={tracks}
+            data={state.tracks.data}
             keyExtractor={item => `key-${item.id}`}
             renderItem={({ item }) => <TrackItem data={item} margin />}
             onEndReached={endReached}
             onEndReachedThreshold={0.4}
-            ListFooterComponent={tracksMeta.loading && <Loading size={24} />}
+            ListFooterComponent={state.tracks.loading && <Loading size={24} />}
             ListFooterComponentStyle={{
               marginTop: 10,
             }}
