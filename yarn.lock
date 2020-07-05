@@ -6096,6 +6096,11 @@ react-native-fast-image@^7.0.2:
   resolved "https://registry.yarnpkg.com/react-native-fast-image/-/react-native-fast-image-7.0.2.tgz#e06b21f42f4a9786eaa86f3db35d919070fb8403"
   integrity sha512-MfuzJbC0RjYobR2gFCdqe1I7jvNOCfDkjQ7VGOHXniqjohhULMkcWNBE9Umovi9Dx93lJ6t5utcE2wf/09zvlg==
 
+react-native-flipper@^0.49.0:
+  version "0.49.0"
+  resolved "https://registry.yarnpkg.com/react-native-flipper/-/react-native-flipper-0.49.0.tgz#8fd19b7cd8af1e7772ece07e54366aa751a87016"
+  integrity sha512-Y0fIwEyEsouYKbyve71Ps7cUryDcEGLY2EOyve6p9gNMDdpVIfo040JgwCOD/2s+AjWK3C7F0wl4IXIrnF+wiA==
+
 react-native-fs@^2.16.1, react-native-fs@^2.16.6:
   version "2.16.6"
   resolved "https://registry.yarnpkg.com/react-native-fs/-/react-native-fs-2.16.6.tgz#2901789a43210a35a0ef0a098019bbef3af395fd"
