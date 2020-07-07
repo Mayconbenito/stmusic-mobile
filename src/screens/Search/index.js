@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import AlbumItem from '~/components/AlbumItem';
 import ArtistItem from '~/components/ArtistItem';
 import TrackItem from '~/components/TrackItem';
+import isStringEmpty from '~/helpers/isStringEmpty';
+import useDebounce from '~/hooks/useDebounce';
 import api from '~/services/api';
 
 import { Container, InputContainer, Input, List, SectionTitle } from './styles';
@@ -21,6 +23,8 @@ function Search({ navigation }) {
     tracks: [],
   });
 
+  const debouncedQuery = useDebounce(query, 500);
+
   async function fetchSearch() {
     try {
       const response = await api.get(`/search/${query}`, {
@@ -32,10 +36,18 @@ function Search({ navigation }) {
 
       setResults({ artists: [], albums: [], tracks: [] });
       setResults(response.data.results);
-    } catch (e) {
-      console.log(e);
-    }
+
+      // eslint-disable-next-line no-empty
+    } catch (err) {}
   }
+
+  useEffect(() => {
+    if (!isStringEmpty(debouncedQuery)) {
+      fetchSearch();
+    } else {
+      setResults({ artists: [], albums: [], tracks: [] });
+    }
+  }, [debouncedQuery]);
 
   function onInputChange(txt) {
     setQuery(txt);
@@ -43,7 +55,6 @@ function Search({ navigation }) {
 
   function clearQuery() {
     setQuery('');
-    setResults({ artists: [], albums: [], tracks: [] });
   }
 
   return (
