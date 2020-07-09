@@ -62,4 +62,4 @@ function Artists({ navigation }) {
   );
 }
 
-export default Artists;
+export default React.memo(Artists);
