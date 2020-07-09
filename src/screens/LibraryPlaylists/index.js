@@ -76,4 +76,4 @@ function Playlists({ navigation }) {
   );
 }
 
-export default Playlists;
+export default React.memo(Playlists);

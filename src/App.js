@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { YellowBox, StatusBar, Alert } from 'react-native';
+import { LogBox, StatusBar, Alert } from 'react-native';
 import { useSelector } from 'react-redux';
 import * as UpdateAPK from 'rn-update-apk';
 import { ThemeProvider } from 'styled-components';
@@ -10,13 +10,15 @@ import UpdateModal from '~/components/UpdateModal';
 
 import Routes from './routes';
 
-YellowBox.ignoreWarnings([
+LogBox.ignoreLogs([
   'Warning: componentWillReceiveProps has been renamed',
   'VirtualizedLists',
   'React.createElement',
   'Warning: Failed prop type: The prop `source`',
   'Warning: Failed prop type: Invalid prop `component`',
   'Soruce.uri',
+  'Cannot update a component',
+  'currentlyFocusedField',
 ]);
 
 function App() {
