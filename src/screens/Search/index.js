@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { TouchableOpacity, View } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
@@ -12,6 +13,8 @@ import api from '~/services/api';
 import { Container, InputContainer, Input, List, SectionTitle } from './styles';
 
 function Search({ navigation }) {
+  const { t } = useTranslation();
+
   navigation.setOptions({
     headerShown: false,
   });
@@ -66,7 +69,7 @@ function Search({ navigation }) {
           onChangeText={onInputChange}
           onSubmitEditing={fetchSearch}
           returnKeyType="search"
-          placeholder="Buscar por artistas e músicas"
+          placeholder={t('search.input')}
           autoFocus
         />
         {query !== '' && (
@@ -79,7 +82,7 @@ function Search({ navigation }) {
       <List>
         {results.artists.length > 0 && (
           <View style={{ marginBottom: 30 }}>
-            <SectionTitle>Artistas</SectionTitle>
+            <SectionTitle>{t('commons.artists')}</SectionTitle>
             {results.artists.map(item => (
               <ArtistItem
                 key={item.id}
@@ -92,7 +95,7 @@ function Search({ navigation }) {
 
         {results.albums.length > 0 && (
           <View style={{ marginBottom: 30 }}>
-            <SectionTitle>Albums</SectionTitle>
+            <SectionTitle>{t('commons.albums')}</SectionTitle>
             {results.albums.map(item => (
               <AlbumItem
                 key={item.id}
@@ -105,7 +108,7 @@ function Search({ navigation }) {
 
         {results.tracks.length > 0 && (
           <View>
-            <SectionTitle>Músicas</SectionTitle>
+            <SectionTitle>{t('commons.tracks')}</SectionTitle>
             {results.tracks.map(item => (
               <TrackItem key={item.id} data={item} />
             ))}

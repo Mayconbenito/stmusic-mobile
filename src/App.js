@@ -1,4 +1,6 @@
+import './config/i18next';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { LogBox, StatusBar, Alert } from 'react-native';
 import { useSelector } from 'react-redux';
 import * as UpdateAPK from 'rn-update-apk';
@@ -16,12 +18,13 @@ LogBox.ignoreLogs([
   'React.createElement',
   'Warning: Failed prop type: The prop `source`',
   'Warning: Failed prop type: Invalid prop `component`',
-  'Soruce.uri',
+  'Source.uri',
   'Cannot update a component',
   'currentlyFocusedField',
 ]);
 
 function App() {
+  const { t } = useTranslation();
   const player = useSelector(state => state.player);
   const playlistModal = useSelector(state => state.playlistModal);
 
@@ -46,10 +49,10 @@ function App() {
       fileProviderAuthority: 'com.mayconbenito.stmusic.provider',
 
       needUpdateApp: needUpdate => {
-        Alert.alert('Nova Atualização disponivel', '', [
-          { text: 'Cancelar', onPress: () => {} },
+        Alert.alert(t('update_modal.new_update'), '', [
+          { text: t('update_modal.cancel'), onPress: () => {} },
           {
-            text: 'Atualizar',
+            text: t('update_modal.update'),
             onPress: () => {
               setUpdateModal('update');
               needUpdate(true);
@@ -88,8 +91,8 @@ function App() {
           <UpdateModal
             title={
               updateModal === 'forceUpdate'
-                ? 'Atualização Obrigatória'
-                : 'Atualização'
+                ? t('update_modal.force_update')
+                : t('update_modal.title')
             }
             progress={progress}
           />

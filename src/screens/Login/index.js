@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
@@ -20,6 +21,7 @@ import {
 } from './styles';
 
 function Login({ navigation }) {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
 
   navigation.setOptions({
@@ -33,7 +35,7 @@ function Login({ navigation }) {
       elevation: 0,
     },
     headerLeft: () => <HeaderBackButton onPress={() => navigation.goBack()} />,
-    title: 'Fazer Login',
+    title: t('login.title'),
     headerTitleStyle: {
       flex: 1,
       textAlign: 'center',
@@ -79,7 +81,7 @@ function Login({ navigation }) {
     } catch (err) {
       setLoading(false);
       if (err.response.status === 401) {
-        setMessage('Email ou senha incorretos');
+        setMessage(t('login.email_or_password_invalid'));
       }
     }
   }
@@ -88,11 +90,11 @@ function Login({ navigation }) {
     try {
       const schema = Yup.object().shape({
         email: Yup.string()
-          .email('O formato de é email inválido')
-          .required('O email é obrigatório'),
+          .email(t('login.invalid_email_format'))
+          .required(t('login.email_is_required')),
         password: Yup.string()
-          .min(6, 'A senha deve ter no mínimo 6 caracteres')
-          .required('A senha é obrigatória'),
+          .min(6, t('login.password_length'))
+          .required(t('login.password_is_required')),
       });
 
       const validation = await schema.validate(
@@ -121,7 +123,7 @@ function Login({ navigation }) {
           <Input
             value={email}
             onChangeText={handleEmailChange}
-            placeholder="Seu endereço de email"
+            placeholder={t('login.email_input')}
             returnKeyType="next"
             keyboardType="email-address"
             autoCompleteType="email"
@@ -135,7 +137,7 @@ function Login({ navigation }) {
             ref={inputPasswordRef}
             value={password}
             onChangeText={handlePasswordChange}
-            placeholder="Sua senha"
+            placeholder={t('login.password_input')}
             returnKeyType="done"
             secureTextEntry
             onSubmitEditing={handleSubmit}
@@ -147,7 +149,7 @@ function Login({ navigation }) {
 
         <Button onPress={handleSubmit}>
           {!loading ? (
-            <TextButton>Entrar</TextButton>
+            <TextButton>{t('login.sign_in')}</TextButton>
           ) : (
             <Loading animating size={24} color="#000" />
           )}

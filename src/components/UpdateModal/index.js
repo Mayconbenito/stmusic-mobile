@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 
 import {
@@ -28,6 +29,8 @@ function ProgressBar({ progress }) {
 }
 
 function UpdateModal({ title, progress }) {
+  const { t } = useTranslation();
+
   const [newsDescription, setNewsDescription] = useState(false);
   const updaterURL = 'http://android-app-update.stmusic.tk';
 
@@ -50,12 +53,14 @@ function UpdateModal({ title, progress }) {
         <Title>{title}</Title>
         {newsDescription && (
           <News>
-            <NewsTitle>Novidades</NewsTitle>
+            <NewsTitle>{t('update_modal.news')}</NewsTitle>
             <NewsDescription>{newsDescription}</NewsDescription>
           </News>
         )}
         <Progress>
-          <ProgressText>Baixando {progress}%</ProgressText>
+          <ProgressText>
+            {t('update_modal.downloading')} {progress}%
+          </ProgressText>
           <ProgressBar progress={progress} />
         </Progress>
       </Content>

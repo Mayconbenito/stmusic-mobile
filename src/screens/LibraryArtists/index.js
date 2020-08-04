@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FlatList } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -9,6 +10,7 @@ import { Creators as LibraryArtistActions } from '~/store/ducks/libraryArtist';
 import { Container, WarningText } from './styles';
 
 function Artists({ navigation }) {
+  const { t } = useTranslation();
   const { fetchArtists } = LibraryArtistActions;
   const libraryArtist = useSelector(state => state.libraryArtist);
   const dispatch = useDispatch();
@@ -56,7 +58,9 @@ function Artists({ navigation }) {
             }}
           />
         ) : (
-          <WarningText>Você ainda não segue nenhuma artista.</WarningText>
+          <WarningText>
+            {t('library.you_are_not_following_any_artist')}
+          </WarningText>
         ))}
     </Container>
   );

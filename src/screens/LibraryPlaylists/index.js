@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FlatList } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -14,6 +15,7 @@ import {
 } from './styles';
 
 function Playlists({ navigation }) {
+  const { t } = useTranslation();
   const { fetchPlaylists } = LibraryPlaylistActions;
   const libraryPlaylist = useSelector(state => state.libraryPlaylist);
   const dispatch = useDispatch();
@@ -48,11 +50,13 @@ function Playlists({ navigation }) {
                 onPress={() => navigation.navigate('CreatePlaylist')}
               >
                 <CreatePlaylistButtonText>
-                  Criar Playlist
+                  {t('library.create_playlist_button')}
                 </CreatePlaylistButtonText>
               </CreatePlaylistButton>
               {!libraryPlaylist.data.length > 0 && (
-                <WarningText>Você ainda não tem nenhuma playlist.</WarningText>
+                <WarningText>
+                  {t('library.you_dont_have_any_playlist')}
+                </WarningText>
               )}
             </>
           }

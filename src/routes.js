@@ -2,6 +2,7 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useSelector } from 'react-redux';
 
@@ -95,6 +96,8 @@ function ProfileStackScreen() {
 }
 
 function Routes() {
+  const { t } = useTranslation();
+
   const session = useSelector(state => state.session);
 
   return (
@@ -139,22 +142,22 @@ function Routes() {
             <Tab.Screen
               name="Home"
               component={HomeStackScreen}
-              options={{ title: 'Ínicio' }}
+              options={{ title: t('commons.home') }}
             />
             <Tab.Screen
               name="Search"
               component={SearchStackScreen}
-              options={{ title: 'Busca' }}
+              options={{ title: t('commons.search') }}
             />
             <Tab.Screen
               name="Library"
               component={LibraryStackScreen}
-              options={{ title: 'Biblioteca' }}
+              options={{ title: t('commons.library') }}
             />
             <Tab.Screen
               name="Profile"
               component={ProfileStackScreen}
-              options={{ title: 'Perfil' }}
+              options={{ title: t('commons.profile') }}
             />
           </Tab.Navigator>
         </>

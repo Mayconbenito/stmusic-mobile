@@ -1,0 +1,107 @@
+{
+  "translation": {
+    "welcome": {
+      "description": "Ouça milhares de músicas gratuitamente.",
+      "login": "Fazer Login",
+      "signup": "Criar Conta"
+    },
+    "login": {
+      "title": "Fazer Login",
+      "sign_in": "Entrar",
+      "email_input": "Endereço de email",
+      "password_input": "Sua Senha",
+      "invalid_email_format": "Formato de email invalido",
+      "email_is_required": "Email é obrigatório",
+      "password_length": "Senha deve ter no mínimo 6 caracteres",
+      "password_is_required": "Senha é obrigatória",
+      "email_or_password_invalid": "Email ou senha incorretos"
+    },
+    "signup": {
+      "title": "Registrar",
+      "sign_up": "Criar Conta",
+      "name_input": "Seu nome",
+      "email_input": "Endereço de email",
+      "password_input": "Sua Senha",
+      "name_is_required": "Nome é obrigatório",
+      "name_length": "Nome deve ter no máximo 30 caracteres",
+      "invalid_email_format": "Formato de email invalido",
+      "email_is_required": "Email é obrigatório",
+      "password_is_required": "Senha é obrigatória",
+      "password_length": "Senha deve ter no mínimo 6 caracteres",
+      "email_already_used": "Endereço de email em uso"
+    },
+    "home": {
+      "title": "Ínicio",
+      "recently_played": "Ouvir novamente",
+      "genres": "Gêneros",
+      "trending": "Em alta",
+      "most_played_tracks": "Mais tocadas",
+      "most_followed_artists": "Artistas mais seguidos"
+    },
+    "artist": {
+      "most_played_tracks": "Músicas mais tocadas",
+      "all_artist_tracks": "Todas as músicas"
+    },
+    "library": {
+      "title": "Biblioteca",
+      "your_playlists": "Suas playlists",
+      "artists_you_follow": "Artistas que você segue",
+      "you_are_not_following_any_artist": "Você ainda não segue nenhum artista.",
+      "you_dont_have_any_playlist": "Você ainda nao tem nenhuma playlist.",
+      "create_playlist_button": "Criar Playlist"
+    },
+    "playlist": {
+      "delete_playlist_button": "Excluir Playlist",
+      "tool_bar_delete_playlist": "Excluir Playlist"
+    },
+    "search": {
+      "input": "Buscar por artistas e músicas."
+    },
+    "playlist_modal": {
+      "select_playlist": "Escolha a Playlist"
+    },
+    "create_playlist": {
+      "create_playlist": "Criar Playlist",
+      "type_playlist_name": "Digite o nome da sua Playlist",
+      "create_playlist_button": "Criar Playlist"
+    },
+    "profile": {
+      "logout": "Encerrar Sessão"
+    },
+    "player": {
+      "playing": "Tocando"
+    },
+    "update_modal": {
+      "title": "Atualização",
+      "news": "Novidades",
+      "downloading": "Baixando",
+      "new_update": "Nova Atualização disponível",
+      "cancel": "Cancelar",
+      "update": "Atualizar",
+      "force_update": "Atualização Obrigatória"
+    },
+    "commons": {
+      "internal_server_error": "Erro interno no servidor",
+      "play_tracks_button": "Tocar",
+      "no_track_available": "Nenhuma música disponível",
+      "home": "Ínicio",
+      "search": "Busca",
+      "library": "Biblioteca",
+      "profile": "Perfil",
+      "tracks": "Músicas",
+      "track": "Música",
+      "albums": "Albums",
+      "playlist": "Playlist",
+      "playlists": "Playlists",
+      "artist": "Artist",
+      "artists": "Artistas",
+      "following": "Seguindo",
+      "followers": "Seguidores",
+      "follow": "Seguir",
+      "genre": "Gênero",
+      "album": "Album",
+      "add_to_playlist": "Adicionar à uma Playlist",
+      "remove_from_playlist": "Remover da Playlist"
+    }
+  }
+}

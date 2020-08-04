@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { TouchableOpacity } from 'react-native';
 import Menu, { MenuItem } from 'react-native-material-menu';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -7,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { Creators as PlaylistModalActions } from '~/store/ducks/playlistModal';
 
 function ToolBar({ data, onRemoveTrackFromPlaylist }) {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const menuRef = useRef();
 
@@ -36,14 +38,14 @@ function ToolBar({ data, onRemoveTrackFromPlaylist }) {
       animationDuration={0}
     >
       <MenuItem textStyle={{ color: '#fff' }} onPress={handleAddToPlaylist}>
-        Adicionar à uma Playlist
+        {t('commons.add_to_playlist')}
       </MenuItem>
       {data.isPlaylist && (
         <MenuItem
           textStyle={{ color: '#fff' }}
           onPress={() => onRemoveTrackFromPlaylist(data.trackId)}
         >
-          Remover da Playlist
+          {t('commons.remove_from_playlist')}
         </MenuItem>
       )}
     </Menu>

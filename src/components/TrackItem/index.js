@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import { Creators as PlayerActions } from '~/store/ducks/player';
@@ -21,7 +22,9 @@ function TrackItem({
   isPlaylist = false,
   onRemoveTrackFromPlaylist,
 }) {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
+
   return (
     <Container
       margin={margin}
@@ -34,7 +37,7 @@ function TrackItem({
       <Details>
         <Name>{data.name}</Name>
         <TextList>
-          <Type>Música | </Type>
+          <Type>{t('commons.track')} | </Type>
           {data.artists.map((artist, index) => (
             <ArtistName key={artist.id}>
               {(index ? ', ' : '') + artist.name}
