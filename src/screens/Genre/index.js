@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -22,10 +23,11 @@ import {
 } from './styles';
 
 function Genre({ navigation, route }) {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
 
   navigation.setOptions({
-    title: 'Gênero',
+    title: t('commons.genre'),
     headerTitleStyle: {
       flex: 1,
       textAlign: 'center',
@@ -138,10 +140,10 @@ function Genre({ navigation, route }) {
                 <DetailsTitle>{state.data.name} </DetailsTitle>
                 {state.tracks.data.length > 0 ? (
                   <Button onPress={handlePlaylistPlay}>
-                    <TextButton>Tocar</TextButton>
+                    <TextButton>{t('commons.play_tracks_button')}</TextButton>
                   </Button>
                 ) : (
-                  <WarningText>Nenhuma música adicionada</WarningText>
+                  <WarningText>{t('commons.no_track_available')}</WarningText>
                 )}
               </Details>
             }

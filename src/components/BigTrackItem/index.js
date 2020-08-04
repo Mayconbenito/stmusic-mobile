@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import { Creators as PlayerActions } from '~/store/ducks/player';
@@ -14,6 +15,7 @@ import {
 } from './styles';
 
 function BigTrackItem({ data }) {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   return (
     <Container onPress={() => dispatch(PlayerActions.play(data))}>
@@ -24,7 +26,7 @@ function BigTrackItem({ data }) {
       <Details>
         <Name>{data.name}</Name>
         <TextList>
-          <Type>Música | </Type>
+          <Type>{t('commons.track')} | </Type>
           {data.artists.map((artist, index) => (
             <ArtistName key={artist.id}>
               {(index ? ', ' : '') + artist.name}

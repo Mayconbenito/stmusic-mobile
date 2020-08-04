@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { View, TouchableOpacity } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -27,10 +28,11 @@ import {
 } from './styles';
 
 function Artist({ navigation, route }) {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
 
   navigation.setOptions({
-    title: 'Artista',
+    title: t('commons.artist'),
     headerTitleStyle: {
       flex: 1,
       textAlign: 'center',
@@ -162,11 +164,11 @@ function Artist({ navigation, route }) {
             <Buttons>
               {state.data.followingState ? (
                 <Button onPress={handleArtistUnfollow}>
-                  <TextButton>Deixar de Seguir</TextButton>
+                  <TextButton>{t('commons.following')}</TextButton>
                 </Button>
               ) : (
                 <Button onPress={handleArtistFollow}>
-                  <TextButton>Seguir</TextButton>
+                  <TextButton>{t('commons.follow')}</TextButton>
                 </Button>
               )}
             </Buttons>
@@ -175,7 +177,7 @@ function Artist({ navigation, route }) {
           {state.albums.data.length > 0 && (
             <ScrollerContainer style={{ marginTop: 0 }}>
               <ScrollerHeader>
-                <ScrollerTitleText>Albums</ScrollerTitleText>
+                <ScrollerTitleText>{t('commons.albums')}</ScrollerTitleText>
               </ScrollerHeader>
               <List
                 data={state.albums.data}
@@ -196,7 +198,9 @@ function Artist({ navigation, route }) {
           {state.mostPlayedTracks.data.length > 0 && (
             <ScrollerContainer style={{ marginTop: 0 }}>
               <ScrollerHeader>
-                <ScrollerTitleText>Músicas mais tocadas</ScrollerTitleText>
+                <ScrollerTitleText>
+                  {t('artist.most_played_tracks')}
+                </ScrollerTitleText>
                 <TouchableOpacity
                   onPress={() =>
                     dispatch(
@@ -220,7 +224,7 @@ function Artist({ navigation, route }) {
           {state.tracks.data.length > 0 && (
             <ScrollerContainer style={{ marginTop: 0 }}>
               <ScrollerHeader>
-                <ScrollerTitleText>Músicas</ScrollerTitleText>
+                <ScrollerTitleText>{t('commons.tracks')}</ScrollerTitleText>
                 <TouchableOpacity
                   onPress={() =>
                     dispatch(

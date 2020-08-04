@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Animated from 'react-native-reanimated';
 import { TabView, SceneMap } from 'react-native-tab-view';
 
@@ -9,6 +10,8 @@ import Playlists from '../LibraryPlaylists';
 import { TabBar, TabItem, TabItemText } from './styles';
 
 export default function Library({ navigation, route }) {
+  const { t } = useTranslation();
+
   navigation.setOptions({
     headerStyle: {
       backgroundColor: '#000',
@@ -19,8 +22,8 @@ export default function Library({ navigation, route }) {
   const [state, setState] = useState({
     index: 0,
     routes: [
-      { key: 'playlists', title: 'Playlists' },
-      { key: 'artists', title: 'Artists' },
+      { key: 'playlists', title: t('commons.playlists') },
+      { key: 'artists', title: t('commons.artists') },
     ],
   });
 

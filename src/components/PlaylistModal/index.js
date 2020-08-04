@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BackHandler } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -18,6 +19,7 @@ import {
 } from './styles';
 
 function PlaylistModal() {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const playlistModal = useSelector(state => state.playlistModal);
 
@@ -97,7 +99,7 @@ function PlaylistModal() {
       <ClickArea onStartShouldSetResponder={handleCloseModal} />
       <Selector>
         <Header>
-          <HeaderText>Escolha a Playlist</HeaderText>
+          <HeaderText>{t('playlist_modal.select_playlist')}</HeaderText>
         </Header>
         {playlist.loading && <Loading />}
         {playlist.data.length > 0 && !playlist.loading && (

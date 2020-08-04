@@ -11,7 +11,7 @@ function ImageFallback({
 }) {
   const [image, setImage] = useState();
   const [resize, setResize] = useState();
-  const [showFallback, setShowfallback] = useState(false);
+  const [showFallback, setShowFallback] = useState(false);
 
   function loadFallback() {
     setImage(fallback);
@@ -25,7 +25,7 @@ function ImageFallback({
 
     if (source.uri === null) {
       loadFallback();
-      setShowfallback(true);
+      setShowFallback(true);
       return;
     }
 

@@ -1,8 +1,11 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Container, Image, Details, Title, TracksCount } from './styles';
 
 function PlaylistItem({ data, onPress, imageBorder }) {
+  const { t } = useTranslation();
+
   return (
     <Container onPress={onPress}>
       <Image
@@ -12,7 +15,9 @@ function PlaylistItem({ data, onPress, imageBorder }) {
       />
       <Details>
         <Title>{data.name}</Title>
-        <TracksCount>{data.tracks} Músicas</TracksCount>
+        <TracksCount>
+          {data.tracks} {t('commons.tracks')}
+        </TracksCount>
       </Details>
     </Container>
   );

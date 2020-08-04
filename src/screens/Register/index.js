@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
@@ -20,6 +21,7 @@ import {
 } from './styles';
 
 function Register({ navigation }) {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
 
   navigation.setOptions({
@@ -33,7 +35,7 @@ function Register({ navigation }) {
       elevation: 0,
     },
     headerLeft: () => <HeaderBackButton onPress={() => navigation.goBack()} />,
-    title: 'Fazer Login',
+    title: t('signup.title'),
     headerTitleStyle: {
       flex: 1,
       textAlign: 'center',
@@ -86,7 +88,7 @@ function Register({ navigation }) {
     } catch (err) {
       setLoading(false);
       if (err.response.data.error.code === 'EmailAlreadyUsed') {
-        setMessage('Endereço de email já cadastrado');
+        setMessage(t('signup.email_already_used'));
       }
     }
   }
@@ -95,14 +97,14 @@ function Register({ navigation }) {
     try {
       const schema = Yup.object().shape({
         name: Yup.string()
-          .max(30, 'Nome deve ter no maximo 30 caracteres')
-          .required('Nome é obrigatório'),
+          .max(30, t('signup.name_length'))
+          .required(t('signup.name_is_required')),
         email: Yup.string()
-          .email('O formato de é email inválido')
-          .required('O email é obrigatório'),
+          .email(t('signup.invalid_email_format'))
+          .required(t('signup.email_is_required')),
         password: Yup.string()
-          .min(6, 'A senha deve ter no mínimo 6 caracteres')
-          .required('A senha é obrigatória'),
+          .min(6, t('signup.password_length'))
+          .required(t('signup.password_is_required')),
       });
 
       const validation = await schema.validate(
@@ -131,7 +133,7 @@ function Register({ navigation }) {
           <Input
             value={name}
             onChangeText={handleNameChange}
-            placeholder="Seu nome"
+            placeholder={t('signup.name_input')}
             returnKeyType="next"
             autoCompleteType="name"
             onSubmitEditing={() => inputEmailRef.current.focus()}
@@ -143,7 +145,7 @@ function Register({ navigation }) {
             ref={inputEmailRef}
             value={email}
             onChangeText={handleEmailChange}
-            placeholder="Seu endereço de email"
+            placeholder={t('signup.email_input')}
             returnKeyType="next"
             keyboardType="email-address"
             autoCompleteType="email"
@@ -156,7 +158,7 @@ function Register({ navigation }) {
             ref={inputPasswordRef}
             value={password}
             onChangeText={handlePasswordChange}
-            placeholder="Sua senha"
+            placeholder={t('signup.password_input')}
             returnKeyType="done"
             secureTextEntry
             onSubmitEditing={handleSubmit}
@@ -168,7 +170,7 @@ function Register({ navigation }) {
 
         <Button onPress={handleSubmit}>
           {!loading ? (
-            <TextButton>Criar Conta</TextButton>
+            <TextButton>{t('signup.sign_up')}</TextButton>
           ) : (
             <Loading animating size={24} color="#000" />
           )}

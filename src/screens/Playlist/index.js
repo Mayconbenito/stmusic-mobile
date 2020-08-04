@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import Fallback from '~/assets/images/fallback-square.png';
@@ -22,11 +23,12 @@ import {
 } from './styles';
 
 function Playlist({ navigation, route }) {
+  const { t } = useTranslation();
   const playlistId = route.params.id;
   const dispatch = useDispatch();
 
   navigation.setOptions({
-    title: 'Playlist',
+    title: t('commons.playlist'),
     headerTitleStyle: {
       flex: 1,
       textAlign: 'center',
@@ -163,10 +165,10 @@ function Playlist({ navigation, route }) {
                 <DetailsTitle>{state.data.name} </DetailsTitle>
                 {state.tracks.data.length > 0 ? (
                   <Button onPress={handlePlaylistPlay}>
-                    <TextButton>Tocar</TextButton>
+                    <TextButton>{t('commons.play_tracks_button')}</TextButton>
                   </Button>
                 ) : (
-                  <WarningText>Nenhuma música adicionada</WarningText>
+                  <WarningText>{t('commons.no_track_available')}</WarningText>
                 )}
               </Details>
             }

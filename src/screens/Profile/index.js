@@ -1,5 +1,6 @@
 import NetInfo from '@react-native-community/netinfo';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 
 import HeaderIcon from '~/components/HeaderIcon';
@@ -18,6 +19,7 @@ import {
 } from './styles';
 
 function Profile({ navigation }) {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState();
   const session = useSelector(state => state.session);
   const dispatch = useDispatch();
@@ -65,7 +67,7 @@ function Profile({ navigation }) {
             <Name>{session.user?.name}</Name>
           </User>
           <LogoutButton onPress={handleLogout}>
-            <LogoutButtonText>Encerrar Sessão</LogoutButtonText>
+            <LogoutButtonText>{t('profile.logout')}</LogoutButtonText>
           </LogoutButton>
         </>
       )}

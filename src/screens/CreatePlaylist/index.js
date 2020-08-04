@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -16,11 +17,12 @@ import {
 } from './styles';
 
 function CreatePlaylist({ navigation }) {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
 
   navigation.setOptions({
     headerLeft: () => <HeaderBackButton onPress={() => navigation.goBack()} />,
-    title: 'Criar Playlist',
+    title: t('create_playlist.create_playlist'),
     headerTitleStyle: {
       flex: 1,
       textAlign: 'center',
@@ -54,10 +56,12 @@ function CreatePlaylist({ navigation }) {
   return (
     <Container>
       <InputContainer>
-        <InputDescription>Digite o nome da sua Playlist</InputDescription>
+        <InputDescription>
+          {t('create_playlist.type_playlist_name')}
+        </InputDescription>
         <Input onChangeText={setInputName} />
         <Submit onPress={handleCreatePlaylist}>
-          <SubmitText>Criar Playlist</SubmitText>
+          <SubmitText>{t('create_playlist.create_playlist_button')}</SubmitText>
         </Submit>
       </InputContainer>
     </Container>

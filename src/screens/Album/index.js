@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
@@ -22,6 +23,7 @@ import {
 } from './styles';
 
 function Album({ navigation, route }) {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
 
   navigation.setOptions({
@@ -142,7 +144,7 @@ function Album({ navigation, route }) {
                   <DetailsTitle>{state.data.name}</DetailsTitle>
                   <Buttons>
                     <Button onPress={handlePlaylistPlay}>
-                      <TextButton>Tocar</TextButton>
+                      <TextButton>{t('commons.play_tracks_button')}</TextButton>
                     </Button>
                   </Buttons>
                 </Details>

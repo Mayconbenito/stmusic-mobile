@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { TouchableOpacity } from 'react-native';
 import Menu, { MenuItem } from 'react-native-material-menu';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -8,6 +9,7 @@ import api from '~/services/api';
 import { Creators as LibraryPlaylistActions } from '~/store/ducks/libraryPlaylist';
 
 function HeaderToolBar({ playlistId, navigation }) {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const menuRef = useRef();
 
@@ -46,7 +48,7 @@ function HeaderToolBar({ playlistId, navigation }) {
       animationDuration={0}
     >
       <MenuItem textStyle={{ color: '#fff' }} onPress={handleDeletePlaylist}>
-        Excluir Playlist
+        {t('playlist.tool_bar_delete_playlist')}
       </MenuItem>
     </Menu>
   );

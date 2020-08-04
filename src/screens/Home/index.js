@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -21,6 +22,8 @@ import {
 } from './styles';
 
 function Home({ navigation }) {
+  const { t } = useTranslation();
+
   const browse = useSelector(state => state.browse);
   const dispatch = useDispatch();
 
@@ -44,12 +47,14 @@ function Home({ navigation }) {
           {browse.recentlyPlayed.length > 0 && (
             <ScrollerContainer>
               <ScrollerHeader>
-                <ScrollerTitleText>Ouvir novamente</ScrollerTitleText>
+                <ScrollerTitleText>
+                  {t('home.recently_played')}
+                </ScrollerTitleText>
                 <ScrollerHeaderButton
                   onPress={() =>
                     dispatch(
                       PlayerActions.playPlaylist({
-                        name: 'Ouvir novamente',
+                        name: t('home.recently_played'),
                         tracks: browse.recentlyPlayed,
                       })
                     )
@@ -70,12 +75,12 @@ function Home({ navigation }) {
           {browse.trending.length > 0 && (
             <ScrollerContainer>
               <ScrollerHeader>
-                <ScrollerTitleText>Em alta</ScrollerTitleText>
+                <ScrollerTitleText>{t('home.trending')}</ScrollerTitleText>
                 <ScrollerHeaderButton
                   onPress={() =>
                     dispatch(
                       PlayerActions.playPlaylist({
-                        name: 'Em alta',
+                        name: t('home.trending'),
                         tracks: browse.trending,
                       })
                     )
@@ -96,7 +101,7 @@ function Home({ navigation }) {
 
           {browse.genres.length > 0 && (
             <ScrollerContainer>
-              <ScrollerTitleText>Gêneros</ScrollerTitleText>
+              <ScrollerTitleText>{t('home.genres')}</ScrollerTitleText>
 
               <List
                 data={browse.genres}
@@ -117,12 +122,14 @@ function Home({ navigation }) {
           {browse.mostPlayed.length > 0 && (
             <ScrollerContainer>
               <ScrollerHeader>
-                <ScrollerTitleText>Músicas mais tocadas</ScrollerTitleText>
+                <ScrollerTitleText>
+                  {t('home.most_played_tracks')}
+                </ScrollerTitleText>
                 <ScrollerHeaderButton
                   onPress={() =>
                     dispatch(
                       PlayerActions.playPlaylist({
-                        name: 'Músicas mais tocadas',
+                        name: t('home.most_played_tracks'),
                         tracks: browse.mostPlayed,
                       })
                     )
@@ -142,7 +149,9 @@ function Home({ navigation }) {
 
           {browse.mostFollowed.length > 0 && (
             <ScrollerContainer style={{ marginBottom: 0 }}>
-              <ScrollerTitleText>Artistas mais seguidos</ScrollerTitleText>
+              <ScrollerTitleText>
+                {t('home.most_followed_artists')}
+              </ScrollerTitleText>
 
               <List
                 data={browse.mostFollowed}

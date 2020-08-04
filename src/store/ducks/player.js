@@ -19,21 +19,6 @@ export const { Types, Creators } = createActions(
   }
 );
 
-// const exampleState = {
-//   isPlaying: false,
-//   active: {
-//     id: 52,
-//     name: 'Song name',
-//     picture: 'https://i.ytimg.com/vi/VY1eFxgRR-k/hqdefault.jpg',
-//     youtubeId: '',
-//     artist: {
-//       name: 'Artist name',
-//       picture: 'https://yt3.ggpht.com/a/AGF-l7_rwqSxaKtyb--b-sr4p_bhHgjEPaxsLVpyvw=s88-mo-c-c0xffffffff-rj-k-no',
-//     },
-//   },
-//   playlist: false,
-// };
-
 const initialState = {
   isPlaying: 'STOPPED',
   active: false,
