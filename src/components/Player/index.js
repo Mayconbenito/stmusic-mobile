@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, TouchableOpacity, Keyboard } from 'react-native';
-import { STREAMER_URL } from 'react-native-dotenv';
 import MusicControl from 'react-native-music-control';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Video from 'react-native-video';
 import { useSelector, useDispatch } from 'react-redux';
 
+import env from '~/config/env';
 import api from '~/services/api';
 import { Creators as PlayerActions } from '~/store/ducks/player';
 import { Creators as PlaylistModalActions } from '~/store/ducks/playlistModal';
@@ -183,7 +183,7 @@ function Player() {
             </BigPlayerHeader>
             <Video
               source={{
-                uri: `${STREAMER_URL}/yt?url=${player.active.youtubeId}`,
+                uri: `${env.STREAMER_URL}/yt?url=${player.active.youtubeId}`,
               }}
               paused={paused}
               playInBackground

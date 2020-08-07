@@ -9,6 +9,7 @@ import { ThemeProvider } from 'styled-components';
 import Player from '~/components/Player';
 import PlaylistModal from '~/components/PlaylistModal';
 import UpdateModal from '~/components/UpdateModal';
+import env from '~/config/env';
 
 import Routes from './routes';
 
@@ -41,11 +42,9 @@ function App() {
   const [progress, setProgress] = useState(0);
   const [updateModal, setUpdateModal] = useState(false);
 
-  const updaterURL = 'http://android-app-update.stmusic.tk';
-
   useEffect(() => {
     const updater = new UpdateAPK.UpdateAPK({
-      apkVersionUrl: updaterURL,
+      apkVersionUrl: env.UPDATER_URL,
       fileProviderAuthority: 'com.mayconbenito.stmusic.provider',
 
       needUpdateApp: needUpdate => {
