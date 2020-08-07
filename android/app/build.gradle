@@ -1,5 +1,7 @@
 apply plugin: "com.android.application"
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
+apply from: '../../node_modules/react-native-unimodules/gradle.groovy'
+apply from: "../../node_modules/expo-updates/scripts/create-manifest-android.gradle"
 
 import com.android.build.OutputFile
 
@@ -125,6 +127,10 @@ def enableHermes = project.ext.react.get("enableHermes", false);
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -209,6 +215,26 @@ dependencies {
 
     implementation "androidx.appcompat:appcompat:1.0.0"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+
+    addUnimodulesDependencies([exclude: [
+        'expo-constants',
+        'expo-file-system',
+        'expo-splash-screen',
+        'expo-font',
+        'expo-location',
+        'expo-sqlite',
+        'expo-linear-gradient',
+        'expo-image-loader',
+        'expo-keep-awake',
+        'unimodules-font-interface',
+        'unimodules-file-system-interface',
+        'unimodules-face-detector-interface',
+        'unimodules-constants-interface',
+        'unimodules-camera-interface',
+        'unimodules-barcode-scanner-interface',
+        'unimodules-sensors-interface',
+    ]])
+    
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'
     }

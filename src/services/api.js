@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import axios from 'axios';
-import { API_URL } from 'react-native-dotenv';
 
+import env from '~/config/env';
 import { store } from '~/store';
 
 const api = axios.create();
@@ -10,7 +10,7 @@ api.interceptors.request.use(async config => {
   const { jwt } = store.getState().session;
   config.headers.Authorization = `Bearer ${jwt}`;
 
-  config = { ...config, baseURL: `${API_URL}/app` };
+  config = { ...config, baseURL: `${env.API_URL}/app` };
 
   return config;
 });
