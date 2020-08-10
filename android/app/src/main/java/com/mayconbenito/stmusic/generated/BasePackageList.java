@@ -7,7 +7,6 @@ import org.unimodules.core.interfaces.Package;
 public class BasePackageList {
   public List<Package> getPackageList() {
     return Arrays.<Package>asList(
-        new expo.modules.errorrecovery.ErrorRecoveryPackage(),
         new expo.modules.permissions.PermissionsPackage(),
         new expo.modules.updates.UpdatesPackage()
     );

@@ -226,6 +226,9 @@ dependencies {
         'expo-linear-gradient',
         'expo-image-loader',
         'expo-keep-awake',
+        'expo-task-manager',
+        'expo-error-recovery',
+        'expo-app-loader-provider',
         'unimodules-font-interface',
         'unimodules-file-system-interface',
         'unimodules-face-detector-interface',
@@ -233,6 +236,9 @@ dependencies {
         'unimodules-camera-interface',
         'unimodules-barcode-scanner-interface',
         'unimodules-sensors-interface',
+        'unimodules-image-loader-interface',
+        'unimodules-task-manager-interface',
+        'unimodules-app-loader'
     ]])
     
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
