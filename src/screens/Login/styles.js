@@ -23,13 +23,18 @@ export const Form = styled.View`
 export const InputGroup = styled.View`
   flex-direction: column;
   align-items: flex-start;
-  margin-bottom: 5;
-  height: 75;
+  margin-bottom: 15;
+`;
+
+export const InputLabel = styled.Text`
+  color: #d99207;
+  font-size: ${hp(2.4)};
+  margin-bottom: 3;
 `;
 
 export const Input = styled.TextInput.attrs({
-  placeholderTextColor: '#D99207',
-  selectionColor: '#D99207',
+  placeholderTextColor: '#817e7e',
+  selectionColor: '#d99207',
 })`
   color: #d99207;
   width: ${wp(70)};
@@ -42,9 +47,11 @@ export const Input = styled.TextInput.attrs({
 `;
 
 export const InputError = styled.Text`
-  color: #d99207;
+  color: #ff1f1f;
+  max-width: ${wp(70)};
   font-size: ${hp(2)};
   line-height: 20;
+  margin-top: 2;
 `;
 
 export const FormMessage = styled.Text`

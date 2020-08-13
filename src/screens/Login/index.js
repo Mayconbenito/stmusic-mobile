@@ -13,6 +13,7 @@ import {
   Container,
   Form,
   InputGroup,
+  InputLabel,
   Input,
   InputError,
   FormMessage,
@@ -120,10 +121,11 @@ function Login({ navigation }) {
     <Container>
       <Form>
         <InputGroup>
+          <InputLabel>{t('login.email_input')}</InputLabel>
           <Input
             value={email}
             onChangeText={handleEmailChange}
-            placeholder={t('login.email_input')}
+            placeholder={t('login.email_input_placeholder')}
             returnKeyType="next"
             keyboardType="email-address"
             autoCompleteType="email"
@@ -133,11 +135,12 @@ function Login({ navigation }) {
         </InputGroup>
 
         <InputGroup>
+          <InputLabel>{t('login.password_input')}</InputLabel>
           <Input
             ref={inputPasswordRef}
             value={password}
             onChangeText={handlePasswordChange}
-            placeholder={t('login.password_input')}
+            placeholder={t('login.password_input_placeholder')}
             returnKeyType="done"
             secureTextEntry
             onSubmitEditing={handleSubmit}
