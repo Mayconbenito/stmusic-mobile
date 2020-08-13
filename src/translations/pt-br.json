@@ -27,6 +27,7 @@
       "email_input_placeholder": "Digite seu email",
       "password_input": "Sua Senha",
       "password_input_placeholder": "Digite sua senha",
+      "name_length": "Nome não deve ter mais de 30 caracteres",
       "name_is_required": "Nome é obrigatório",
       "invalid_email_format": "Formato de email invalido",
       "email_is_required": "Endereço de email é obrigatório",
