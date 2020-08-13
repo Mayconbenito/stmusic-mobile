@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, TouchableOpacity, Keyboard } from 'react-native';
+import { View, TouchableOpacity, Keyboard, BackHandler } from 'react-native';
 import MusicControl from 'react-native-music-control';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Video from 'react-native-video';
@@ -51,6 +51,23 @@ function Player() {
 
   const [paused, setPaused] = useState(false);
   const [notificationControls, setNotificationControls] = useState(false);
+
+  useEffect(() => {
+    function handleBackHandler() {
+      if (showBigPlayer) {
+        setShowBigPlayer(false);
+        return true;
+      }
+
+      return false;
+    }
+
+    BackHandler.addEventListener('hardwareBackPress', handleBackHandler);
+
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', handleBackHandler);
+    };
+  }, [showBigPlayer]);
 
   useEffect(() => {
     Keyboard.addListener('keyboardDidShow', () => {
