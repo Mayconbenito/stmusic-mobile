@@ -28,6 +28,7 @@
       "email_input_placeholder": "Type your e-mail address",
       "password_input": "Your Password",
       "password_input_placeholder": "Type your password",
+      "name_length": "Name should not have more than 30 characters",
       "name_is_required": "Name is required",
       "invalid_email_format": "Invalid e-mail format",
       "email_is_required": "E-mail address is required",
