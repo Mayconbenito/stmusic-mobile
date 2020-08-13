@@ -9,6 +9,7 @@ import Loading from '~/components/Loading';
 import api from '~/services/api';
 import { Creators as SessionActions } from '~/store/ducks/session';
 
+import { InputLabel } from '../Login/styles';
 import {
   Container,
   Form,
@@ -130,10 +131,11 @@ function Register({ navigation }) {
     <Container>
       <Form>
         <InputGroup>
+          <InputLabel>{t('signup.name_input')}</InputLabel>
           <Input
             value={name}
             onChangeText={handleNameChange}
-            placeholder={t('signup.name_input')}
+            placeholder={t('signup.name_input_placeholder')}
             returnKeyType="next"
             autoCompleteType="name"
             onSubmitEditing={() => inputEmailRef.current.focus()}
@@ -141,11 +143,12 @@ function Register({ navigation }) {
           {errors && errors.name && <InputError>{errors.name}</InputError>}
         </InputGroup>
         <InputGroup>
+          <InputLabel>{t('signup.email_input')}</InputLabel>
           <Input
             ref={inputEmailRef}
             value={email}
             onChangeText={handleEmailChange}
-            placeholder={t('signup.email_input')}
+            placeholder={t('signup.email_input_placeholder')}
             returnKeyType="next"
             keyboardType="email-address"
             autoCompleteType="email"
@@ -154,11 +157,12 @@ function Register({ navigation }) {
           {errors && errors.email && <InputError>{errors.email}</InputError>}
         </InputGroup>
         <InputGroup>
+          <InputLabel>{t('signup.password_input')}</InputLabel>
           <Input
             ref={inputPasswordRef}
             value={password}
             onChangeText={handlePasswordChange}
-            placeholder={t('signup.password_input')}
+            placeholder={t('signup.password_input_placeholder')}
             returnKeyType="done"
             secureTextEntry
             onSubmitEditing={handleSubmit}
