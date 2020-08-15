@@ -70,14 +70,24 @@ function Player() {
   }, [showBigPlayer]);
 
   useEffect(() => {
-    Keyboard.addListener('keyboardDidShow', () => {
+    function handleKeyboardDidShow() {
       dispatch(showPlayer(false));
-    });
+    }
 
-    Keyboard.addListener('keyboardDidHide', () => {
+    function handleKeyboardDidHide() {
       dispatch(showPlayer(true));
-    });
+    }
 
+    Keyboard.addListener('keyboardDidShow', handleKeyboardDidShow);
+    Keyboard.addListener('keyboardDidHide', handleKeyboardDidHide);
+
+    return () => {
+      Keyboard.removeEventListener('keyboardDidShow', handleKeyboardDidShow);
+      Keyboard.removeEventListener('keyboardDidHide', handleKeyboardDidHide);
+    };
+  }, []);
+
+  useEffect(() => {
     MusicControl.enableBackgroundMode(true);
 
     MusicControl.on('play', () => {
@@ -186,7 +196,7 @@ function Player() {
 
   return (
     <>
-      {!!player.active && (
+      {!!player.active && player.showPlayer && (
         <Container showBigPlayer={showBigPlayer}>
           <BigPlayerContainer showBigPlayer={showBigPlayer}>
             <BigPlayerHeader>
