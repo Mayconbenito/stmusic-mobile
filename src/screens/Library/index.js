@@ -7,7 +7,7 @@ import HeaderIcon from '~/components/HeaderIcon';
 
 import Artists from '../LibraryArtists';
 import Playlists from '../LibraryPlaylists';
-import { TabBar, TabItem, TabItemText } from './styles';
+import { TabBar, TabItem, TabItemText, TabItemIndicator } from './styles';
 
 export default function Library({ navigation, route }) {
   const { t } = useTranslation();
@@ -64,12 +64,44 @@ export default function Library({ navigation, route }) {
             )
           );
 
+          const indicatorColor = Animated.color(
+            Animated.round(
+              Animated.interpolate(position, {
+                inputRange,
+                outputRange: inputRange.map(inputIndex =>
+                  inputIndex === i ? 217 : 20
+                ),
+              })
+            ),
+            Animated.round(
+              Animated.interpolate(position, {
+                inputRange,
+                outputRange: inputRange.map(inputIndex =>
+                  inputIndex === i ? 146 : 20
+                ),
+              })
+            ),
+            Animated.round(
+              Animated.interpolate(position, {
+                inputRange,
+                outputRange: inputRange.map(inputIndex =>
+                  inputIndex === i ? 7 : 20
+                ),
+              })
+            )
+          );
+
           return (
             <TabItem
               onPress={() => setState({ ...state, index: i })}
               key={scene.key}
             >
               <TabItemText style={{ color }}>{scene.title}</TabItemText>
+              <TabItemIndicator
+                style={{
+                  backgroundColor: indicatorColor,
+                }}
+              />
             </TabItem>
           );
         })}

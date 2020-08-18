@@ -22,3 +22,9 @@ export const TabItemText = styled(Animated.Text)`
   font-weight: bold;
   font-size: ${hp(2.3)};
 `;
+
+export const TabItemIndicator = styled(Animated.View)`
+  width: 100%;
+  height: 2;
+  margin-top: 2;
+`;
