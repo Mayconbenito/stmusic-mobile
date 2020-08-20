@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import Animated from 'react-native-reanimated';
+import Animated, { Extrapolate } from 'react-native-reanimated';
 import { TabView, SceneMap } from 'react-native-tab-view';
 
 import HeaderIcon from '~/components/HeaderIcon';
@@ -44,6 +44,7 @@ export default function Library({ navigation, route }) {
                 outputRange: inputRange.map(inputIndex =>
                   inputIndex === i ? 217 : 255
                 ),
+                extrapolate: Extrapolate.CLAMP,
               })
             ),
             Animated.round(
@@ -52,6 +53,7 @@ export default function Library({ navigation, route }) {
                 outputRange: inputRange.map(inputIndex =>
                   inputIndex === i ? 146 : 255
                 ),
+                extrapolate: Extrapolate.CLAMP,
               })
             ),
             Animated.round(
@@ -60,6 +62,7 @@ export default function Library({ navigation, route }) {
                 outputRange: inputRange.map(inputIndex =>
                   inputIndex === i ? 7 : 255
                 ),
+                extrapolate: Extrapolate.CLAMP,
               })
             )
           );
@@ -71,6 +74,7 @@ export default function Library({ navigation, route }) {
                 outputRange: inputRange.map(inputIndex =>
                   inputIndex === i ? 217 : 20
                 ),
+                extrapolate: Extrapolate.CLAMP,
               })
             ),
             Animated.round(
@@ -79,6 +83,7 @@ export default function Library({ navigation, route }) {
                 outputRange: inputRange.map(inputIndex =>
                   inputIndex === i ? 146 : 20
                 ),
+                extrapolate: Extrapolate.CLAMP,
               })
             ),
             Animated.round(
@@ -87,6 +92,7 @@ export default function Library({ navigation, route }) {
                 outputRange: inputRange.map(inputIndex =>
                   inputIndex === i ? 7 : 20
                 ),
+                extrapolate: Extrapolate.CLAMP,
               })
             )
           );
@@ -116,6 +122,7 @@ export default function Library({ navigation, route }) {
 
   return (
     <TabView
+      style={{ backgroundColor: '#141414' }}
       navigationState={state}
       renderScene={renderScene}
       renderTabBar={renderTabBar}
