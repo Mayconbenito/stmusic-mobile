@@ -63,7 +63,8 @@
       "input": "Buscar por artistas e músicas."
     },
     "playlist_modal": {
-      "select_playlist": "Escolha a Playlist"
+      "select_playlist": "Escolha a Playlist",
+      "you_dont_have_any_playlist": "Você ainda nao tem nenhuma playlist."
     },
     "create_playlist": {
       "create_playlist": "Criar Playlist",
