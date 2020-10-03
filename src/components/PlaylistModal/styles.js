@@ -1,3 +1,4 @@
+import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import styled from 'styled-components/native';
 
 import { getHeaderHeight } from '~/helpers/headerDefaultHeight';
@@ -35,6 +36,13 @@ export const Header = styled.View`
 export const HeaderText = styled.Text`
   color: #fff;
   font-size: 18;
+`;
+
+export const WarningText = styled.Text`
+  color: #d99207;
+  margin-top: 150;
+  text-align: center;
+  font-size: ${hp(2.3)};
 `;
 
 export const List = styled.FlatList`

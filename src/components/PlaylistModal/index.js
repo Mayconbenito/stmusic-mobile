@@ -15,6 +15,7 @@ import {
   Selector,
   Header,
   HeaderText,
+  WarningText,
   List,
 } from './styles';
 
@@ -101,7 +102,15 @@ function PlaylistModal() {
         <Header>
           <HeaderText>{t('playlist_modal.select_playlist')}</HeaderText>
         </Header>
+
+        {playlist.data.length === 0 && (
+          <WarningText>
+            {t('playlist_modal.you_dont_have_any_playlist')}
+          </WarningText>
+        )}
+
         {playlist.loading && <Loading />}
+
         {playlist.data.length > 0 && !playlist.loading && (
           <List
             data={playlist.data}

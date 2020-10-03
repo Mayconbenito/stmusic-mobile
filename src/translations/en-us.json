@@ -53,7 +53,7 @@
       "your_playlists": "Your playlists",
       "artists_you_follow": "Artists",
       "you_are_not_following_any_artist": "You are not following any artist.",
-      "you_dont_have_any_playlist": "Você ainda nao tem nenhuma playlist.",
+      "you_dont_have_any_playlist": "You don't have any playlist.",
       "create_playlist_button": "Create Playlist"
     },
     "playlist": {
@@ -64,7 +64,8 @@
       "input": "Search artists, albums and tracks."
     },
     "playlist_modal": {
-      "select_playlist": "Select Playlist"
+      "select_playlist": "Select Playlist",
+      "you_dont_have_any_playlist": "You don't have any playlist."
     },
     "create_playlist": {
       "create_playlist": "Create Playlist",
