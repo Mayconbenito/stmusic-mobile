@@ -2,6 +2,7 @@ import './config/i18next';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LogBox, StatusBar, Alert } from 'react-native';
+import codePush from 'react-native-code-push';
 import { useSelector } from 'react-redux';
 import * as UpdateAPK from 'rn-update-apk';
 import { ThemeProvider } from 'styled-components';
@@ -101,4 +102,7 @@ function App() {
   );
 }
 
-export default App;
+export default codePush({
+  checkFrequency: codePush.CheckFrequency.ON_APP_START,
+  installMode: codePush.InstallMode.ON_NEXT_RESUME,
+})(App);
