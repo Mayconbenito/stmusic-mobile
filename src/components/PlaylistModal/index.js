@@ -35,7 +35,7 @@ function PlaylistModal() {
 
   async function fetchPlaylists() {
     try {
-      const response = await api.get('/me/playlists', {
+      const response = await api.get('/me/library/playlists', {
         params: {
           page: playlist.page,
         },
@@ -82,9 +82,12 @@ function PlaylistModal() {
   async function addTrackToPlaylist(playlistId) {
     try {
       handleCloseModal();
-      const response = await api.post(`/playlists/${playlistId}/tracks`, {
-        tracks: [playlistModal.trackId],
-      });
+      const response = await api.post(
+        `/me/library/playlists/${playlistId}/tracks`,
+        {
+          tracks: [playlistModal.trackId],
+        }
+      );
 
       if (response.status === 204) {
         dispatch(LibraryPlaylistActions.clearState());

@@ -36,7 +36,7 @@ function CreatePlaylist({ navigation }) {
 
   async function handleCreatePlaylist() {
     try {
-      const response = await api.post('/me/playlists', {
+      const response = await api.post('/me/library/playlists', {
         name,
       });
 

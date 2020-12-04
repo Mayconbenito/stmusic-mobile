@@ -19,7 +19,7 @@ function HeaderToolBar({ playlistId, navigation }) {
 
   async function handleDeletePlaylist() {
     try {
-      const response = await api.delete(`/playlists/${playlistId}`);
+      const response = await api.delete(`/me/library/playlists/${playlistId}`);
 
       if (response.status === 204) {
         dispatch(LibraryPlaylistActions.clearState());

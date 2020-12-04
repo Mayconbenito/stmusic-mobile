@@ -119,9 +119,12 @@ function Playlist({ navigation, route }) {
 
   async function handleRemoveTrackFromPlaylist(trackId) {
     try {
-      const response = await api.delete(`/playlists/${playlistId}/tracks`, {
-        data: { tracks: [trackId] },
-      });
+      const response = await api.delete(
+        `/me/library/playlists/${playlistId}/tracks`,
+        {
+          data: { tracks: [trackId] },
+        }
+      );
 
       if (response.status === 204) {
         setState({
