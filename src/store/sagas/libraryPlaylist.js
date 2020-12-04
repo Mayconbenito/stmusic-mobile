@@ -11,7 +11,7 @@ const { successPlaylists, failurePlaylists } = LibraryPlaylistActions;
 
 function* fetchPlaylists({ page = 1 }) {
   try {
-    const response = yield call(api.get, '/me/playlists', {
+    const response = yield call(api.get, '/me/library/playlists', {
       params: {
         page,
       },
