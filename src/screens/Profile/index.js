@@ -1,13 +1,13 @@
 import NetInfo from '@react-native-community/netinfo';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import HeaderIcon from '~/components/HeaderIcon';
 import Loading from '~/components/Loading';
+import AuthContext from '~/contexts/AuthContext';
 import api from '~/services/api';
 import { Creators as PlayerActions } from '~/store/ducks/player';
-import { Creators as SessionActions } from '~/store/ducks/session';
 
 import {
   Container,
@@ -21,8 +21,8 @@ import {
 function Profile({ navigation }) {
   const { t } = useTranslation();
   const [loading, setLoading] = useState();
-  const session = useSelector(state => state.session);
   const dispatch = useDispatch();
+  const auth = useContext(AuthContext);
 
   navigation.setOptions({
     headerStyle: {
@@ -37,7 +37,7 @@ function Profile({ navigation }) {
       const isConnected = await NetInfo.fetch();
       if (isConnected) {
         const response = await api.get('/me');
-        dispatch(SessionActions.updateUserData(response.data.user));
+        auth.setData(response.data.user);
       }
       setLoading(false);
 
@@ -53,7 +53,7 @@ function Profile({ navigation }) {
 
   async function handleLogout() {
     dispatch(PlayerActions.clearState());
-    dispatch(SessionActions.deleteSession());
+    auth.destroySession();
   }
 
   return (
@@ -64,7 +64,7 @@ function Profile({ navigation }) {
         <>
           <User>
             <Image source={require('~/assets/images/fallback-square.png')} />
-            <Name>{session.user?.name}</Name>
+            <Name>{auth.userData?.name}</Name>
           </User>
           <LogoutButton onPress={handleLogout}>
             <LogoutButtonText>{t('profile.logout')}</LogoutButtonText>

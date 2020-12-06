@@ -1,13 +1,12 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
-import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
 
 import HeaderBackButton from '~/components/HeaderBackButton';
 import Loading from '~/components/Loading';
+import AuthContext from '~/contexts/AuthContext';
 import api from '~/services/api';
-import { Creators as SessionActions } from '~/store/ducks/session';
 
 import {
   Container,
@@ -23,7 +22,7 @@ import {
 
 function Login({ navigation }) {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const auth = useContext(AuthContext);
 
   navigation.setOptions({
     headerStyle: {
@@ -72,12 +71,8 @@ function Login({ navigation }) {
 
       if (response.status === 200) {
         setLoading(false);
-        dispatch(
-          SessionActions.createSession({
-            jwt: response.data.jwt,
-            user: response.data.user,
-          })
-        );
+        auth.createSession(response.data.jwt);
+        auth.setData(response.data.user);
       }
     } catch (err) {
       setLoading(false);

@@ -12,6 +12,7 @@ import PlaylistModal from '~/components/PlaylistModal';
 import UpdateModal from '~/components/UpdateModal';
 import env from '~/config/env';
 
+import { AuthProvider } from './contexts/AuthContext';
 import Routes from './routes';
 
 LogBox.ignoreLogs([
@@ -82,21 +83,23 @@ function App() {
       <StatusBar backgroundColor="#000000" barStyle="light-content" />
 
       <ThemeProvider theme={theme}>
-        <Routes />
+        <AuthProvider>
+          <Routes />
 
-        <Player />
-        {playlistModal.open && <PlaylistModal />}
+          <Player />
+          {playlistModal.open && <PlaylistModal />}
 
-        {!!updateModal && (
-          <UpdateModal
-            title={
-              updateModal === 'forceUpdate'
-                ? t('update_modal.force_update')
-                : t('update_modal.title')
-            }
-            progress={progress}
-          />
-        )}
+          {!!updateModal && (
+            <UpdateModal
+              title={
+                updateModal === 'forceUpdate'
+                  ? t('update_modal.force_update')
+                  : t('update_modal.title')
+              }
+              progress={progress}
+            />
+          )}
+        </AuthProvider>
       </ThemeProvider>
     </>
   );
