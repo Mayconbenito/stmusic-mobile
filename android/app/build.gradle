@@ -1,7 +1,5 @@
 apply plugin: "com.android.application"
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
-apply from: '../../node_modules/react-native-unimodules/gradle.groovy'
-apply from: "../../node_modules/expo-updates/scripts/create-manifest-android.gradle"
 
 import com.android.build.OutputFile
 
@@ -86,6 +84,7 @@ project.ext.react = [
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
+apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -171,6 +170,13 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
+            resValue "string", "CodePushDeploymentKey", '""'
+        }
+        releaseStaging {
+            resValue "string", "CodePushDeploymentKey", '0_c89GYyNrMR1GdkRnz_pldXACdMw4kMJ9eEM'
+            // Note: It's a good idea to provide matchingFallbacks for the new buildType you create to prevent build issues
+            // Add the following line if not already there
+            matchingFallbacks = ['release']
         }
         release {
             // Caution! In production, you need to generate your own keystore file.
@@ -179,6 +185,7 @@ android {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             signingConfig signingConfigs.release
+            resValue "string", "CodePushDeploymentKey", 'ts5c2dbQol7cCZbd3quVyvZbYdiAMf3A0Gii3'
         }
     }
 
@@ -215,31 +222,6 @@ dependencies {
 
     implementation "androidx.appcompat:appcompat:1.0.0"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
-
-    addUnimodulesDependencies([exclude: [
-        'expo-constants',
-        'expo-file-system',
-        'expo-splash-screen',
-        'expo-font',
-        'expo-location',
-        'expo-sqlite',
-        'expo-linear-gradient',
-        'expo-image-loader',
-        'expo-keep-awake',
-        'expo-task-manager',
-        'expo-error-recovery',
-        'expo-app-loader-provider',
-        'unimodules-font-interface',
-        'unimodules-file-system-interface',
-        'unimodules-face-detector-interface',
-        'unimodules-constants-interface',
-        'unimodules-camera-interface',
-        'unimodules-barcode-scanner-interface',
-        'unimodules-sensors-interface',
-        'unimodules-image-loader-interface',
-        'unimodules-task-manager-interface',
-        'unimodules-app-loader'
-    ]])
     
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'

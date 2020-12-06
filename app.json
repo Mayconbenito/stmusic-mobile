@@ -1,9 +1,4 @@
 {
   "name": "stmusic",
-  "displayName": "STMusic",
-  "expo": {
-    "name": "STMusic",
-    "slug": "stmusic",
-    "sdkVersion": "38.0.0"
-  }
+  "displayName": "STMusic"
 }

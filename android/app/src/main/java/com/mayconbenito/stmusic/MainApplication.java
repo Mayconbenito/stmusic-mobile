@@ -1,6 +1,5 @@
 package com.mayconbenito.stmusic;
 
-import com.mayconbenito.stmusic.generated.BasePackageList;
 import androidx.multidex.MultiDexApplication;
 import android.content.Context;
 import com.facebook.react.PackageList;
@@ -11,21 +10,15 @@ import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import java.util.Arrays;
- 
-import org.unimodules.adapters.react.ModuleRegistryAdapter;
-import org.unimodules.adapters.react.ReactModuleRegistryProvider;
-import org.unimodules.core.interfaces.SingletonModule;
 
 import android.net.Uri;
-import expo.modules.updates.UpdatesController;
 import javax.annotation.Nullable;
 
 import com.brentvatne.react.ReactVideoPackage;
 
-public class MainApplication extends MultiDexApplication implements ReactApplication {
-  private final ReactModuleRegistryProvider mModuleRegistryProvider = new ReactModuleRegistryProvider(new BasePackageList().getPackageList(), null);
+import com.microsoft.codepush.react.CodePush;
 
+public class MainApplication extends MultiDexApplication implements ReactApplication {
   private final ReactNativeHost mReactNativeHost =
       new ReactNativeHost(this) {
         @Override
@@ -40,11 +33,6 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
           packages.add(new ReactVideoPackage());
-          // Add unimodules
-          List<ReactPackage> unimodules = Arrays.<ReactPackage>asList(
-            new ModuleRegistryAdapter(mModuleRegistryProvider)
-          );
-          packages.addAll(unimodules);
 
           return packages;
         }
@@ -54,22 +42,9 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
           return "index";
         }
 
-         @Override
-        protected @Nullable String getJSBundleFile() {
-          if (BuildConfig.DEBUG) {
-            return super.getJSBundleFile();
-          } else {
-            return UpdatesController.getInstance().getLaunchAssetFile();
-          }
-        }
- 
         @Override
-        protected @Nullable String getBundleAssetName() {
-          if (BuildConfig.DEBUG) {
-            return super.getBundleAssetName();
-          } else {
-            return UpdatesController.getInstance().getBundleAssetName();
-          }
+        protected String getJSBundleFile() {
+          return CodePush.getJSBundleFile();
         }
       };
 
@@ -82,10 +57,6 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
   public void onCreate() {
     super.onCreate();
     SoLoader.init(this, /* native exopackage */ false);
-
-    if (!BuildConfig.DEBUG) {
-      UpdatesController.initialize(this);
-    }
 
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
   }
