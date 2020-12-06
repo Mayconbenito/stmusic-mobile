@@ -2,13 +2,12 @@
 import axios from 'axios';
 
 import env from '~/config/env';
-import { store } from '~/store';
+import getAuthToken from '~/helpers/getAuthToken';
 
 const api = axios.create();
 
 api.interceptors.request.use(async config => {
-  const { jwt } = store.getState().session;
-  config.headers.Authorization = `Bearer ${jwt}`;
+  config.headers.Authorization = `Bearer ${await getAuthToken()}`;
 
   config = { ...config, baseURL: `${env.API_URL}/app` };
 

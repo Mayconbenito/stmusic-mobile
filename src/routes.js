@@ -1,13 +1,15 @@
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import React from 'react';
+import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
+import { View } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 
 import HeaderIcon from '~/components/HeaderIcon';
 
+import AuthContext from './contexts/AuthContext';
 import Album from './screens/Album';
 import Artist from './screens/Artist';
 import CreatePlaylist from './screens/CreatePlaylist';
@@ -98,80 +100,86 @@ function ProfileStackScreen() {
 function Routes() {
   const { t } = useTranslation();
 
-  const session = useSelector(state => state.session);
+  const auth = useContext(AuthContext);
+
+  if (auth.isLoading) {
+    return <View style={{ flex: 1, backgroundColor: '#141414' }} />;
+  }
+
+  if (!auth.isLoading && auth.isLoggedIn) {
+    return (
+      <NavigationContainer ref={navigationRef}>
+        <Tab.Navigator
+          activeColor="#d99207"
+          inactiveColor="#fff"
+          shifting={false}
+          barStyle={{ backgroundColor: '#000' }}
+          screenOptions={({ route }) => ({
+            tabBarIcon: ({ color, size = 22 }) => {
+              let iconName;
+
+              if (route.name === 'Home') {
+                iconName = 'home';
+              }
+
+              if (route.name === 'Search') {
+                iconName = 'search';
+              }
+
+              if (route.name === 'Library') {
+                iconName = 'library-music';
+              }
+
+              if (route.name === 'Profile') {
+                iconName = 'person';
+              }
+
+              return (
+                <MaterialIcons name={iconName} color={color} size={size} />
+              );
+            },
+          })}
+          tabBarOptions={{
+            activeTintColor: '#d99207',
+            inactiveTintColor: '#fff',
+          }}
+        >
+          <Tab.Screen
+            name="Home"
+            component={HomeStackScreen}
+            options={{ title: t('commons.home') }}
+          />
+          <Tab.Screen
+            name="Search"
+            component={SearchStackScreen}
+            options={{ title: t('commons.search') }}
+          />
+          <Tab.Screen
+            name="Library"
+            component={LibraryStackScreen}
+            options={{ title: t('commons.library') }}
+          />
+          <Tab.Screen
+            name="Profile"
+            component={ProfileStackScreen}
+            options={{ title: t('commons.profile') }}
+          />
+        </Tab.Navigator>
+      </NavigationContainer>
+    );
+  }
 
   return (
     <NavigationContainer ref={navigationRef}>
-      {session.jwt ? (
-        <>
-          <Tab.Navigator
-            activeColor="#d99207"
-            inactiveColor="#fff"
-            shifting={false}
-            barStyle={{ backgroundColor: '#000' }}
-            screenOptions={({ route }) => ({
-              tabBarIcon: ({ color, size = 22 }) => {
-                let iconName;
-
-                if (route.name === 'Home') {
-                  iconName = 'home';
-                }
-
-                if (route.name === 'Search') {
-                  iconName = 'search';
-                }
-
-                if (route.name === 'Library') {
-                  iconName = 'library-music';
-                }
-
-                if (route.name === 'Profile') {
-                  iconName = 'person';
-                }
-
-                return (
-                  <MaterialIcons name={iconName} color={color} size={size} />
-                );
-              },
-            })}
-            tabBarOptions={{
-              activeTintColor: '#d99207',
-              inactiveTintColor: '#fff',
-            }}
-          >
-            <Tab.Screen
-              name="Home"
-              component={HomeStackScreen}
-              options={{ title: t('commons.home') }}
-            />
-            <Tab.Screen
-              name="Search"
-              component={SearchStackScreen}
-              options={{ title: t('commons.search') }}
-            />
-            <Tab.Screen
-              name="Library"
-              component={LibraryStackScreen}
-              options={{ title: t('commons.library') }}
-            />
-            <Tab.Screen
-              name="Profile"
-              component={ProfileStackScreen}
-              options={{ title: t('commons.profile') }}
-            />
-          </Tab.Navigator>
-        </>
-      ) : (
-        <Stack.Navigator>
-          <Stack.Screen
-            name="Welcome"
-            component={Welcome}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="Register" component={Register} />
-        </Stack.Navigator>
-      )}
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Welcome"
+          component={Welcome}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Register" component={Register} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }
