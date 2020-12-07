@@ -11,7 +11,7 @@ const { successArtists, failureArtists } = LibraryArtistActions;
 
 function* fetchArtists({ page = 1 }) {
   try {
-    const response = yield call(api.get, '/me/following/artists', {
+    const response = yield call(api.get, '/me/library/following/artists', {
       params: {
         page,
       },

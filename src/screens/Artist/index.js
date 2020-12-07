@@ -89,7 +89,7 @@ function Artist({ navigation, route }) {
         ]);
 
         const followingState = await api.get(
-          `/me/following/artists/contains?artists=${artistId}`
+          `/me/library/following/artists/contains?artists=${artistId}`
         );
 
         setState({
@@ -120,7 +120,7 @@ function Artist({ navigation, route }) {
 
   async function handleArtistFollow() {
     try {
-      const response = await api.put('/me/following/artists', {
+      const response = await api.put('/me/library/following/artists', {
         artists: [artistId],
       });
 
@@ -135,7 +135,7 @@ function Artist({ navigation, route }) {
 
   async function handleArtistUnfollow() {
     try {
-      const response = await api.delete('/me/following/artists', {
+      const response = await api.delete('/me/library/following/artists', {
         data: {
           artists: [artistId],
         },
