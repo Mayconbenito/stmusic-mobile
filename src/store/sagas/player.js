@@ -13,7 +13,7 @@ function* fetchPlaylist({ playlistId, playlistType }) {
   try {
     const response = yield call(
       api.get,
-      `/${playlistType}/${playlistId}/tracks`,
+      `/app/${playlistType}/${playlistId}/tracks`,
       {
         params: {
           limit: 100,
@@ -22,7 +22,7 @@ function* fetchPlaylist({ playlistId, playlistType }) {
       }
     );
 
-    const playlist = yield call(api.get, `/${playlistType}/${playlistId}`);
+    const playlist = yield call(api.get, `/app/${playlistType}/${playlistId}`);
 
     let name;
     if (playlist.data.playlist) {

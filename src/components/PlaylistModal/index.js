@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BackHandler } from 'react-native';
+import { useInfiniteQuery, useMutation, useQueryCache } from 'react-query';
 import { useSelector, useDispatch } from 'react-redux';
 
 import Loading from '~/components/Loading';
 import PlaylistItem from '~/components/PlaylistItem';
 import api from '~/services/api';
-import { Creators as LibraryPlaylistActions } from '~/store/ducks/libraryPlaylist';
 import { Creators as PlaylistModalActions } from '~/store/ducks/playlistModal';
 
 import {
@@ -22,44 +22,49 @@ import {
 function PlaylistModal() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const queryCache = useQueryCache();
   const playlistModal = useSelector(state => state.playlistModal);
 
-  const playlistInitialState = {
-    data: [],
-    total: 0,
-    page: 1,
-    loading: true,
-  };
+  const [totalPlaylists, setTotalPlaylists] = useState(0);
 
-  const [playlist, setPlaylist] = useState(playlistInitialState);
+  const playlistsQuery = useInfiniteQuery(
+    'libraryPlaylists',
+    async (key, page = 1) => {
+      const response = await api.get(`/app/me/library/playlists?page=${page}`);
 
-  async function fetchPlaylists() {
-    try {
-      const response = await api.get('/me/library/playlists', {
-        params: {
-          page: playlist.page,
-        },
-      });
+      return response.data;
+    },
+    {
+      getFetchMore: lastGroup => {
+        if (Math.ceil(lastGroup.meta.total / 10) > lastGroup.meta.page) {
+          return lastGroup.meta.page + 1;
+        }
 
-      setPlaylist({
-        data: [...playlist.data, ...response.data.playlists],
-        page: playlist.page + 1,
-        total: response.data.meta.total,
-        loading: false,
-      });
-    } catch (err) {
-      console.log(err);
+        return false;
+      },
     }
-  }
+  );
+
+  const [addTrackToPlaylist] = useMutation(
+    async ({ playlistId }) => {
+      await api.post(`/app/me/library/playlists/${playlistId}/tracks`, {
+        tracks: [playlistModal.trackId],
+      });
+
+      return { playlistId };
+    },
+    {
+      onSettled: ({ playlistId }) => {
+        queryCache.invalidateQueries('libraryPlaylists');
+        queryCache.invalidateQueries(`playlist-${playlistId}-tracks`);
+      },
+    }
+  );
 
   function handleBackPress() {
     dispatch(PlaylistModalActions.closeModal());
     return true;
   }
-
-  useEffect(() => {
-    fetchPlaylists();
-  }, []);
 
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', handleBackPress);
@@ -69,33 +74,20 @@ function PlaylistModal() {
     };
   }, []);
 
-  function endReached() {
-    if (playlist.total > playlist.data.length) {
-      fetchPlaylists();
+  const onEndReached = useCallback(() => {
+    playlistsQuery.fetchMore();
+  }, []);
+
+  useEffect(() => {
+    if (!playlistsQuery.isLoading) {
+      playlistsQuery.data.forEach(group => {
+        setTotalPlaylists(totalPlaylists + group.playlists.length);
+      });
     }
-  }
+  }, [playlistsQuery.isLoading, playlistsQuery.data]);
 
   function handleCloseModal() {
     dispatch(PlaylistModalActions.closeModal());
-  }
-
-  async function addTrackToPlaylist(playlistId) {
-    try {
-      handleCloseModal();
-      const response = await api.post(
-        `/me/library/playlists/${playlistId}/tracks`,
-        {
-          tracks: [playlistModal.trackId],
-        }
-      );
-
-      if (response.status === 204) {
-        dispatch(LibraryPlaylistActions.clearState());
-        dispatch(LibraryPlaylistActions.fetchPlaylists());
-      }
-    } catch (err) {
-      console.log(err);
-    }
   }
 
   return (
@@ -106,26 +98,29 @@ function PlaylistModal() {
           <HeaderText>{t('playlist_modal.select_playlist')}</HeaderText>
         </Header>
 
-        {playlist.data.length === 0 && (
+        {totalPlaylists === 0 && !playlistsQuery.isLoading && (
           <WarningText>
             {t('playlist_modal.you_dont_have_any_playlist')}
           </WarningText>
         )}
 
-        {playlist.loading && <Loading />}
+        {playlistsQuery.isLoading && <Loading />}
 
-        {playlist.data.length > 0 && !playlist.loading && (
+        {totalPlaylists > 0 && !playlistsQuery.isLoading && (
           <List
-            data={playlist.data}
+            data={playlistsQuery.data.reduce(
+              (acc, val) => acc.concat(val.playlists),
+              []
+            )}
             keyExtractor={item => `item-${item.id}`}
             renderItem={({ item }) => (
               <PlaylistItem
                 data={item}
                 imageBorder
-                onPress={() => addTrackToPlaylist(item.id)}
+                onPress={() => addTrackToPlaylist({ playlistId: item.id })}
               />
             )}
-            onEndReached={endReached}
+            onEndReached={onEndReached}
             onEndReachedThreshold={0.1}
           />
         )}

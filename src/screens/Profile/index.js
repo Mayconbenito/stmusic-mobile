@@ -1,12 +1,10 @@
-import NetInfo from '@react-native-community/netinfo';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
 import HeaderIcon from '~/components/HeaderIcon';
-import Loading from '~/components/Loading';
 import AuthContext from '~/contexts/AuthContext';
-import api from '~/services/api';
+import { useFetch } from '~/hooks/useFetch';
 import { Creators as PlayerActions } from '~/store/ducks/player';
 
 import {
@@ -20,7 +18,6 @@ import {
 
 function Profile({ navigation }) {
   const { t } = useTranslation();
-  const [loading, setLoading] = useState();
   const dispatch = useDispatch();
   const auth = useContext(AuthContext);
 
@@ -31,25 +28,22 @@ function Profile({ navigation }) {
     headerTitle: () => <HeaderIcon />,
   });
 
-  async function fetchUser() {
-    try {
-      setLoading(true);
-      const isConnected = await NetInfo.fetch();
-      if (isConnected) {
-        const response = await api.get('/me');
-        auth.setData(response.data.user);
-      }
-      setLoading(false);
+  const userQuery = useFetch('profile-me', `/v1/profile/me`);
 
-      // eslint-disable-next-line no-empty
-    } catch (err) {
-      setLoading(false);
-    }
-  }
+  const user = {
+    name: userQuery.data?.data.name || auth.userData?.name,
+    avatar: userQuery.data?.data.avatar || auth.userData?.avatar,
+  };
 
   useEffect(() => {
-    fetchUser();
-  }, []);
+    if (userQuery.data?.data) {
+      auth.setData({
+        name: userQuery.data?.data.name,
+        email: userQuery.data?.data.email,
+        avatar: userQuery.data?.data.avatar,
+      });
+    }
+  }, [userQuery.data]);
 
   async function handleLogout() {
     dispatch(PlayerActions.clearState());
@@ -58,19 +52,13 @@ function Profile({ navigation }) {
 
   return (
     <Container>
-      {loading && <Loading animating />}
-
-      {!loading && (
-        <>
-          <User>
-            <Image source={require('~/assets/images/fallback-square.png')} />
-            <Name>{auth.userData?.name}</Name>
-          </User>
-          <LogoutButton onPress={handleLogout}>
-            <LogoutButtonText>{t('profile.logout')}</LogoutButtonText>
-          </LogoutButton>
-        </>
-      )}
+      <User>
+        <Image source={require('~/assets/images/fallback-square.png')} />
+        <Name>{user.name}</Name>
+      </User>
+      <LogoutButton onPress={handleLogout}>
+        <LogoutButtonText>{t('profile.logout')}</LogoutButtonText>
+      </LogoutButton>
     </Container>
   );
 }

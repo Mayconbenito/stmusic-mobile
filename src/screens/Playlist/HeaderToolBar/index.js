@@ -3,33 +3,36 @@ import { useTranslation } from 'react-i18next';
 import { TouchableOpacity } from 'react-native';
 import Menu, { MenuItem } from 'react-native-material-menu';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { useDispatch } from 'react-redux';
+import { useMutation, useQueryCache } from 'react-query';
 
 import api from '~/services/api';
-import { Creators as LibraryPlaylistActions } from '~/store/ducks/libraryPlaylist';
 
 function HeaderToolBar({ playlistId, navigation }) {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+
   const menuRef = useRef();
+
+  const queryCache = useQueryCache();
 
   function showMenu() {
     menuRef.current.show();
   }
 
-  async function handleDeletePlaylist() {
-    try {
-      const response = await api.delete(`/me/library/playlists/${playlistId}`);
+  const [deletePlaylist] = useMutation(
+    async () => {
+      const response = await api.delete(
+        `/app/me/library/playlists/${playlistId}`
+      );
 
-      if (response.status === 204) {
-        dispatch(LibraryPlaylistActions.clearState());
-        dispatch(LibraryPlaylistActions.fetchPlaylists());
+      return response.data;
+    },
+    {
+      onSettled: () => {
+        queryCache.invalidateQueries('libraryPlaylists');
         navigation.goBack();
-      }
-    } catch (err) {
-      console.log(err);
+      },
     }
-  }
+  );
 
   return (
     <Menu
@@ -47,7 +50,7 @@ function HeaderToolBar({ playlistId, navigation }) {
       }
       animationDuration={0}
     >
-      <MenuItem textStyle={{ color: '#fff' }} onPress={handleDeletePlaylist}>
+      <MenuItem textStyle={{ color: '#fff' }} onPress={deletePlaylist}>
         {t('playlist.tool_bar_delete_playlist')}
       </MenuItem>
     </Menu>

@@ -16,6 +16,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import Routes from './routes';
 
 LogBox.ignoreLogs([
+  'Setting a timer for a long period',
   'Warning: componentWillReceiveProps has been renamed',
   'VirtualizedLists',
   'React.createElement',

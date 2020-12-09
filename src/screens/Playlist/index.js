@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useInfiniteQuery, useMutation, useQueryCache } from 'react-query';
 import { useDispatch } from 'react-redux';
 
 import Fallback from '~/assets/images/fallback-square.png';
 import HeaderBackButton from '~/components/HeaderBackButton';
 import Loading from '~/components/Loading';
 import TrackItem from '~/components/TrackItem';
+import { useFetch } from '~/hooks/useFetch';
 import api from '~/services/api';
 import { Creators as PlayerActions } from '~/store/ducks/player';
 
@@ -24,8 +26,10 @@ import {
 
 function Playlist({ navigation, route }) {
   const { t } = useTranslation();
-  const playlistId = route.params.id;
   const dispatch = useDispatch();
+  const queryCache = useQueryCache();
+
+  const playlistId = route.params.id;
 
   navigation.setOptions({
     title: t('commons.playlist'),
@@ -41,113 +45,88 @@ function Playlist({ navigation, route }) {
     ),
   });
 
-  const [state, setState] = useState({
-    error: false,
-    loading: true,
-    data: {
-      name: '',
-      tracks: 0,
-      picture: '',
-    },
-    tracks: {
-      error: false,
-      loading: true,
-      data: [],
-      total: 0,
-      page: 1,
-    },
-  });
+  const [totalTracks, setTotalTracks] = useState(0);
 
-  useEffect(() => {
-    async function fetchPlaylist() {
-      try {
-        const [playlist, tracks] = await Promise.all([
-          api.get(`/playlists/${playlistId}`),
-          api.get(`/playlists/${playlistId}/tracks`, {
-            params: {
-              page: state.tracks.page,
-            },
-          }),
-        ]);
+  const playlistQuery = useFetch(
+    `playlist-${playlistId}`,
+    `/app/playlists/${playlistId}`
+  );
 
-        setState({
-          ...state,
-          error: false,
-          loading: false,
-          data: playlist.data.playlist,
-          tracks: {
-            error: false,
-            loading: false,
-            data: tracks.data.tracks,
-            total: tracks.data.meta.total,
-            page: tracks.data.meta.page + 1,
-          },
-        });
-      } catch (err) {
-        setState({ ...state, error: true, loading: false });
-      }
+  const tracksQuery = useInfiniteQuery(
+    `playlist-${playlistId}-tracks`,
+    async (key, page = 1) => {
+      const response = await api.get(
+        `/app/playlists/${playlistId}/tracks?page=${page}`
+      );
+
+      return response.data;
+    },
+    {
+      getFetchMore: lastGroup => {
+        if (Math.ceil(lastGroup?.meta.total / 10) > lastGroup?.meta.page) {
+          return lastGroup?.meta.page + 1;
+        }
+
+        return false;
+      },
     }
-    fetchPlaylist();
+  );
+
+  const onEndReached = useCallback(() => {
+    tracksQuery.fetchMore();
   }, []);
 
-  async function fetchTracks() {
-    try {
-      setState({ ...state, tracks: { ...state.tracks, loading: true } });
-      const response = await api.get(`/playlists/${playlistId}/tracks`, {
-        params: {
-          page: state.tracks.page,
-        },
-      });
-
-      setState({
-        ...state,
-        tracks: {
-          error: false,
-          loading: false,
-          data: [...state.tracks.data, ...response.data.tracks],
-          total: response.data.meta.total,
-          page: response.data.meta.page + 1,
-        },
-      });
-    } catch (err) {
-      setState({
-        ...state,
-        tracks: { ...state.tracks, error: true, loading: false },
-      });
-    }
-  }
-
-  async function handleRemoveTrackFromPlaylist(trackId) {
-    try {
+  const [removeTrackFromPlaylist] = useMutation(
+    async ({ trackId }) => {
       const response = await api.delete(
-        `/me/library/playlists/${playlistId}/tracks`,
+        `/app/me/library/playlists/${playlistId}/tracks`,
         {
           data: { tracks: [trackId] },
         }
       );
 
-      if (response.status === 204) {
-        setState({
-          ...state,
-          tracks: {
-            ...state.tracks,
-            total: state.tracks.total - 1,
-            data: state.tracks.data.filter(track => track.id !== trackId),
-          },
-        });
-      }
-      // eslint-disable-next-line no-empty
-    } catch (err) {}
-  }
+      return response.data;
+    },
+    {
+      onMutate: ({ trackId }) => {
+        queryCache.cancelQueries(`playlist-${playlistId}-tracks`);
 
-  function endReached() {
-    if (
-      state.tracks.total > state.tracks.data.length &&
-      !state.tracks.loading
-    ) {
-      fetchTracks();
+        const previousTodos = queryCache.getQueryData(
+          `playlist-${playlistId}-tracks`
+        );
+
+        queryCache.setQueryData(`playlist-${playlistId}-tracks`, old => {
+          return old.map(group => {
+            return {
+              meta: {
+                ...group.meta,
+                total: group.total - 1,
+              },
+              tracks: group.tracks.filter(track => track.id !== trackId),
+            };
+          });
+        });
+
+        return () =>
+          queryCache.setQueryData(
+            `playlist-${playlistId}-tracks`,
+            previousTodos
+          );
+      },
+      onError: (err, _, rollback) => rollback(),
+      onSettled: () => {
+        queryCache.invalidateQueries(`playlist-${playlistId}-tracks`);
+      },
     }
-  }
+  );
+
+  useEffect(() => {
+    if (tracksQuery.isSuccess) {
+      tracksQuery.data.forEach(group => {
+        setTotalTracks(totalTracks + group?.tracks.length);
+      });
+    }
+  }, [tracksQuery.isSuccess, tracksQuery.data]);
 
   function handlePlaylistPlay() {
     dispatch(PlayerActions.fetchPlaylist(playlistId, 'playlists'));
@@ -155,18 +134,20 @@ function Playlist({ navigation, route }) {
 
   return (
     <ParentContainer>
-      {state.loading && <Loading />}
-      {!state.loading && (
+      {playlistQuery.isLoading && <Loading />}
+      {playlistQuery.isSuccess && (
         <Container>
           <List
             ListHeaderComponent={
               <Details>
                 <Image
-                  source={{ uri: state.data.picture }}
+                  source={{ uri: playlistQuery.data?.playlist?.picture }}
                   fallback={Fallback}
                 />
-                <DetailsTitle>{state.data.name} </DetailsTitle>
-                {state.tracks.data.length > 0 ? (
+                <DetailsTitle>
+                  {playlistQuery.data?.playlist?.name}{' '}
+                </DetailsTitle>
+                {totalTracks > 0 ? (
                   <Button onPress={handlePlaylistPlay}>
                     <TextButton>{t('commons.play_tracks_button')}</TextButton>
                   </Button>
@@ -175,19 +156,30 @@ function Playlist({ navigation, route }) {
                 )}
               </Details>
             }
-            data={state.tracks.data}
-            keyExtractor={item => `key-${item.id}`}
+            data={
+              totalTracks > 0
+                ? tracksQuery.data.reduce(
+                    (acc, val) => acc.concat(val.tracks),
+                    []
+                  )
+                : []
+            }
+            keyExtractor={track => `key-${track.id}`}
             renderItem={({ item }) => (
               <TrackItem
                 data={item}
                 margin
                 isPlaylist
-                onRemoveTrackFromPlaylist={handleRemoveTrackFromPlaylist}
+                onRemoveTrackFromPlaylist={() =>
+                  removeTrackFromPlaylist({ trackId: item.id })
+                }
               />
             )}
-            onEndReached={endReached}
+            onEndReached={onEndReached}
             onEndReachedThreshold={0.4}
-            ListFooterComponent={state.tracks.loading && <Loading size={24} />}
+            ListFooterComponent={
+              tracksQuery.isFetchingMore && <Loading size={24} />
+            }
             ListFooterComponentStyle={{
               marginTop: 10,
             }}

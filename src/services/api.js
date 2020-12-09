@@ -9,7 +9,7 @@ const api = axios.create();
 api.interceptors.request.use(async config => {
   config.headers.Authorization = `Bearer ${await getAuthToken()}`;
 
-  config = { ...config, baseURL: `${env.API_URL}/app` };
+  config = { ...config, baseURL: `${env.API_URL}` };
 
   return config;
 });
