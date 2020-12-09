@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import FastStorage from 'react-native-fast-storage';
+import { queryCache } from 'react-query';
 
 import getAuthToken from '~/helpers/getAuthToken';
 
@@ -68,6 +69,7 @@ export const AuthProvider = ({ children }) => {
 
   async function destroySession() {
     await FastStorage.removeItem('@STMusic:token');
+    queryCache.clear();
     setToken(null);
   }
 

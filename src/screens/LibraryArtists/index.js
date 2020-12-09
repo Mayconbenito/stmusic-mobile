@@ -1,48 +1,61 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import { useInfiniteQuery } from 'react-query';
 
 import ArtistItem from '~/components/ArtistItem';
 import Loading from '~/components/Loading';
-import { Creators as LibraryArtistActions } from '~/store/ducks/libraryArtist';
+import api from '~/services/api';
 
 import { Container, WarningText } from './styles';
 
 function Artists({ navigation }) {
   const { t } = useTranslation();
-  const { fetchArtists } = LibraryArtistActions;
-  const libraryArtist = useSelector(state => state.libraryArtist);
-  const dispatch = useDispatch();
+  const [totalArtists, setTotalArtists] = useState(0);
 
-  useEffect(() => {
-    if (libraryArtist.data.length === 0) dispatch(fetchArtists());
+  const artistsQuery = useInfiniteQuery(
+    'libraryArtists',
+    async (key, page = 1) => {
+      const response = await api.get(
+        `/app/me/library/following/artists?page=${page}`
+      );
+
+      return response.data;
+    },
+    {
+      getFetchMore: lastGroup => {
+        if (Math.ceil(lastGroup.meta.total / 10) > lastGroup.meta.page) {
+          return lastGroup.meta.page + 1;
+        }
+
+        return false;
+      },
+    }
+  );
+
+  const onEndReached = useCallback(() => {
+    artistsQuery.fetchMore();
   }, []);
 
-  function endReached() {
-    if (
-      libraryArtist.total > libraryArtist.data.length &&
-      !libraryArtist.loading
-    ) {
-      dispatch(fetchArtists(libraryArtist.page));
+  useEffect(() => {
+    if (artistsQuery.isSuccess) {
+      artistsQuery.data.forEach(group => {
+        setTotalArtists(totalArtists + group.artists.length);
+      });
     }
-  }
-
-  const showLoadingSpinner = function() {
-    if (libraryArtist.loading && libraryArtist.page === 1) {
-      return true;
-    }
-    return false;
-  };
+  }, [artistsQuery.isSuccess, artistsQuery.data]);
 
   return (
     <Container>
-      {showLoadingSpinner() && <Loading />}
+      {artistsQuery.isLoading && <Loading />}
 
-      {!showLoadingSpinner() &&
-        (libraryArtist.data.length > 0 ? (
+      {artistsQuery.isSuccess &&
+        (totalArtists > 0 ? (
           <FlatList
-            data={libraryArtist.data}
+            data={artistsQuery.data.reduce(
+              (acc, val) => acc.concat(val.artists),
+              []
+            )}
             keyExtractor={item => `key-${item.id}`}
             renderItem={({ item }) => (
               <ArtistItem
@@ -50,9 +63,11 @@ function Artists({ navigation }) {
                 onPress={() => navigation.navigate('Artist', { id: item.id })}
               />
             )}
-            onEndReached={endReached}
+            onEndReached={onEndReached}
             onEndReachedThreshold={0.4}
-            ListFooterComponent={libraryArtist.loading && <Loading size={24} />}
+            ListFooterComponent={
+              artistsQuery.isFetchingMore && <Loading size={24} />
+            }
             ListFooterComponentStyle={{
               marginTop: 10,
             }}

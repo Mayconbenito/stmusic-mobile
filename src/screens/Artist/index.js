@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { View, TouchableOpacity } from 'react-native';
+import { useMutation, useQueryCache } from 'react-query';
 import { useDispatch } from 'react-redux';
 
 import BigAlbumItem from '~/components/BigAlbumItem';
 import HeaderBackButton from '~/components/HeaderBackButton';
 import Loading from '~/components/Loading';
 import TrackItem from '~/components/TrackItem';
+import { useFetch } from '~/hooks/useFetch';
 import api from '~/services/api';
-import { Creators as LibraryArtistsActions } from '~/store/ducks/libraryArtist';
 import { Creators as PlayerActions } from '~/store/ducks/player';
 
 import {
@@ -30,6 +31,9 @@ import {
 function Artist({ navigation, route }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const queryCache = useQueryCache();
+
+  const artistId = route.params.id;
 
   navigation.setOptions({
     title: t('commons.artist'),
@@ -43,145 +47,149 @@ function Artist({ navigation, route }) {
     headerRight: () => <View />,
   });
 
-  const artistId = route.params.id;
-  const [state, setState] = useState({
-    error: false,
-    loading: true,
-    data: {
-      name: '',
-      tracks: 0,
-      picture: '',
-    },
-    albums: {
-      data: [],
-    },
-    mostPlayedTracks: {
-      data: [],
-    },
-    tracks: {
-      data: [],
-    },
-  });
+  const artistFollowingStateQuery = useFetch(
+    `artist-${artistId}-followingState`,
+    `/app/me/library/following/artists/contains?artists=${artistId}`
+  );
+  const artistQuery = useFetch(
+    `artist-${artistId}`,
+    `/app/artists/${artistId}`
+  );
+  const albumsQuery = useFetch(
+    `artist-${artistId}-albums`,
+    `/app/artists/${artistId}/albums?page=1&limit=100`
+  );
+  const mostPlayedTracksQuery = useFetch(
+    `artist-${artistId}-mostPlayedTracks`,
+    `/app/artists/${artistId}/most-played-tracks?page=1&limit=10`
+  );
+  const tracksQuery = useFetch(
+    `artist-${artistId}-tracks`,
+    `/app/artists/${artistId}/tracks?page=1&limit=10`
+  );
 
-  useEffect(() => {
-    async function fetchArtist() {
-      try {
-        const [artist, albums, mostPlayedTracks, tracks] = await Promise.all([
-          api.get(`/artists/${artistId}`),
-          api.get(`/artists/${artistId}/albums`, {
-            params: {
-              page: 1,
-              limit: 100,
-            },
-          }),
-          api.get(`/artists/${artistId}/most-played-tracks`, {
-            params: {
-              page: 1,
-              limit: 10,
-            },
-          }),
-          api.get(`/artists/${artistId}/tracks`, {
-            params: {
-              page: 1,
-              limit: 15,
-            },
-          }),
-        ]);
+  const [followArtist] = useMutation(
+    async () => {
+      const response = await api.put('/app/me/library/following/artists', {
+        artists: [parseInt(artistId)],
+      });
 
-        const followingState = await api.get(
-          `/me/library/following/artists/contains?artists=${artistId}`
+      return response.data;
+    },
+    {
+      onMutate: () => {
+        queryCache.cancelQueries(`artist-${artistId}-followingState`);
+
+        const previousFollowingState = queryCache.getQueryData(
+          `artist-${artistId}-followingState`
         );
 
-        setState({
-          ...state,
-          error: false,
-          loading: false,
-          data: {
-            ...artist.data.artist,
-            followingState: followingState.data.artists.find(
-              itemId => itemId === parseInt(artistId)
-            ),
-          },
-          albums: {
-            data: albums.data.albums,
-          },
-          mostPlayedTracks: {
-            data: mostPlayedTracks.data.tracks,
-          },
-          tracks: {
-            data: tracks.data.tracks,
-          },
+        queryCache.setQueryData(`artist-${artistId}-followingState`, () => {
+          return {
+            artists: [parseInt(artistId)],
+          };
         });
-        // eslint-disable-next-line no-empty
-      } catch (err) {}
+
+        queryCache.invalidateQueries('libraryArtists');
+
+        return () =>
+          queryCache.setQueryData(
+            `artist-${artistId}-followingState`,
+            previousFollowingState
+          );
+      },
+      onError: (err, _, rollback) => rollback(),
+      onSettled: () => {
+        queryCache.invalidateQueries(`artist-${artistId}-followingState`);
+      },
     }
-    fetchArtist();
-  }, []);
+  );
 
-  async function handleArtistFollow() {
-    try {
-      const response = await api.put('/me/library/following/artists', {
-        artists: [artistId],
+  const [unfollowArtist] = useMutation(
+    async () => {
+      const response = await api.delete('/app/me/library/following/artists', {
+        data: { artists: [artistId] },
       });
 
-      if (response.status === 204) {
-        setState({ ...state, data: { ...state.data, followingState: true } });
-        dispatch(LibraryArtistsActions.clearState());
-        dispatch(LibraryArtistsActions.fetchArtists());
-      }
-      // eslint-disable-next-line no-empty
-    } catch (err) {}
-  }
+      return response.data;
+    },
+    {
+      onMutate: () => {
+        queryCache.cancelQueries(`artist-${artistId}-followingState`);
 
-  async function handleArtistUnfollow() {
-    try {
-      const response = await api.delete('/me/library/following/artists', {
-        data: {
-          artists: [artistId],
-        },
-      });
+        const previousFollowingState = queryCache.getQueryData(
+          `artist-${artistId}-followingState`
+        );
 
-      if (response.status === 204) {
-        setState({ ...state, data: { ...state.data, followingState: false } });
-        dispatch(LibraryArtistsActions.clearState());
-        dispatch(LibraryArtistsActions.fetchArtists());
-      }
-      // eslint-disable-next-line no-empty
-    } catch (err) {}
+        queryCache.setQueryData(`artist-${artistId}-followingState`, old => {
+          return {
+            artists: old.artists.filter(artist => {
+              return artist !== parseInt(artistId);
+            }),
+          };
+        });
+
+        queryCache.invalidateQueries('libraryArtists');
+
+        return () =>
+          queryCache.setQueryData(
+            `artist-${artistId}-followingState`,
+            previousFollowingState
+          );
+      },
+      onError: (err, _, rollback) => rollback(),
+      onSettled: () => {
+        queryCache.invalidateQueries(`artist-${artistId}-followingState`);
+      },
+    }
+  );
+
+  function handleFollowing() {
+    if (
+      artistFollowingStateQuery.isSuccess &&
+      !artistFollowingStateQuery.data.artists.find(
+        itemId => itemId === parseInt(artistId)
+      )
+    ) {
+      followArtist();
+    } else {
+      unfollowArtist();
+    }
   }
 
   return (
     <ParentContainer>
-      {state.loading && <Loading />}
-      {!state.loading && (
+      {artistQuery.isLoading && <Loading />}
+      {artistQuery.isSuccess && (
         <Container>
           <Details>
             <Image
-              source={{ uri: state.data.picture }}
+              source={{ uri: artistQuery.data?.artist?.picture }}
               fallback={require('~/assets/images/fallback-square.png')}
             />
-            <DetailsTitle>{state.data.name}</DetailsTitle>
+            <DetailsTitle>{artistQuery.data.artist.name}</DetailsTitle>
             <Buttons>
-              {state.data.followingState ? (
-                <Button onPress={handleArtistUnfollow}>
-                  <TextButton>{t('commons.following')}</TextButton>
-                </Button>
-              ) : (
-                <Button onPress={handleArtistFollow}>
-                  <TextButton>{t('commons.follow')}</TextButton>
-                </Button>
-              )}
+              <Button onPress={handleFollowing}>
+                <TextButton>
+                  {artistFollowingStateQuery.isSuccess &&
+                  artistFollowingStateQuery.data.artists.find(
+                    itemId => itemId === parseInt(artistId)
+                  )
+                    ? t('commons.following')
+                    : t('commons.follow')}
+                </TextButton>
+              </Button>
             </Buttons>
           </Details>
 
-          {state.albums.data.length > 0 && (
+          {albumsQuery.isSuccess && albumsQuery.data?.albums?.length > 0 && (
             <ScrollerContainer style={{ marginTop: 0 }}>
               <ScrollerHeader>
                 <ScrollerTitleText>{t('commons.albums')}</ScrollerTitleText>
               </ScrollerHeader>
               <List
-                data={state.albums.data}
-                keyExtractor={item => `key-${item.id}`}
+                data={albumsQuery.data.albums}
+                keyExtractor={track => `key-${track.id}`}
                 renderItem={({ item }) => (
                   <BigAlbumItem
                     data={item}
@@ -195,7 +203,7 @@ function Artist({ navigation, route }) {
             </ScrollerContainer>
           )}
 
-          {state.mostPlayedTracks.data.length > 0 && (
+          {mostPlayedTracksQuery.data?.tracks?.length > 0 && (
             <ScrollerContainer style={{ marginTop: 0 }}>
               <ScrollerHeader>
                 <ScrollerTitleText>
@@ -205,8 +213,8 @@ function Artist({ navigation, route }) {
                   onPress={() =>
                     dispatch(
                       PlayerActions.playPlaylist({
-                        name: `Mais tocadas de ${state.data.name}`,
-                        tracks: state.mostPlayedTracks.data,
+                        name: `Mais tocadas de ${artistQuery.data.name}`,
+                        tracks: mostPlayedTracksQuery.data.tracks,
                       })
                     )
                   }
@@ -215,13 +223,13 @@ function Artist({ navigation, route }) {
                   <ScrollerHeaderButton />
                 </TouchableOpacity>
               </ScrollerHeader>
-              {state.mostPlayedTracks.data.map(item => (
+              {mostPlayedTracksQuery.data?.tracks?.map(item => (
                 <TrackItem key={item.id} data={item} />
               ))}
             </ScrollerContainer>
           )}
 
-          {state.tracks.data.length > 0 && (
+          {tracksQuery.data?.tracks?.length > 0 && (
             <ScrollerContainer style={{ marginTop: 0 }}>
               <ScrollerHeader>
                 <ScrollerTitleText>{t('commons.tracks')}</ScrollerTitleText>
@@ -229,8 +237,8 @@ function Artist({ navigation, route }) {
                   onPress={() =>
                     dispatch(
                       PlayerActions.playPlaylist({
-                        name: state.data.name,
-                        tracks: state.tracks.data,
+                        name: artistQuery.data.name,
+                        tracks: tracksQuery.data.tracks,
                       })
                     )
                   }
@@ -239,7 +247,7 @@ function Artist({ navigation, route }) {
                   <ScrollerHeaderButton />
                 </TouchableOpacity>
               </ScrollerHeader>
-              {state.tracks.data.map(item => (
+              {tracksQuery.data?.tracks?.map(item => (
                 <TrackItem key={item.id} data={item} />
               ))}
             </ScrollerContainer>

@@ -1,12 +1,13 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import BigTrackItem from '~/components/BigTrackItem';
 import HeaderIcon from '~/components/HeaderIcon';
 import Loading from '~/components/Loading';
-import { Creators as BrowseActions } from '~/store/ducks/browse';
+import { isLoggedIn } from '~/helpers/isLoggedIn';
+import { useFetch } from '~/hooks/useFetch';
 import { Creators as PlayerActions } from '~/store/ducks/player';
 
 import GenreItem from './GenreItem';
@@ -24,7 +25,6 @@ import {
 function Home({ navigation }) {
   const { t } = useTranslation();
 
-  const browse = useSelector(state => state.browse);
   const dispatch = useDispatch();
 
   navigation.setOptions({
@@ -34,17 +34,60 @@ function Home({ navigation }) {
     headerTitle: () => <HeaderIcon />,
   });
 
-  useEffect(() => {
-    dispatch(BrowseActions.fetchBrowse());
-  }, []);
+  let recentlyPlayedQuery;
+
+  if (isLoggedIn()) {
+    recentlyPlayedQuery = useFetch(
+      isLoggedIn() ? 'recentlyPlayed' : null,
+      '/app/me/recently-played?page=1&limit=30'
+    );
+  }
+
+  const genresQuery = useFetch('genres', '/app/genres?page=1&limit=30');
+  const trendingQuery = useFetch(
+    'trending',
+    '/app/browse/tracks/trending?page=1&limit=30'
+  );
+  const mostPlayedTracksQuery = useFetch(
+    'mostPlayedTracks',
+    '/app/browse/tracks/most-played?page=1&limit=30'
+  );
+  const mostFollowedArtistsQuery = useFetch(
+    'mostFollowedArtists',
+    '/app/browse/artists/most-followed?page=1&limit=30'
+  );
+
+  function isLoading() {
+    if (!recentlyPlayedQuery?.isLoading) {
+      return false;
+    }
+
+    if (!genresQuery.isLoading) {
+      return false;
+    }
+
+    if (!trendingQuery.isLoading) {
+      return false;
+    }
+
+    if (!mostPlayedTracksQuery.isLoading) {
+      return false;
+    }
+
+    if (!mostFollowedArtistsQuery.isLoading) {
+      return false;
+    }
+
+    return true;
+  }
 
   return (
     <Container>
-      {browse.loading && <Loading />}
+      {isLoading() && <Loading />}
 
-      {!browse.loading && (
+      {!isLoading() && (
         <ScrollView>
-          {browse.recentlyPlayed.length > 0 && (
+          {recentlyPlayedQuery.data?.tracks?.length > 0 && (
             <ScrollerContainer>
               <ScrollerHeader>
                 <ScrollerTitleText>
@@ -55,7 +98,7 @@ function Home({ navigation }) {
                     dispatch(
                       PlayerActions.playPlaylist({
                         name: t('home.recently_played'),
-                        tracks: browse.recentlyPlayed,
+                        tracks: recentlyPlayedQuery.data?.tracks,
                       })
                     )
                   }
@@ -64,7 +107,7 @@ function Home({ navigation }) {
                 </ScrollerHeaderButton>
               </ScrollerHeader>
               <List
-                data={browse.recentlyPlayed}
+                data={recentlyPlayedQuery.data?.tracks}
                 keyExtractor={item => `key-${item.id}`}
                 renderItem={({ item }) => <BigTrackItem data={item} />}
                 horizontal
@@ -72,7 +115,7 @@ function Home({ navigation }) {
             </ScrollerContainer>
           )}
 
-          {browse.trending.length > 0 && (
+          {trendingQuery.data?.tracks?.length > 0 && (
             <ScrollerContainer>
               <ScrollerHeader>
                 <ScrollerTitleText>{t('home.trending')}</ScrollerTitleText>
@@ -81,7 +124,7 @@ function Home({ navigation }) {
                     dispatch(
                       PlayerActions.playPlaylist({
                         name: t('home.trending'),
-                        tracks: browse.trending,
+                        tracks: trendingQuery.data?.tracks,
                       })
                     )
                   }
@@ -91,7 +134,7 @@ function Home({ navigation }) {
               </ScrollerHeader>
 
               <List
-                data={browse.trending}
+                data={trendingQuery.data?.tracks}
                 keyExtractor={item => `key-${item.id}`}
                 renderItem={({ item }) => <BigTrackItem data={item} />}
                 horizontal
@@ -99,12 +142,12 @@ function Home({ navigation }) {
             </ScrollerContainer>
           )}
 
-          {browse.genres.length > 0 && (
+          {genresQuery.data?.genres?.length > 0 && (
             <ScrollerContainer>
               <ScrollerTitleText>{t('home.genres')}</ScrollerTitleText>
 
               <List
-                data={browse.genres}
+                data={genresQuery.data?.genres}
                 keyExtractor={item => `key-${item.id}`}
                 renderItem={({ item }) => (
                   <GenreItem
@@ -119,7 +162,7 @@ function Home({ navigation }) {
             </ScrollerContainer>
           )}
 
-          {browse.mostPlayed.length > 0 && (
+          {mostPlayedTracksQuery.data?.tracks?.length > 0 && (
             <ScrollerContainer>
               <ScrollerHeader>
                 <ScrollerTitleText>
@@ -130,7 +173,7 @@ function Home({ navigation }) {
                     dispatch(
                       PlayerActions.playPlaylist({
                         name: t('home.most_played_tracks'),
-                        tracks: browse.mostPlayed,
+                        tracks: mostPlayedTracksQuery.data?.tracks,
                       })
                     )
                   }
@@ -139,7 +182,7 @@ function Home({ navigation }) {
                 </ScrollerHeaderButton>
               </ScrollerHeader>
               <List
-                data={browse.mostPlayed}
+                data={mostPlayedTracksQuery.data?.tracks}
                 keyExtractor={item => `key-${item.id}`}
                 renderItem={({ item }) => <BigTrackItem data={item} />}
                 horizontal
@@ -147,14 +190,14 @@ function Home({ navigation }) {
             </ScrollerContainer>
           )}
 
-          {browse.mostFollowed.length > 0 && (
+          {mostFollowedArtistsQuery.data?.artists?.length > 0 && (
             <ScrollerContainer style={{ marginBottom: 0 }}>
               <ScrollerTitleText>
                 {t('home.most_followed_artists')}
               </ScrollerTitleText>
 
               <List
-                data={browse.mostFollowed}
+                data={mostFollowedArtistsQuery.data?.artists}
                 keyExtractor={item => `key-${item.id}`}
                 renderItem={({ item }) => (
                   <HomeArtistItem

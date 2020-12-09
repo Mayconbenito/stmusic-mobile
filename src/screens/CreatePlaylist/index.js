@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { useMutation, useQueryCache } from 'react-query';
 
 import HeaderBackButton from '~/components/HeaderBackButton';
 import api from '~/services/api';
-import { Creators as LibraryPlaylistActions } from '~/store/ducks/libraryPlaylist';
 
 import {
   Container,
@@ -18,7 +17,8 @@ import {
 
 function CreatePlaylist({ navigation }) {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+
+  const queryCache = useQueryCache();
 
   navigation.setOptions({
     headerLeft: () => <HeaderBackButton onPress={() => navigation.goBack()} />,
@@ -32,35 +32,32 @@ function CreatePlaylist({ navigation }) {
     headerRight: () => <View />,
   });
 
-  const [name, setName] = useState('');
+  const [playlistName, setPlaylistName] = useState('');
 
-  async function handleCreatePlaylist() {
-    try {
-      const response = await api.post('/me/library/playlists', {
+  const [createPlaylist] = useMutation(
+    async ({ name }) => {
+      const response = await api.post(`/app/me/library/playlists`, {
         name,
       });
 
-      if (response.status === 200) {
-        dispatch(LibraryPlaylistActions.clearState());
-        dispatch(LibraryPlaylistActions.fetchPlaylists());
+      return response.data;
+    },
+    {
+      onSettled: () => {
+        queryCache.invalidateQueries('libraryPlaylists');
         navigation.goBack();
-      }
-    } catch (err) {
-      console.log(err);
+      },
     }
-  }
+  );
 
-  function setInputName(txt) {
-    setName(txt);
-  }
   return (
     <Container>
       <InputContainer>
         <InputDescription>
           {t('create_playlist.type_playlist_name')}
         </InputDescription>
-        <Input onChangeText={setInputName} />
-        <Submit onPress={handleCreatePlaylist}>
+        <Input onChangeText={txt => setPlaylistName(txt)} />
+        <Submit onPress={() => createPlaylist({ name: playlistName })}>
           <SubmitText>{t('create_playlist.create_playlist_button')}</SubmitText>
         </Submit>
       </InputContainer>
