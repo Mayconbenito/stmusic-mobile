@@ -132,6 +132,8 @@ function Playlist({ navigation, route }) {
     dispatch(PlayerActions.fetchPlaylist(playlistId, 'playlists'));
   }
 
+  const isTracksLoading = tracksQuery.isFetchingMore || tracksQuery.isLoading;
+
   return (
     <ParentContainer>
       {playlistQuery.isLoading && <Loading />}
@@ -177,9 +179,7 @@ function Playlist({ navigation, route }) {
             )}
             onEndReached={onEndReached}
             onEndReachedThreshold={0.4}
-            ListFooterComponent={
-              tracksQuery.isFetchingMore && <Loading size={24} />
-            }
+            ListFooterComponent={isTracksLoading && <Loading size={24} />}
             ListFooterComponentStyle={{
               marginTop: 10,
             }}

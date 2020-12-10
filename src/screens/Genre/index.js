@@ -82,6 +82,8 @@ function Genre({ navigation, route }) {
     dispatch(PlayerActions.fetchPlaylist(genreId, 'genres'));
   }
 
+  const isTracksLoading = tracksQuery.isFetchingMore || tracksQuery.isLoading;
+
   return (
     <ParentContainer>
       {genreQuery.isLoading && <Loading />}
@@ -113,9 +115,7 @@ function Genre({ navigation, route }) {
             renderItem={({ item }) => <TrackItem data={item} margin />}
             onEndReached={onEndReached}
             onEndReachedThreshold={0.4}
-            ListFooterComponent={
-              tracksQuery.isFetchingMore && <Loading size={24} />
-            }
+            ListFooterComponent={isTracksLoading && <Loading size={24} />}
             ListFooterComponentStyle={{
               marginTop: 10,
             }}
