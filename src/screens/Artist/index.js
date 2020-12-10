@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View, TouchableOpacity } from 'react-native';
-import { useMutation, useQueryCache } from 'react-query';
+import { useInfiniteQuery, useMutation, useQueryCache } from 'react-query';
 import { useDispatch } from 'react-redux';
 
 import BigAlbumItem from '~/components/BigAlbumItem';
@@ -32,6 +32,7 @@ function Artist({ navigation, route }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const queryCache = useQueryCache();
+  const [totalAlbums, setTotalAlbums] = useState(0);
 
   const artistId = route.params.id;
 
@@ -55,10 +56,26 @@ function Artist({ navigation, route }) {
     `artist-${artistId}`,
     `/app/artists/${artistId}`
   );
-  const albumsQuery = useFetch(
+  const albumsQuery = useInfiniteQuery(
     `artist-${artistId}-albums`,
-    `/app/artists/${artistId}/albums?page=1&limit=100`
+    async (key, page = 1) => {
+      const response = await api.get(
+        `/app/artists/${artistId}/albums?page=${page}&limit=10`
+      );
+
+      return response.data;
+    },
+    {
+      getFetchMore: lastGroup => {
+        if (Math.ceil(lastGroup.meta.total / 10) > lastGroup.meta.page) {
+          return lastGroup.meta.page + 1;
+        }
+
+        return false;
+      },
+    }
   );
+
   const mostPlayedTracksQuery = useFetch(
     `artist-${artistId}-mostPlayedTracks`,
     `/app/artists/${artistId}/most-played-tracks?page=1&limit=10`
@@ -157,6 +174,34 @@ function Artist({ navigation, route }) {
     }
   }
 
+  function isLoading() {
+    if (!albumsQuery.isLoading) {
+      return false;
+    }
+
+    if (!mostPlayedTracksQuery.isLoading) {
+      return false;
+    }
+
+    if (!tracksQuery.isLoading) {
+      return false;
+    }
+
+    return true;
+  }
+
+  const onAlbumsEndReached = useCallback(() => {
+    albumsQuery.fetchMore();
+  }, []);
+
+  useEffect(() => {
+    if (albumsQuery.isSuccess) {
+      albumsQuery.data.forEach(group => {
+        setTotalAlbums(totalAlbums + group.albums.length);
+      });
+    }
+  }, [albumsQuery.isSuccess, albumsQuery.data]);
+
   return (
     <ParentContainer>
       {artistQuery.isLoading && <Loading />}
@@ -182,13 +227,18 @@ function Artist({ navigation, route }) {
             </Buttons>
           </Details>
 
-          {albumsQuery.isSuccess && albumsQuery.data?.albums?.length > 0 && (
+          {isLoading() && <Loading size={24} style={{ marginTop: 5 }} />}
+
+          {albumsQuery.isSuccess && totalAlbums > 0 && (
             <ScrollerContainer style={{ marginTop: 0 }}>
               <ScrollerHeader>
                 <ScrollerTitleText>{t('commons.albums')}</ScrollerTitleText>
               </ScrollerHeader>
               <List
-                data={albumsQuery.data.albums}
+                data={albumsQuery.data.reduce(
+                  (acc, val) => acc.concat(val.albums),
+                  []
+                )}
                 keyExtractor={track => `key-${track.id}`}
                 renderItem={({ item }) => (
                   <BigAlbumItem
@@ -198,6 +248,8 @@ function Artist({ navigation, route }) {
                     }
                   />
                 )}
+                onEndReached={onAlbumsEndReached}
+                onEndReachedThreshold={0.6}
                 horizontal
               />
             </ScrollerContainer>
