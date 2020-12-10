@@ -94,6 +94,10 @@ function Artist({ navigation, route }) {
       return response.data;
     },
     {
+      onSettled: () => {
+        queryCache.invalidateQueries('libraryArtists');
+        queryCache.invalidateQueries(`artist-${artistId}-followingState`);
+      },
       onMutate: () => {
         queryCache.cancelQueries(`artist-${artistId}-followingState`);
 
@@ -107,8 +111,6 @@ function Artist({ navigation, route }) {
           };
         });
 
-        queryCache.invalidateQueries('libraryArtists');
-
         return () =>
           queryCache.setQueryData(
             `artist-${artistId}-followingState`,
@@ -116,9 +118,6 @@ function Artist({ navigation, route }) {
           );
       },
       onError: (err, _, rollback) => rollback(),
-      onSettled: () => {
-        queryCache.invalidateQueries(`artist-${artistId}-followingState`);
-      },
     }
   );
 
@@ -131,6 +130,10 @@ function Artist({ navigation, route }) {
       return response.data;
     },
     {
+      onSettled: () => {
+        queryCache.invalidateQueries('libraryArtists');
+        queryCache.invalidateQueries(`artist-${artistId}-followingState`);
+      },
       onMutate: () => {
         queryCache.cancelQueries(`artist-${artistId}-followingState`);
 
@@ -146,8 +149,6 @@ function Artist({ navigation, route }) {
           };
         });
 
-        queryCache.invalidateQueries('libraryArtists');
-
         return () =>
           queryCache.setQueryData(
             `artist-${artistId}-followingState`,
@@ -155,9 +156,6 @@ function Artist({ navigation, route }) {
           );
       },
       onError: (err, _, rollback) => rollback(),
-      onSettled: () => {
-        queryCache.invalidateQueries(`artist-${artistId}-followingState`);
-      },
     }
   );
 
