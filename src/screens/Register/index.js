@@ -71,7 +71,7 @@ function Register({ navigation }) {
   async function handleRegister() {
     try {
       setLoading(true);
-      const response = await api.post('/register', {
+      const response = await api.post('/app/register', {
         name,
         email,
         password,
