@@ -64,7 +64,7 @@ function Login({ navigation }) {
   async function handleLogin() {
     try {
       setLoading(true);
-      const response = await api.post('/sessions', {
+      const response = await api.post('/app/sessions', {
         email,
         password,
       });
