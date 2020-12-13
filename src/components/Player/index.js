@@ -165,7 +165,7 @@ function Player() {
 
   async function handleSetPlayCount() {
     try {
-      await api.post(`/tracks/plays/${player.active.id}`);
+      await api.post(`/app/tracks/plays/${player.active.id}`);
     } catch (e) {
       console.log(e);
     }
