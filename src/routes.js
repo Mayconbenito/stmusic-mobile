@@ -5,10 +5,10 @@ import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-// import { useSelector } from 'react-redux';
 
 import HeaderIcon from '~/components/HeaderIcon';
 
+import Loading from './components/Loading';
 import AuthContext from './contexts/AuthContext';
 import Album from './screens/Album';
 import Artist from './screens/Artist';
@@ -103,7 +103,11 @@ function Routes() {
   const auth = useContext(AuthContext);
 
   if (auth.isLoading) {
-    return <View style={{ flex: 1, backgroundColor: '#141414' }} />;
+    return (
+      <View style={{ flex: 1, backgroundColor: '#141414' }}>
+        <Loading />
+      </View>
+    );
   }
 
   if (!auth.isLoading && auth.isLoggedIn) {
