@@ -1,4 +1,4 @@
-import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React, { useContext } from 'react';
@@ -25,7 +25,7 @@ import Welcome from './screens/Welcome';
 import { navigationRef } from './services/navigation';
 
 const Stack = createStackNavigator();
-const Tab = createMaterialBottomTabNavigator();
+const Tab = createBottomTabNavigator();
 
 const HomeStack = createStackNavigator();
 
@@ -116,7 +116,7 @@ function Routes() {
         <Tab.Navigator
           activeColor="#d99207"
           inactiveColor="#fff"
-          shifting={false}
+          lazy={false}
           barStyle={{ backgroundColor: '#000' }}
           screenOptions={({ route }) => ({
             tabBarIcon: ({ color, size = 22 }) => {
@@ -144,8 +144,11 @@ function Routes() {
             },
           })}
           tabBarOptions={{
+            inactiveBackgroundColor: '#000',
+            activeBackgroundColor: '#000',
             activeTintColor: '#d99207',
             inactiveTintColor: '#fff',
+            keyboardHidesTabBar: true,
           }}
         >
           <Tab.Screen

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { View, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity, SectionList } from 'react-native';
 import { useInfiniteQuery, useMutation, useQueryCache } from 'react-query';
 import { useDispatch } from 'react-redux';
 
@@ -248,6 +248,12 @@ function Artist({ navigation, route }) {
                 )}
                 onEndReached={onAlbumsEndReached}
                 onEndReachedThreshold={0.6}
+                initialNumToRender={1}
+                getItemLayout={(data, index) => ({
+                  length: 180,
+                  offset: 180 * index,
+                  index,
+                })}
                 horizontal
               />
             </ScrollerContainer>
@@ -273,6 +279,7 @@ function Artist({ navigation, route }) {
                   <ScrollerHeaderButton />
                 </TouchableOpacity>
               </ScrollerHeader>
+              <SectionList />
               {mostPlayedTracksQuery.data?.tracks?.map(item => (
                 <TrackItem key={item.id} data={item} />
               ))}
