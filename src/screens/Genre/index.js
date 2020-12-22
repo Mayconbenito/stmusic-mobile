@@ -78,11 +78,32 @@ function Genre({ navigation, route }) {
     }
   }, [tracksQuery.isSuccess, tracksQuery.data]);
 
-  function handlePlaylistPlay() {
-    dispatch(PlayerActions.fetchPlaylist(genreId, 'genres'));
+  const isTracksLoading = tracksQuery.isFetchingMore || tracksQuery.isLoading;
+
+  function handleQueuePlay() {
+    if (genreQuery.isSuccess && tracksQuery.isSuccess && totalTracks > 0) {
+      const firstTrack = tracksQuery.data.map(group => group.tracks[0])[0];
+
+      dispatch(
+        PlayerActions.loadQueue({
+          name: genreQuery.data.genre.name,
+          id: genreId,
+          type: 'genres',
+          preloadedTrack: {
+            title: firstTrack.name,
+            artwork: firstTrack.picture,
+            artist: firstTrack.artists.map(
+              (artist, index) => (index ? ', ' : '') + artist.name
+            )[0],
+          },
+        })
+      );
+    }
   }
 
-  const isTracksLoading = tracksQuery.isFetchingMore || tracksQuery.isLoading;
+  function handleQueueTrackPlay(track) {
+    dispatch(PlayerActions.play(track, genreId));
+  }
 
   return (
     <ParentContainer>
@@ -95,7 +116,7 @@ function Genre({ navigation, route }) {
                 <Image source={Fallback} local />
                 <DetailsTitle>{genreQuery.data.genre.name} </DetailsTitle>
                 {totalTracks > 0 ? (
-                  <Button onPress={handlePlaylistPlay}>
+                  <Button onPress={handleQueuePlay}>
                     <TextButton>{t('commons.play_tracks_button')}</TextButton>
                   </Button>
                 ) : (
@@ -112,7 +133,13 @@ function Genre({ navigation, route }) {
                 : []
             }
             keyExtractor={track => `key-${track.id}`}
-            renderItem={({ item }) => <TrackItem data={item} margin />}
+            renderItem={({ item }) => (
+              <TrackItem
+                data={item}
+                margin
+                onPress={() => handleQueueTrackPlay(item.id)}
+              />
+            )}
             onEndReached={onEndReached}
             onEndReachedThreshold={0.4}
             ListFooterComponent={isTracksLoading && <Loading size={24} />}

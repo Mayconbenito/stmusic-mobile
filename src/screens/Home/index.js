@@ -57,6 +57,20 @@ function Home({ navigation }) {
     '/app/browse/artists/most-followed?page=1&limit=30'
   );
 
+  function handleQueuePlay({ name, tracks, nameKey }) {
+    dispatch(
+      PlayerActions.loadQueue(null, {
+        id: nameKey,
+        name,
+        tracks,
+      })
+    );
+  }
+
+  function handleQueueTrackPlay(track, nameKey) {
+    dispatch(PlayerActions.play(track, nameKey));
+  }
+
   function isLoading() {
     if (!recentlyPlayedQuery?.isLoading) {
       return false;
@@ -94,14 +108,13 @@ function Home({ navigation }) {
                   {t('home.recently_played')}
                 </ScrollerTitleText>
                 <ScrollerHeaderButton
-                  onPress={() =>
-                    dispatch(
-                      PlayerActions.playPlaylist({
-                        name: t('home.recently_played'),
-                        tracks: recentlyPlayedQuery.data?.tracks,
-                      })
-                    )
-                  }
+                  onPress={() => {
+                    handleQueuePlay({
+                      name: t('home.recently_played'),
+                      tracks: recentlyPlayedQuery?.data?.tracks,
+                      nameKey: 'recently_played',
+                    });
+                  }}
                 >
                   <ScrollerHeaderButtonIcon />
                 </ScrollerHeaderButton>
@@ -109,7 +122,14 @@ function Home({ navigation }) {
               <List
                 data={recentlyPlayedQuery.data?.tracks}
                 keyExtractor={item => `key-${item.id}`}
-                renderItem={({ item }) => <BigTrackItem data={item} />}
+                renderItem={({ item }) => (
+                  <BigTrackItem
+                    data={item}
+                    onPress={() =>
+                      handleQueueTrackPlay(item, 'recently_played')
+                    }
+                  />
+                )}
                 horizontal
               />
             </ScrollerContainer>
@@ -120,14 +140,13 @@ function Home({ navigation }) {
               <ScrollerHeader>
                 <ScrollerTitleText>{t('home.trending')}</ScrollerTitleText>
                 <ScrollerHeaderButton
-                  onPress={() =>
-                    dispatch(
-                      PlayerActions.playPlaylist({
-                        name: t('home.trending'),
-                        tracks: trendingQuery.data?.tracks,
-                      })
-                    )
-                  }
+                  onPress={() => {
+                    handleQueuePlay({
+                      name: t('home.trending'),
+                      tracks: trendingQuery?.data?.tracks,
+                      nameKey: 'trending',
+                    });
+                  }}
                 >
                   <ScrollerHeaderButtonIcon />
                 </ScrollerHeaderButton>
@@ -136,7 +155,12 @@ function Home({ navigation }) {
               <List
                 data={trendingQuery.data?.tracks}
                 keyExtractor={item => `key-${item.id}`}
-                renderItem={({ item }) => <BigTrackItem data={item} />}
+                renderItem={({ item }) => (
+                  <BigTrackItem
+                    data={item}
+                    onClick={() => handleQueueTrackPlay(item, 'trending')}
+                  />
+                )}
                 horizontal
               />
             </ScrollerContainer>
@@ -169,14 +193,13 @@ function Home({ navigation }) {
                   {t('home.most_played_tracks')}
                 </ScrollerTitleText>
                 <ScrollerHeaderButton
-                  onPress={() =>
-                    dispatch(
-                      PlayerActions.playPlaylist({
-                        name: t('home.most_played_tracks'),
-                        tracks: mostPlayedTracksQuery.data?.tracks,
-                      })
-                    )
-                  }
+                  onPress={() => {
+                    handleQueuePlay({
+                      name: t('home.most_played_tracks'),
+                      tracks: mostPlayedTracksQuery?.data?.tracks,
+                      nameKey: 'most_played_tracks',
+                    });
+                  }}
                 >
                   <ScrollerHeaderButtonIcon />
                 </ScrollerHeaderButton>
@@ -184,7 +207,14 @@ function Home({ navigation }) {
               <List
                 data={mostPlayedTracksQuery.data?.tracks}
                 keyExtractor={item => `key-${item.id}`}
-                renderItem={({ item }) => <BigTrackItem data={item} />}
+                renderItem={({ item }) => (
+                  <BigTrackItem
+                    data={item}
+                    onPress={() =>
+                      handleQueueTrackPlay(item, 'most_played_tracks')
+                    }
+                  />
+                )}
                 horizontal
               />
             </ScrollerContainer>

@@ -2,8 +2,11 @@ import 'react-native-gesture-handler';
 
 import React from 'react';
 import { AppRegistry } from 'react-native';
+import TrackPlayer from 'react-native-track-player';
 import { QueryCache, ReactQueryCacheProvider, setConsole } from 'react-query';
 import { Provider } from 'react-redux';
+
+import TrackPlayerService from '~/services/TrackPlayerService';
 
 import { name as appName } from './app.json';
 import App from './src/App';
@@ -34,3 +37,4 @@ function Main() {
 }
 
 AppRegistry.registerComponent(appName, () => Main);
+TrackPlayer.registerPlaybackService(() => TrackPlayerService);

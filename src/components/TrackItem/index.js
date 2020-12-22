@@ -1,8 +1,5 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDispatch } from 'react-redux';
-
-import { Creators as PlayerActions } from '~/store/ducks/player';
 
 import {
   Container,
@@ -17,19 +14,16 @@ import {
 import ToolBar from './ToolBar';
 
 function TrackItem({
+  onPress,
   data,
   margin,
   isPlaylist = false,
   onRemoveTrackFromPlaylist,
 }) {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
 
   return (
-    <Container
-      margin={margin}
-      onPress={() => dispatch(PlayerActions.play(data))}
-    >
+    <Container margin={margin} onPress={onPress}>
       <Image
         source={{ uri: data.picture }}
         fallback={require('~/assets/images/fallback-horizontal.png')}

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, TouchableOpacity, Keyboard, BackHandler } from 'react-native';
-import MusicControl from 'react-native-music-control';
+import TrackPlayer from 'react-native-track-player';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Video from 'react-native-video';
 import { useSelector, useDispatch } from 'react-redux';
 
 import env from '~/config/env';
+import useCurrentTrack from '~/hooks/useCurrentTrack';
+import usePlaybackState from '~/hooks/usePlaybackState';
 import api from '~/services/api';
 import { Creators as PlayerActions } from '~/store/ducks/player';
 import { Creators as PlaylistModalActions } from '~/store/ducks/playlistModal';
@@ -44,13 +45,15 @@ function Player() {
   const player = useSelector(state => state.player);
   const dispatch = useDispatch();
 
+  const playbackState = usePlaybackState();
+  const currentTrack = useCurrentTrack();
+
   const [showBigPlayer, setShowBigPlayer] = useState(false);
   const [playCountStatus, setPlayCountStatus] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [activeCounter, setActiveCounter] = useState(0);
 
   const [paused, setPaused] = useState(false);
-  const [notificationControls, setNotificationControls] = useState(false);
 
   useEffect(() => {
     function handleBackHandler() {
@@ -87,89 +90,13 @@ function Player() {
     };
   }, []);
 
-  useEffect(() => {
-    MusicControl.enableBackgroundMode(true);
-
-    MusicControl.on('play', () => {
-      dispatch(resume());
-    });
-
-    MusicControl.on('pause', () => {
-      dispatch(pause());
-    });
-
-    MusicControl.on('previousTrack', () => {
-      dispatch(prev());
-    });
-
-    MusicControl.on('nextTrack', () => {
-      dispatch(next());
-    });
-  }, []);
-
-  useEffect(() => {
-    if (player.active.name) {
-      setNotificationControls(true);
-      MusicControl.enableControl('play', true);
-      MusicControl.enableControl('pause', true);
-      MusicControl.enableControl('stop', false);
-      MusicControl.enableControl('nextTrack', true);
-      MusicControl.enableControl('previousTrack', true);
-
-      MusicControl.setNowPlaying({
-        title: player.active.name,
-        artwork: player.active.picture,
-        artist: player.active.artists.map(artist => artist.name).join(', '),
-        duration: player.active.duration,
-        color: 0x141414,
-        notificationIcon: 'ic_stat_icon',
-      });
-      setActiveCounter(activeCounter + 1);
-    }
-
-    if (!player.active && activeCounter > 0) {
-      setNotificationControls(false);
-      MusicControl.setNowPlaying({
-        notificationIcon: 'ic_stat_icon',
-      });
-      MusicControl.enableControl('closeNotification', true, { when: 'always' });
-    }
-
-    setPlayCountStatus(false);
-  }, [player.active.name]);
-
-  useEffect(() => {
-    if (notificationControls) {
-      if (player.isPlaying === 'STOPPED') {
-        MusicControl.updatePlayback({
-          state: MusicControl.STATE_STOPPED,
-        });
-        setPaused(true);
-      }
-
-      if (player.isPlaying === 'PAUSED') {
-        MusicControl.updatePlayback({
-          state: MusicControl.STATE_PAUSED,
-        });
-        setPaused(true);
-      }
-
-      if (player.isPlaying === 'PLAYING') {
-        MusicControl.updatePlayback({
-          state: MusicControl.STATE_PLAYING,
-        });
-        setPaused(false);
-      }
-    }
-  }, [player.isPlaying, notificationControls]);
-
-  async function handleSetPlayCount() {
-    try {
-      await api.post(`/app/tracks/plays/${player.active.id}`);
-    } catch (e) {
-      console.log(e);
-    }
-  }
+  // async function handleSetPlayCount() {
+  //   try {
+  //     await api.post(`/app/tracks/plays/${player.active.id}`);
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // }
 
   function formatTime(millis = 0) {
     const minutes = Math.floor(millis / 60);
@@ -178,21 +105,26 @@ function Player() {
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   }
 
-  function handleOnProgress(event) {
-    setCurrentTime(event.currentTime);
+  // function handleOnProgress(event) {
+  //   setCurrentTime(event.currentTime);
 
-    const percentage = Math.round(
-      (currentTime * 100) / player.active.duration || 0
-    );
-    if (!playCountStatus && percentage === 45) {
-      handleSetPlayCount();
-      setPlayCountStatus(true);
-    }
-  }
+  //   const percentage = Math.round(
+  //     (currentTime * 100) / player.active.duration || 0
+  //   );
+  //   if (!playCountStatus && percentage === 45) {
+  //     handleSetPlayCount();
+  //     setPlayCountStatus(true);
+  //   }
+  // }
 
-  function handleFinishedPlaying() {
-    dispatch(next());
-  }
+  // function handleFinishedPlaying() {
+  //   dispatch(next());
+  // }
+
+  const showPauseButton =
+    playbackState === TrackPlayer.STATE_PLAYING ||
+    playbackState === TrackPlayer.STATE_BUFFERING ||
+    playbackState === TrackPlayer.STATE_NONE;
 
   return (
     <>
@@ -208,28 +140,25 @@ function Player() {
                 />
               </TouchableOpacity>
             </BigPlayerHeader>
-            <Video
-              source={{
-                uri: `${env.STREAMER_URL}/yt?url=${player.active.youtubeId}`,
-              }}
-              paused={paused}
-              playInBackground
-              onEnd={handleFinishedPlaying}
-              onProgress={handleOnProgress}
-            />
+
             <BigPlayerTrackImage
-              source={{ uri: player.active.picture }}
+              source={{
+                uri:
+                  currentTrack?.artwork ||
+                  player?.queue?.preloadedTrack?.artwork,
+              }}
               defaultSource={require('~/assets/images/fallback-square.png')}
             />
             <BigPlayerDetails>
               <BigPlayerNames>
-                <BigPlayerTrackName>{player.active.name}</BigPlayerTrackName>
+                <BigPlayerTrackName>
+                  {currentTrack?.title || player?.queue?.preloadedTrack?.title}
+                </BigPlayerTrackName>
                 <ArtistsNames>
-                  {player.active.artists.map((artist, index) => (
-                    <BigPlayerArtistName key={artist.id}>
-                      {(index ? ', ' : '') + artist.name}
-                    </BigPlayerArtistName>
-                  ))}
+                  <BigPlayerArtistName>
+                    {currentTrack?.artist ||
+                      player?.queue?.preloadedTrack?.artist}
+                  </BigPlayerArtistName>
                 </ArtistsNames>
               </BigPlayerNames>
 
@@ -258,21 +187,20 @@ function Player() {
                         color="#d99207"
                       />
                     </Control>
-                    {player.isPlaying === 'PLAYING' && (
+                    {showPauseButton && (
                       <Control onPress={() => dispatch(pause())}>
                         <MaterialIcons name="pause" size={60} color="#d99207" />
                       </Control>
                     )}
-                    {player.isPlaying === 'PLAYING' ||
-                      ('STOPPED' && (
-                        <Control onPress={() => dispatch(resume())}>
-                          <MaterialIcons
-                            name="play-arrow"
-                            size={60}
-                            color="#d99207"
-                          />
-                        </Control>
-                      ))}
+                    {!showPauseButton && (
+                      <Control onPress={() => dispatch(resume())}>
+                        <MaterialIcons
+                          name="play-arrow"
+                          size={60}
+                          color="#d99207"
+                        />
+                      </Control>
+                    )}
                     <Control onPress={() => dispatch(next())}>
                       <MaterialIcons
                         name="skip-next"
@@ -281,10 +209,10 @@ function Player() {
                       />
                     </Control>
                   </BigPlayerMainControls>
-
+                  {console.log(currentTrack?.id)}
                   <Control
                     onPress={() =>
-                      dispatch(PlaylistModalActions.openModal(player.active.id))
+                      dispatch(PlaylistModalActions.openModal(currentTrack?.id))
                     }
                   >
                     <MaterialIcons
@@ -307,17 +235,23 @@ function Player() {
                   onStartShouldSetResponder={() => setShowBigPlayer(true)}
                 >
                   <Image
-                    source={{ uri: player.active.picture }}
+                    source={{
+                      uri:
+                        currentTrack?.artwork ||
+                        player?.queue?.preloadedTrack?.artwork,
+                    }}
                     defaultSource={require('~/assets/images/fallback-square.png')}
                   />
                   <Info>
-                    <TrackName>{player.active.name}</TrackName>
+                    <TrackName>
+                      {currentTrack?.title ||
+                        player?.queue?.preloadedTrack?.title}
+                    </TrackName>
                     <ArtistsNames>
-                      {player.active.artists.map((artist, index) => (
-                        <ArtistName key={artist.id}>
-                          {(index ? ', ' : '') + artist.name}
-                        </ArtistName>
-                      ))}
+                      <ArtistName>
+                        {currentTrack?.artist ||
+                          player?.queue?.preloadedTrack?.artist}
+                      </ArtistName>
                     </ArtistsNames>
                   </Info>
                 </Details>
@@ -329,21 +263,20 @@ function Player() {
                       color="#d99207"
                     />
                   </Control>
-                  {player.isPlaying === 'PLAYING' && (
+                  {showPauseButton && (
                     <Control onPress={() => dispatch(pause())}>
                       <MaterialIcons name="pause" size={30} color="#d99207" />
                     </Control>
                   )}
-                  {player.isPlaying === 'PLAYING' ||
-                    ('STOPPED' && (
-                      <Control onPress={() => dispatch(resume())}>
-                        <MaterialIcons
-                          name="play-arrow"
-                          size={30}
-                          color="#d99207"
-                        />
-                      </Control>
-                    ))}
+                  {!showPauseButton && (
+                    <Control onPress={() => dispatch(resume())}>
+                      <MaterialIcons
+                        name="play-arrow"
+                        size={30}
+                        color="#d99207"
+                      />
+                    </Control>
+                  )}
                   <Control onPress={() => dispatch(next())}>
                     <MaterialIcons name="skip-next" size={30} color="#d99207" />
                   </Control>
