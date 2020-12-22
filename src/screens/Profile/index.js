@@ -28,19 +28,19 @@ function Profile({ navigation }) {
     headerTitle: () => <HeaderIcon />,
   });
 
-  const userQuery = useFetch('profile-me', `/v1/profile/me`);
+  const userQuery = useFetch('profile-me', `/app/me`);
 
   const user = {
-    name: userQuery.data?.data.name || auth.userData?.name,
-    avatar: userQuery.data?.data.avatar || auth.userData?.avatar,
+    name: userQuery.data?.user.name || auth.userData?.name,
+    avatar: userQuery.data?.user.avatar || auth.userData?.avatar,
   };
 
   useEffect(() => {
     if (userQuery.data?.data) {
       auth.setData({
-        name: userQuery.data?.data.name,
-        email: userQuery.data?.data.email,
-        avatar: userQuery.data?.data.avatar,
+        name: userQuery.data?.user.name,
+        email: userQuery.data?.user.email,
+        avatar: userQuery.data?.user.avatar,
       });
     }
   }, [userQuery.data]);

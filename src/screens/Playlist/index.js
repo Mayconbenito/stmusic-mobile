@@ -128,11 +128,32 @@ function Playlist({ navigation, route }) {
     }
   }, [tracksQuery.isSuccess, tracksQuery.data]);
 
-  function handlePlaylistPlay() {
-    dispatch(PlayerActions.fetchPlaylist(playlistId, 'playlists'));
+  const isTracksLoading = tracksQuery.isFetchingMore || tracksQuery.isLoading;
+
+  function handleQueuePlay() {
+    if (playlistQuery.isSuccess && tracksQuery.isSuccess && totalTracks > 0) {
+      const firstTrack = tracksQuery.data.map(group => group.tracks[0])[0];
+
+      dispatch(
+        PlayerActions.loadQueue({
+          name: playlistQuery.data.playlist.name,
+          id: playlistId,
+          type: 'playlists',
+          preloadedTrack: {
+            title: firstTrack.name,
+            artwork: firstTrack.picture,
+            artist: firstTrack.artists.map(
+              (artist, index) => (index ? ', ' : '') + artist.name
+            )[0],
+          },
+        })
+      );
+    }
   }
 
-  const isTracksLoading = tracksQuery.isFetchingMore || tracksQuery.isLoading;
+  function handleQueueTrackPlay(track) {
+    dispatch(PlayerActions.play(track, playlistId));
+  }
 
   return (
     <ParentContainer>
@@ -150,7 +171,7 @@ function Playlist({ navigation, route }) {
                   {playlistQuery.data?.playlist?.name}{' '}
                 </DetailsTitle>
                 {totalTracks > 0 ? (
-                  <Button onPress={handlePlaylistPlay}>
+                  <Button onPress={handleQueuePlay}>
                     <TextButton>{t('commons.play_tracks_button')}</TextButton>
                   </Button>
                 ) : (
@@ -172,6 +193,7 @@ function Playlist({ navigation, route }) {
                 data={item}
                 margin
                 isPlaylist
+                onPress={() => handleQueueTrackPlay(item)}
                 onRemoveTrackFromPlaylist={() =>
                   removeTrackFromPlaylist({ trackId: item.id })
                 }

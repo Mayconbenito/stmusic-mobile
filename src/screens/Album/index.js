@@ -78,8 +78,29 @@ function Album({ navigation, route }) {
     }
   }, [tracksQuery.isSuccess, tracksQuery.data]);
 
-  function handlePlaylistPlay() {
-    dispatch(PlayerActions.fetchPlaylist(albumId, 'albums'));
+  function handleQueuePlay() {
+    if (albumQuery.isSuccess && tracksQuery.isSuccess && totalTracks > 0) {
+      const firstTrack = tracksQuery.data.map(group => group.tracks[0])[0];
+
+      dispatch(
+        PlayerActions.loadQueue({
+          name: albumQuery.data.album.name,
+          id: albumId,
+          type: 'albums',
+          preloadedTrack: {
+            title: firstTrack.name,
+            artwork: firstTrack.picture,
+            artist: firstTrack.artists.map(
+              (artist, index) => (index ? ', ' : '') + artist.name
+            )[0],
+          },
+        })
+      );
+    }
+  }
+
+  function handleQueueTrackPlay(track) {
+    dispatch(PlayerActions.play(track, albumId));
   }
 
   const isTracksLoading = tracksQuery.isFetchingMore || tracksQuery.isLoading;
@@ -99,7 +120,7 @@ function Album({ navigation, route }) {
                   />
                   <DetailsTitle>{albumQuery.data.album.name}</DetailsTitle>
                   <Buttons>
-                    <Button onPress={handlePlaylistPlay}>
+                    <Button onPress={handleQueuePlay}>
                       <TextButton>{t('commons.play_tracks_button')}</TextButton>
                     </Button>
                   </Buttons>
@@ -115,7 +136,13 @@ function Album({ navigation, route }) {
                 : []
             }
             keyExtractor={track => `key-${track.id}`}
-            renderItem={({ item }) => <TrackItem data={item} margin />}
+            renderItem={({ item }) => (
+              <TrackItem
+                data={item}
+                margin
+                onPress={() => handleQueueTrackPlay(item.id)}
+              />
+            )}
             onEndReached={onEndReached}
             onEndReachedThreshold={0.4}
             ListFooterComponent={isTracksLoading && <Loading size={24} />}

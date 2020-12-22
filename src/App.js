@@ -36,7 +36,7 @@ function App() {
 
   useEffect(() => {
     setTheme({
-      showPlayer: player.active ? player.showPlayer : false,
+      showPlayer: player.active ? player.active : false,
     });
   }, [player.active]);
 

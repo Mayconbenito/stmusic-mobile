@@ -14,8 +14,6 @@ import java.util.List;
 import android.net.Uri;
 import javax.annotation.Nullable;
 
-import com.brentvatne.react.ReactVideoPackage;
-
 import com.microsoft.codepush.react.CodePush;
 
 public class MainApplication extends MultiDexApplication implements ReactApplication {
@@ -32,7 +30,6 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
           List<ReactPackage> packages = new PackageList(this).getPackages();
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
-          packages.add(new ReactVideoPackage());
 
           return packages;
         }
