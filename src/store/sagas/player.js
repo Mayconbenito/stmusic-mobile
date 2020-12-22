@@ -13,9 +13,7 @@ const { successLoadQueue, successNext, successPrev } = PlayerActions;
 
 function* init() {
   try {
-    yield call(TrackPlayer.setupPlayer, {
-      icon: require('../../assets/images/notification-icon.png'),
-    });
+    yield call(TrackPlayer.setupPlayer);
 
     yield call(TrackPlayer.updateOptions, {
       stopWithApp: true,
