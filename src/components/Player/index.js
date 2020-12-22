@@ -4,10 +4,9 @@ import TrackPlayer from 'react-native-track-player';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useSelector, useDispatch } from 'react-redux';
 
-import env from '~/config/env';
 import useCurrentTrack from '~/hooks/useCurrentTrack';
 import usePlaybackState from '~/hooks/usePlaybackState';
-import api from '~/services/api';
+import useTrackPlayerProgress from '~/hooks/useTrackPlayerProgress';
 import { Creators as PlayerActions } from '~/store/ducks/player';
 import { Creators as PlaylistModalActions } from '~/store/ducks/playlistModal';
 
@@ -47,13 +46,14 @@ function Player() {
 
   const playbackState = usePlaybackState();
   const currentTrack = useCurrentTrack();
+  const {
+    position,
+    duration,
+    formatedPosition,
+    formatedDuration,
+  } = useTrackPlayerProgress();
 
   const [showBigPlayer, setShowBigPlayer] = useState(false);
-  const [playCountStatus, setPlayCountStatus] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [activeCounter, setActiveCounter] = useState(0);
-
-  const [paused, setPaused] = useState(false);
 
   useEffect(() => {
     function handleBackHandler() {
@@ -89,37 +89,6 @@ function Player() {
       Keyboard.removeEventListener('keyboardDidHide', handleKeyboardDidHide);
     };
   }, []);
-
-  // async function handleSetPlayCount() {
-  //   try {
-  //     await api.post(`/app/tracks/plays/${player.active.id}`);
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // }
-
-  function formatTime(millis = 0) {
-    const minutes = Math.floor(millis / 60);
-    const seconds = (millis % 60).toFixed(0);
-
-    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-  }
-
-  // function handleOnProgress(event) {
-  //   setCurrentTime(event.currentTime);
-
-  //   const percentage = Math.round(
-  //     (currentTime * 100) / player.active.duration || 0
-  //   );
-  //   if (!playCountStatus && percentage === 45) {
-  //     handleSetPlayCount();
-  //     setPlayCountStatus(true);
-  //   }
-  // }
-
-  // function handleFinishedPlaying() {
-  //   dispatch(next());
-  // }
 
   const showPauseButton =
     playbackState === TrackPlayer.STATE_PLAYING ||
@@ -163,19 +132,17 @@ function Player() {
               </BigPlayerNames>
 
               <BigPlayerBottom>
-                {player.active.duration && (
-                  <BigPlayerProgress>
-                    <BigPlayerProgressTime>
-                      {formatTime(currentTime)}
-                    </BigPlayerProgressTime>
-                    <BigPlayerProgressBar
-                      value={(currentTime * 100) / player.active.duration || 0}
-                    />
-                    <BigPlayerProgressTime>
-                      {formatTime(player.active.duration)}
-                    </BigPlayerProgressTime>
-                  </BigPlayerProgress>
-                )}
+                <BigPlayerProgress>
+                  <BigPlayerProgressTime>
+                    {formatedPosition}
+                  </BigPlayerProgressTime>
+                  <BigPlayerProgressBar
+                    value={(position * 100) / duration || 0}
+                  />
+                  <BigPlayerProgressTime>
+                    {formatedDuration}
+                  </BigPlayerProgressTime>
+                </BigPlayerProgress>
 
                 <BigPlayerControls>
                   <View style={{ width: 40, height: 40 }} />
@@ -209,7 +176,7 @@ function Player() {
                       />
                     </Control>
                   </BigPlayerMainControls>
-                  {console.log(currentTrack?.id)}
+
                   <Control
                     onPress={() =>
                       dispatch(PlaylistModalActions.openModal(currentTrack?.id))
@@ -227,9 +194,7 @@ function Player() {
           </BigPlayerContainer>
           {!showBigPlayer && (
             <SmallPlayerContainer>
-              <SmallPlayerProgress
-                value={(currentTime * 100) / player.active.duration || 0}
-              />
+              <SmallPlayerProgress value={(position * 100) / duration || 0} />
               <SmallPlayerInfo>
                 <Details
                   onStartShouldSetResponder={() => setShowBigPlayer(true)}

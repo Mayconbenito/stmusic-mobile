@@ -13,7 +13,9 @@ const { successLoadQueue, successNext, successPrev } = PlayerActions;
 
 function* init() {
   try {
-    yield call(TrackPlayer.setupPlayer);
+    yield call(TrackPlayer.setupPlayer, {
+      icon: require('../../assets/images/notification-icon.png'),
+    });
 
     yield call(TrackPlayer.updateOptions, {
       stopWithApp: true,
@@ -26,6 +28,7 @@ function* init() {
         TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
         TrackPlayer.CAPABILITY_STOP,
       ],
+      icon: require('../../assets/images/notification-icon.png'),
     });
 
     // eslint-disable-next-line no-empty
