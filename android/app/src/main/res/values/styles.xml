@@ -4,7 +4,12 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="android:textColor">@color/colorSecondary</item>
         <item name="android:statusBarColor">@color/colorSecondary</item>
-        <item name="android:windowBackground">@drawable/splash_screen</item>
+    </style>
+
+    <!-- Add the following lines (BootTheme should inherit from AppTheme) -->
+    <style name="BootTheme" parent="AppTheme">
+        <!-- set the generated bootsplash.xml drawable as activity background -->
+        <item name="android:background">@drawable/bootsplash</item>
     </style>
 
 </resources>
