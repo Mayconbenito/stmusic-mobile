@@ -1,14 +1,18 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View, TouchableOpacity, SectionList } from 'react-native';
-import { useInfiniteQuery, useMutation, useQueryCache } from 'react-query';
+import {
+  useQuery,
+  useInfiniteQuery,
+  useMutation,
+  useQueryCache,
+} from 'react-query';
 import { useDispatch } from 'react-redux';
 
 import BigAlbumItem from '~/components/BigAlbumItem';
 import HeaderBackButton from '~/components/HeaderBackButton';
 import Loading from '~/components/Loading';
 import TrackItem from '~/components/TrackItem';
-import { useFetch } from '~/hooks/useFetch';
 import api from '~/services/api';
 import { Creators as PlayerActions } from '~/store/ducks/player';
 
@@ -48,14 +52,22 @@ function Artist({ navigation, route }) {
     headerRight: () => <View />,
   });
 
-  const artistFollowingStateQuery = useFetch(
+  const artistFollowingStateQuery = useQuery(
     `artist-${artistId}-followingState`,
-    `/app/me/library/following/artists/contains?artists=${artistId}`
+    async () => {
+      const response = await api.get(
+        `/app/me/library/following/artists/contains?artists=${artistId}`
+      );
+
+      return response.data;
+    }
   );
-  const artistQuery = useFetch(
-    `artist-${artistId}`,
-    `/app/artists/${artistId}`
-  );
+  const artistQuery = useQuery(`artist-${artistId}`, async () => {
+    const response = await api.get(`/app/artists/${artistId}`);
+
+    return response.data;
+  });
+
   const albumsQuery = useInfiniteQuery(
     `artist-${artistId}-albums`,
     async (key, page = 1) => {
@@ -76,14 +88,23 @@ function Artist({ navigation, route }) {
     }
   );
 
-  const mostPlayedTracksQuery = useFetch(
+  const mostPlayedTracksQuery = useQuery(
     `artist-${artistId}-mostPlayedTracks`,
-    `/app/artists/${artistId}/most-played-tracks?page=1&limit=10`
+    async () => {
+      const response = await api.get(
+        `/app/artists/${artistId}/most-played-tracks?page=1&limit=10`
+      );
+
+      return response.data;
+    }
   );
-  const tracksQuery = useFetch(
-    `artist-${artistId}-tracks`,
-    `/app/artists/${artistId}/tracks?page=1&limit=10`
-  );
+  const tracksQuery = useQuery(`artist-${artistId}-tracks`, async () => {
+    const response = await api.get(
+      `/app/artists/${artistId}/tracks?page=1&limit=10`
+    );
+
+    return response.data;
+  });
 
   const [followArtist] = useMutation(
     async () => {
@@ -173,15 +194,11 @@ function Artist({ navigation, route }) {
   }
 
   function isLoading() {
-    if (!albumsQuery.isLoading) {
-      return false;
-    }
-
-    if (!mostPlayedTracksQuery.isLoading) {
-      return false;
-    }
-
-    if (!tracksQuery.isLoading) {
+    if (
+      !albumsQuery.isLoading &&
+      !mostPlayedTracksQuery.isLoading &&
+      !tracksQuery.isLoading
+    ) {
       return false;
     }
 
@@ -199,6 +216,32 @@ function Artist({ navigation, route }) {
       });
     }
   }, [albumsQuery.isSuccess, albumsQuery.data]);
+
+  const sections = [
+    {
+      title: t('commons.albums'),
+      horizontal: true,
+      data: [
+        albumsQuery.isSuccess && totalAlbums
+          ? albumsQuery?.data?.reduce((acc, val) => acc.concat(val.albums), [])
+          : [],
+      ],
+    },
+    {
+      title: t('artist.most_played_tracks'),
+      horizontal: false,
+      type: 'most_played_tracks',
+      data: mostPlayedTracksQuery.data?.tracks?.length
+        ? mostPlayedTracksQuery?.data?.tracks
+        : [],
+    },
+    {
+      title: t('commons.tracks'),
+      horizontal: false,
+      type: 'tracks',
+      data: tracksQuery.data?.tracks?.length ? tracksQuery?.data?.tracks : [],
+    },
+  ];
 
   return (
     <ParentContainer>
@@ -227,86 +270,91 @@ function Artist({ navigation, route }) {
 
           {isLoading() && <Loading size={24} style={{ marginTop: 5 }} />}
 
-          {albumsQuery.isSuccess && totalAlbums > 0 && (
+          {!isLoading() && (
             <ScrollerContainer style={{ marginTop: 0 }}>
-              <ScrollerHeader>
-                <ScrollerTitleText>{t('commons.albums')}</ScrollerTitleText>
-              </ScrollerHeader>
-              <List
-                data={albumsQuery.data.reduce(
-                  (acc, val) => acc.concat(val.albums),
-                  []
+              <SectionList
+                sections={sections}
+                stickySectionHeadersEnabled={false}
+                initialNumToRender={8}
+                keyExtractor={item => `key-${item.id}`}
+                renderSectionHeader={({ section }) => (
+                  <>
+                    <ScrollerHeader>
+                      <ScrollerTitleText>{section.title}</ScrollerTitleText>
+
+                      {section.type === 'most_played_tracks' && (
+                        <TouchableOpacity
+                          onPress={() =>
+                            dispatch(
+                              PlayerActions.loadQueue(null, {
+                                name: `${t('commons.most_played_from')} ${
+                                  artistQuery.data.name
+                                }`,
+                                id: `most-played-${artistId}`,
+                                type: 'tracks',
+                                tracks: section.data,
+                              })
+                            )
+                          }
+                          activeOpacity={0.5}
+                        >
+                          <ScrollerHeaderButton />
+                        </TouchableOpacity>
+                      )}
+
+                      {section.type === 'tracks' && (
+                        <TouchableOpacity
+                          onPress={() =>
+                            dispatch(
+                              PlayerActions.loadQueue(null, {
+                                name: artistQuery.data.name,
+                                id: `tracks-${artistId}`,
+                                type: 'tracks',
+                                tracks: section.data,
+                              })
+                            )
+                          }
+                          activeOpacity={0.5}
+                        >
+                          <ScrollerHeaderButton />
+                        </TouchableOpacity>
+                      )}
+                    </ScrollerHeader>
+                  </>
                 )}
-                keyExtractor={track => `key-${track.id}`}
-                renderItem={({ item }) => (
-                  <BigAlbumItem
-                    data={item}
-                    onPress={() =>
-                      navigation.navigate('Album', { id: item.id })
-                    }
-                  />
-                )}
-                onEndReached={onAlbumsEndReached}
-                onEndReachedThreshold={0.6}
-                initialNumToRender={1}
-                getItemLayout={(data, index) => ({
-                  length: 180,
-                  offset: 180 * index,
-                  index,
-                })}
-                horizontal
+                renderItem={({ item, section }) => {
+                  if (section.horizontal) {
+                    return (
+                      <List
+                        key={section.type}
+                        data={section.data[0]}
+                        keyExtractor={track => `key-${track.id}`}
+                        renderItem={({ item: horizontalItem }) => (
+                          <BigAlbumItem
+                            data={horizontalItem}
+                            onPress={() =>
+                              navigation.navigate('Album', {
+                                id: horizontalItem.id,
+                              })
+                            }
+                          />
+                        )}
+                        onEndReached={onAlbumsEndReached}
+                        onEndReachedThreshold={0.6}
+                        initialNumToRender={1}
+                        showsHorizontalScrollIndicator={false}
+                        getItemLayout={(data, index) => ({
+                          length: 180,
+                          offset: 180 * index,
+                          index,
+                        })}
+                        horizontal
+                      />
+                    );
+                  }
+                  return <TrackItem key={item.id} data={item} />;
+                }}
               />
-            </ScrollerContainer>
-          )}
-
-          {mostPlayedTracksQuery.data?.tracks?.length > 0 && (
-            <ScrollerContainer style={{ marginTop: 0 }}>
-              <ScrollerHeader>
-                <ScrollerTitleText>
-                  {t('artist.most_played_tracks')}
-                </ScrollerTitleText>
-                <TouchableOpacity
-                  onPress={() =>
-                    dispatch(
-                      PlayerActions.playPlaylist({
-                        name: `Mais tocadas de ${artistQuery.data.name}`,
-                        tracks: mostPlayedTracksQuery.data.tracks,
-                      })
-                    )
-                  }
-                  activeOpacity={0.5}
-                >
-                  <ScrollerHeaderButton />
-                </TouchableOpacity>
-              </ScrollerHeader>
-              <SectionList />
-              {mostPlayedTracksQuery.data?.tracks?.map(item => (
-                <TrackItem key={item.id} data={item} />
-              ))}
-            </ScrollerContainer>
-          )}
-
-          {tracksQuery.data?.tracks?.length > 0 && (
-            <ScrollerContainer style={{ marginTop: 0 }}>
-              <ScrollerHeader>
-                <ScrollerTitleText>{t('commons.tracks')}</ScrollerTitleText>
-                <TouchableOpacity
-                  onPress={() =>
-                    dispatch(
-                      PlayerActions.playPlaylist({
-                        name: artistQuery.data.name,
-                        tracks: tracksQuery.data.tracks,
-                      })
-                    )
-                  }
-                  activeOpacity={0.5}
-                >
-                  <ScrollerHeaderButton />
-                </TouchableOpacity>
-              </ScrollerHeader>
-              {tracksQuery.data?.tracks?.map(item => (
-                <TrackItem key={item.id} data={item} />
-              ))}
             </ScrollerContainer>
           )}
         </Container>

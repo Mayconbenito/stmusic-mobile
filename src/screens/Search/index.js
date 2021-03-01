@@ -30,7 +30,7 @@ function Search({ navigation }) {
 
   async function fetchSearch() {
     try {
-      const response = await api.get(`/search/${query}`, {
+      const response = await api.get(`/app/search/${query}`, {
         params: {
           limit: 10,
           type: 'artist,album,track',
@@ -70,7 +70,6 @@ function Search({ navigation }) {
           onSubmitEditing={fetchSearch}
           returnKeyType="search"
           placeholder={t('search.input')}
-          autoFocus
         />
         {query !== '' && (
           <TouchableOpacity onPress={clearQuery}>

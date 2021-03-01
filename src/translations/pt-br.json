@@ -107,7 +107,8 @@
       "genre": "Gênero",
       "album": "Album",
       "add_to_playlist": "Adicionar à uma Playlist",
-      "remove_from_playlist": "Remover da Playlist"
+      "remove_from_playlist": "Remover da Playlist",
+      "most_played_from": "Mais tocadas de"
     }
   }
 }

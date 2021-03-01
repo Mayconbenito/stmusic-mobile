@@ -23,6 +23,7 @@ LogBox.ignoreLogs([
   'Source.uri',
   'Cannot update a component',
   'currentlyFocusedField',
+  'Setting a timer for a long',
 ]);
 
 function App() {
@@ -39,6 +40,12 @@ function App() {
       showPlayer: player.active ? player.active : false,
     });
   }, [player.active]);
+
+  useEffect(() => {
+    setTheme({
+      showPlayer: player.showPlayer,
+    });
+  }, [player.showPlayer]);
 
   const [progress, setProgress] = useState(0);
   const [updateModal, setUpdateModal] = useState(false);

@@ -1,10 +1,11 @@
 import React, { useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 
 import HeaderIcon from '~/components/HeaderIcon';
 import AuthContext from '~/contexts/AuthContext';
-import { useFetch } from '~/hooks/useFetch';
+import api from '~/services/api';
 import { Creators as PlayerActions } from '~/store/ducks/player';
 
 import {
@@ -28,7 +29,11 @@ function Profile({ navigation }) {
     headerTitle: () => <HeaderIcon />,
   });
 
-  const userQuery = useFetch('profile-me', `/app/me`);
+  const userQuery = useQuery('profile-me', async () => {
+    const response = await api.get('/app/me');
+
+    return response.data;
+  });
 
   const user = {
     name: userQuery.data?.user.name || auth.userData?.name,

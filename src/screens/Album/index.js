@@ -1,14 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
-import { useInfiniteQuery } from 'react-query';
+import { useInfiniteQuery, useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 
 import Fallback from '~/assets/images/fallback-square.png';
 import HeaderBackButton from '~/components/HeaderBackButton';
 import Loading from '~/components/Loading';
 import TrackItem from '~/components/TrackItem';
-import { useFetch } from '~/hooks/useFetch';
 import api from '~/services/api';
 import { Creators as PlayerActions } from '~/store/ducks/player';
 
@@ -44,7 +43,11 @@ function Album({ navigation, route }) {
 
   const [totalTracks, setTotalTracks] = useState(0);
 
-  const albumQuery = useFetch(`album-${albumId}`, `/app/albums/${albumId}`);
+  const albumQuery = useQuery(`album-${albumId}`, async () => {
+    const response = await api.get(`/app/albums/${albumId}`);
+
+    return response.data;
+  });
 
   const tracksQuery = useInfiniteQuery(
     `album-${albumId}-tracks`,

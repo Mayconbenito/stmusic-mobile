@@ -44,7 +44,7 @@
     "react-native-tab-view": "^2.14.1",
     "react-native-track-player": "^1.2.3",
     "react-native-vector-icons": "^6.6.0",
-    "react-query": "^3.12.0",
+    "react-query": "2.26.4",
     "react-redux": "^7.1.1",
     "redux": "^4.0.4",
     "redux-saga": "^1.1.1",
