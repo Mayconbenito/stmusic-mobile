@@ -4,7 +4,9 @@ import { createStackNavigator } from '@react-navigation/stack';
 import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
+import RNBootSplash from 'react-native-bootsplash';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { useEffect } from 'react/cjs/react.development';
 
 import HeaderIcon from '~/components/HeaderIcon';
 
@@ -101,6 +103,12 @@ function Routes() {
   const { t } = useTranslation();
 
   const auth = useContext(AuthContext);
+
+  useEffect(() => {
+    if (!auth.isLoading) {
+      RNBootSplash.hide({ fade: true });
+    }
+  }, [auth.isLoading]);
 
   if (auth.isLoading) {
     return (
