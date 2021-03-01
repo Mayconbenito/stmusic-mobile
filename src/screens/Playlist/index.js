@@ -1,13 +1,17 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useInfiniteQuery, useMutation, useQueryCache } from 'react-query';
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryCache,
+} from 'react-query';
 import { useDispatch } from 'react-redux';
 
 import Fallback from '~/assets/images/fallback-square.png';
 import HeaderBackButton from '~/components/HeaderBackButton';
 import Loading from '~/components/Loading';
 import TrackItem from '~/components/TrackItem';
-import { useFetch } from '~/hooks/useFetch';
 import api from '~/services/api';
 import { Creators as PlayerActions } from '~/store/ducks/player';
 
@@ -47,10 +51,11 @@ function Playlist({ navigation, route }) {
 
   const [totalTracks, setTotalTracks] = useState(0);
 
-  const playlistQuery = useFetch(
-    `playlist-${playlistId}`,
-    `/app/playlists/${playlistId}`
-  );
+  const playlistQuery = useQuery(`playlist-${playlistId}`, async () => {
+    const response = await api.get(`/app/playlists/${playlistId}`);
+
+    return response.data;
+  });
 
   const tracksQuery = useInfiniteQuery(
     `playlist-${playlistId}-tracks`,

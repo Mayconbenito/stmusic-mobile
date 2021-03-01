@@ -1,13 +1,14 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView } from 'react-native';
+import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 
 import BigTrackItem from '~/components/BigTrackItem';
 import HeaderIcon from '~/components/HeaderIcon';
 import Loading from '~/components/Loading';
 import { isLoggedIn } from '~/helpers/isLoggedIn';
-import { useFetch } from '~/hooks/useFetch';
+import api from '~/services/api';
 import { Creators as PlayerActions } from '~/store/ducks/player';
 
 import GenreItem from './GenreItem';
@@ -37,25 +38,47 @@ function Home({ navigation }) {
   let recentlyPlayedQuery;
 
   if (isLoggedIn()) {
-    recentlyPlayedQuery = useFetch(
+    recentlyPlayedQuery = useQuery(
       isLoggedIn() ? 'recentlyPlayed' : null,
-      '/app/me/recently-played?page=1&limit=30'
+      async () => {
+        const response = await api.get(
+          '/app/me/recently-played?page=1&limit=30'
+        );
+
+        return response.data;
+      }
     );
   }
 
-  const genresQuery = useFetch('genres', '/app/genres?page=1&limit=30');
-  const trendingQuery = useFetch(
-    'trending',
-    '/app/browse/tracks/trending?page=1&limit=30'
-  );
-  const mostPlayedTracksQuery = useFetch(
-    'mostPlayedTracks',
-    '/app/browse/tracks/most-played?page=1&limit=30'
-  );
-  const mostFollowedArtistsQuery = useFetch(
-    'mostFollowedArtists',
-    '/app/browse/artists/most-followed?page=1&limit=30'
-  );
+  const genresQuery = useQuery('genres', async () => {
+    const response = await api.get('/app/genres?page=1&limit=30');
+
+    return response.data;
+  });
+
+  const trendingQuery = useQuery('trending', async () => {
+    const response = await api.get(
+      '/app/browse/tracks/trending?page=1&limit=30'
+    );
+
+    return response.data;
+  });
+
+  const mostPlayedTracksQuery = useQuery('mostPlayedTracks', async () => {
+    const response = await api.get(
+      '/app/browse/tracks/most-played?page=1&limit=30'
+    );
+
+    return response.data;
+  });
+
+  const mostFollowedArtistsQuery = useQuery('mostFollowedArtists', async () => {
+    const response = await api.get(
+      '/app/browse/artists/most-followed?page=1&limit=30'
+    );
+
+    return response.data;
+  });
 
   function handleQueuePlay({ name, tracks, nameKey }) {
     dispatch(

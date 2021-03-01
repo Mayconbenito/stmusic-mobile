@@ -15,6 +15,7 @@ export const { Types, Creators } = createActions(
     successNext: ['data'],
     successPrev: ['data'],
     setVolume: ['volume'],
+    showPlayer: ['status'],
   },
   {
     prefix: 'player/',
@@ -64,6 +65,11 @@ const successPrev = (state = initialState, action) => ({
   },
 });
 
+const showPlayer = (state = initialState, action) => ({
+  ...state,
+  showPlayer: action.status,
+});
+
 export default createReducer(initialState, {
   [Types.LOAD_QUEUE]: loadQueue,
   [Types.LOAD_SINGLE_TRACK]: loadSingleTrack,
@@ -76,4 +82,5 @@ export default createReducer(initialState, {
   [Types.NEXT]: next,
   [Types.SUCCESS_NEXT]: successNext,
   [Types.SUCCESS_PREV]: successPrev,
+  [Types.SHOW_PLAYER]: showPlayer,
 });

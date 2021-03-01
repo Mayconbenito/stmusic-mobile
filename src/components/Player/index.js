@@ -85,8 +85,8 @@ function Player() {
     Keyboard.addListener('keyboardDidHide', handleKeyboardDidHide);
 
     return () => {
-      Keyboard.removeEventListener('keyboardDidShow', handleKeyboardDidShow);
-      Keyboard.removeEventListener('keyboardDidHide', handleKeyboardDidHide);
+      Keyboard.removeAllListeners('keyboardDidShow');
+      Keyboard.removeAllListeners('keyboardDidHide');
     };
   }, []);
 

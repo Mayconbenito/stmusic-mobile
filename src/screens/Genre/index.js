@@ -1,14 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
-import { useInfiniteQuery } from 'react-query';
+import { useInfiniteQuery, useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 
 import Fallback from '~/assets/images/fallback-square.png';
 import HeaderBackButton from '~/components/HeaderBackButton';
 import Loading from '~/components/Loading';
 import TrackItem from '~/components/TrackItem';
-import { useFetch } from '~/hooks/useFetch';
 import api from '~/services/api';
 import { Creators as PlayerActions } from '~/store/ducks/player';
 
@@ -44,7 +43,11 @@ function Genre({ navigation, route }) {
 
   const [totalTracks, setTotalTracks] = useState(0);
 
-  const genreQuery = useFetch(`genre-${genreId}`, `/app/genres/${genreId}`);
+  const genreQuery = useQuery(`genre-${genreId}`, async () => {
+    const response = await api.get(`/app/genres/${genreId}`);
+
+    return response.data;
+  });
 
   const tracksQuery = useInfiniteQuery(
     `genre-${genreId}-tracks`,
