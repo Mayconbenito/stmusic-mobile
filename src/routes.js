@@ -149,6 +149,10 @@ function Routes() {
             activeTintColor: '#d99207',
             inactiveTintColor: '#fff',
             keyboardHidesTabBar: true,
+            style: {
+              borderTopWidth: 0,
+              borderTopColor: 'transparent',
+            },
           }}
         >
           <Tab.Screen
