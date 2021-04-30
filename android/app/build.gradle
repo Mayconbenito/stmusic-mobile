@@ -79,7 +79,6 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
-    entryFile: "index.js",
     enableHermes: false,  // clean and rebuild if changing
 ]
 
@@ -112,7 +111,7 @@ def enableProguardInReleaseBuilds = false
  * give correct results when using with locales other than en-US.  Note that
  * this variant is about 6MiB larger per architecture than default.
  */
-def jscFlavor = 'org.webkit:android-jsc:+'
+def jscFlavor = 'org.webkit:android-jsc-intl:+'
 
 /**
  * Whether to enable the Hermes VM.
@@ -126,10 +125,6 @@ def enableHermes = project.ext.react.get("enableHermes", false);
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    dexOptions {
-        javaMaxHeapSize "4g"
-    }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -141,7 +136,6 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 7
         versionName "1.4.1"
-        multiDexEnabled true
     }
     splits {
         abi {
@@ -206,16 +200,16 @@ android {
 }
 
 dependencies {
-    // Multidex
-    implementation 'com.android.support:multidex:1.0.3'
-
     implementation fileTree(dir: "libs", include: ["*.jar"])
     //noinspection GradleDynamicVersion
+
+    implementation 'com.facebook.soloader:soloader:0.9.0+'
+    
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
-    implementation "androidx.appcompat:appcompat:1.0.0"
-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
-    
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'
     }
