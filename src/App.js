@@ -33,17 +33,26 @@ function App() {
 
   const [theme, setTheme] = useState({
     showPlayer: false,
+    tabHeight: 0,
   });
+
+  function updateTheme(oldTheme, newTheme) {
+    setTheme({ ...oldTheme, ...newTheme });
+  }
 
   useEffect(() => {
     setTheme({
+      ...theme,
       showPlayer: player.active ? player.active : false,
+      updateTheme,
     });
   }, [player.active]);
 
   useEffect(() => {
     setTheme({
+      ...theme,
       showPlayer: player.showPlayer,
+      updateTheme,
     });
   }, [player.showPlayer]);
 
