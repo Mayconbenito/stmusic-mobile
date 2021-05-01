@@ -1,12 +1,11 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import React, { useContext } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import RNBootSplash from 'react-native-bootsplash';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { useEffect } from 'react/cjs/react.development';
 
 import HeaderIcon from '~/components/HeaderIcon';
 

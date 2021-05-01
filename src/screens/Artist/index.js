@@ -279,47 +279,49 @@ function Artist({ navigation, route }) {
                 keyExtractor={item => `key-${item.id}`}
                 renderSectionHeader={({ section }) => (
                   <>
-                    <ScrollerHeader>
-                      <ScrollerTitleText>{section.title}</ScrollerTitleText>
+                    {section.data.length > 0 && (
+                      <ScrollerHeader>
+                        <ScrollerTitleText>{section.title}</ScrollerTitleText>
 
-                      {section.type === 'most_played_tracks' && (
-                        <TouchableOpacity
-                          onPress={() =>
-                            dispatch(
-                              PlayerActions.loadQueue(null, {
-                                name: `${t('commons.most_played_from')} ${
-                                  artistQuery.data.name
-                                }`,
-                                id: `most-played-${artistId}`,
-                                type: 'tracks',
-                                tracks: section.data,
-                              })
-                            )
-                          }
-                          activeOpacity={0.5}
-                        >
-                          <ScrollerHeaderButton />
-                        </TouchableOpacity>
-                      )}
+                        {section.type === 'most_played_tracks' && (
+                          <TouchableOpacity
+                            onPress={() =>
+                              dispatch(
+                                PlayerActions.loadQueue(null, {
+                                  name: `${t('commons.most_played_from')} ${
+                                    artistQuery.data.name
+                                  }`,
+                                  id: `most-played-${artistId}`,
+                                  type: 'tracks',
+                                  tracks: section.data,
+                                })
+                              )
+                            }
+                            activeOpacity={0.5}
+                          >
+                            <ScrollerHeaderButton />
+                          </TouchableOpacity>
+                        )}
 
-                      {section.type === 'tracks' && (
-                        <TouchableOpacity
-                          onPress={() =>
-                            dispatch(
-                              PlayerActions.loadQueue(null, {
-                                name: artistQuery.data.name,
-                                id: `tracks-${artistId}`,
-                                type: 'tracks',
-                                tracks: section.data,
-                              })
-                            )
-                          }
-                          activeOpacity={0.5}
-                        >
-                          <ScrollerHeaderButton />
-                        </TouchableOpacity>
-                      )}
-                    </ScrollerHeader>
+                        {section.type === 'tracks' && (
+                          <TouchableOpacity
+                            onPress={() =>
+                              dispatch(
+                                PlayerActions.loadQueue(null, {
+                                  name: artistQuery.data.name,
+                                  id: `tracks-${artistId}`,
+                                  type: 'tracks',
+                                  tracks: section.data,
+                                })
+                              )
+                            }
+                            activeOpacity={0.5}
+                          >
+                            <ScrollerHeaderButton />
+                          </TouchableOpacity>
+                        )}
+                      </ScrollerHeader>
+                    )}
                   </>
                 )}
                 renderItem={({ item, section }) => {
