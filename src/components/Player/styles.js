@@ -17,7 +17,7 @@ export const Container = styled.View`
     props.showBigPlayer ? height - StatusBar.currentHeight : 54};
   position: absolute;
   flex: 1;
-  bottom: ${props => (props.showBigPlayer ? 0 : 54)};
+  bottom: ${props => (props.showBigPlayer ? 0 : props.theme.tabHeight)};
   flex-direction: column;
   opacity: ${props => (props.theme.showPlayer ? 1 : 0)};
 `;

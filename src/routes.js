@@ -1,4 +1,7 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {
+  createBottomTabNavigator,
+  useBottomTabBarHeight,
+} from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import React, { useEffect, useContext } from 'react';
@@ -6,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import RNBootSplash from 'react-native-bootsplash';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { ThemeContext } from 'styled-components';
 
 import HeaderIcon from '~/components/HeaderIcon';
 
@@ -31,6 +35,13 @@ const Tab = createBottomTabNavigator();
 const HomeStack = createStackNavigator();
 
 function HomeStackScreen() {
+  const tabHeight = useBottomTabBarHeight();
+  const theme = useContext(ThemeContext);
+
+  useEffect(() => {
+    theme.updateTheme(theme, { tabHeight });
+  }, [tabHeight]);
+
   return (
     <HomeStack.Navigator
       screenOptions={{ headerStyle: { backgroundColor: '#000' } }}
@@ -100,7 +111,6 @@ function ProfileStackScreen() {
 
 function Routes() {
   const { t } = useTranslation();
-
   const auth = useContext(AuthContext);
 
   useEffect(() => {
