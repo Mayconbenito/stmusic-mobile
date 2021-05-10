@@ -10,11 +10,12 @@ import {
   ArtistName,
 } from './styles';
 
-function BigAlbumItem({ data, margin, onPress }) {
+function BigAlbumItem({ data, margin, medium, onPress }) {
   return (
-    <Container margin={margin} onPress={onPress}>
+    <Container margin={margin} medium={medium} onPress={onPress}>
       <Image
         source={{ uri: data.picture }}
+        medium={medium}
         fallback={require('~/assets/images/fallback-horizontal.png')}
       />
       <Details>

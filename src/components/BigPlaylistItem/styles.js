@@ -41,8 +41,3 @@ export const Type = styled.Text`
   color: #606060;
   font-size: ${hp(1.9)};
 `;
-
-export const ArtistName = styled.Text`
-  color: #606060;
-  font-size: ${hp(1.9)};
-`;
