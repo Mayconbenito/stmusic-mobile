@@ -4,6 +4,8 @@ import { ScrollView } from 'react-native';
 import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 
+import BigAlbumItem from '~/components/BigAlbumItem';
+import BigPlaylistItem from '~/components/BigPlaylistItem';
 import BigTrackItem from '~/components/BigTrackItem';
 import HeaderIcon from '~/components/HeaderIcon';
 import Loading from '~/components/Loading';
@@ -124,35 +126,80 @@ function Home({ navigation }) {
 
       {!isLoading() && (
         <ScrollView>
-          {recentlyPlayedQuery.data?.tracks?.length > 0 && (
+          {recentlyPlayedQuery.data?.lists?.length > 0 && (
             <ScrollerContainer>
               <ScrollerHeader>
                 <ScrollerTitleText>
                   {t('home.recently_played')}
                 </ScrollerTitleText>
-                <ScrollerHeaderButton
-                  onPress={() => {
-                    handleQueuePlay({
-                      name: t('home.recently_played'),
-                      tracks: recentlyPlayedQuery?.data?.tracks,
-                      nameKey: 'recently_played',
-                    });
-                  }}
-                >
-                  <ScrollerHeaderButtonIcon />
-                </ScrollerHeaderButton>
               </ScrollerHeader>
               <List
-                data={recentlyPlayedQuery.data?.tracks}
-                keyExtractor={item => `key-${item.id}`}
-                renderItem={({ item }) => (
+                data={recentlyPlayedQuery.data?.lists}
+                keyExtractor={item => `${item.listType}-${item.id}`}
+                renderItem={({ item }) => {
+                  if (item.listType === 'artist') {
+                    return (
+                      <HomeArtistItem
+                        data={{ name: item.name, picture: item.picture }}
+                        onPress={() =>
+                          navigation.navigate('Artist', { id: item.id })
+                        }
+                      />
+                    );
+                  }
+
+                  if (item.listType === 'album') {
+                    return (
+                      <BigAlbumItem
+                        data={{
+                          name: item.name,
+                          picture: item.picture,
+                          artists: item.artists || [],
+                          type: item.type || 'album',
+                        }}
+                        medium
+                        onPress={() =>
+                          navigation.navigate('Album', { id: item.id })
+                        }
+                      />
+                    );
+                  }
+
+                  if (item.listType === 'playlist') {
+                    return (
+                      <BigPlaylistItem
+                        data={{
+                          name: item.name,
+                          picture: item.picture,
+                        }}
+                        medium
+                        onPress={() =>
+                          navigation.navigate('Playlist', { id: item.id })
+                        }
+                      />
+                    );
+                  }
+
+                  if (item.listType === 'genre') {
+                    return (
+                      <GenreItem
+                        data={{
+                          name: item.name,
+                        }}
+                        onPress={() =>
+                          navigation.navigate('Genre', { id: item.id })
+                        }
+                      />
+                    );
+                  }
+
                   <BigTrackItem
                     data={item}
                     onPress={() =>
                       handleQueueTrackPlay(item, 'recently_played')
                     }
-                  />
-                )}
+                  />;
+                }}
                 horizontal
               />
             </ScrollerContainer>

@@ -10,7 +10,7 @@ export const Container = styled.TouchableOpacity.attrs({
   width: 130;
   height: 130;
   background-color: #4d120f;
-  margin-right: 5;
+  margin-right: 10;
 `;
 
 export const Name = styled.Text`

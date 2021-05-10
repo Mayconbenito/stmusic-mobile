@@ -10,6 +10,7 @@
     "android:apk": "cd android && ./gradlew assembleRelease",
     "android:build": "react-native run-android --variant release",
     "android:clean-gradlew": "cd android && ./gradlew clean",
+    "codepush:release": "appcenter codepush release-react -a mayconbenito/STMusic",
     "test": "jest",
     "lint": "eslint ."
   },
