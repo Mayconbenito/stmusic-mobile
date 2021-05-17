@@ -154,8 +154,8 @@ function Home({ navigation }) {
                         data={{
                           name: item.name,
                           picture: item.picture,
-                          artists: item.artists || [],
-                          type: item.type || 'album',
+                          artists: item.artists,
+                          type: item.albumType,
                         }}
                         medium
                         onPress={() =>
