@@ -23,6 +23,6 @@ i18next
   .use(initReactI18next)
   .init({
     fallbackLng,
-    debug: true,
+    debug: false,
     resources: { 'en-US': enUS, 'pt-BR': ptBR },
   });
