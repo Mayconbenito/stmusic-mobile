@@ -30,7 +30,7 @@
     "react-native": "0.63.3",
     "react-native-bootsplash": "^3.1.5",
     "react-native-code-push": "^6.4.0",
-    "react-native-fast-image": "^7.0.2",
+    "react-native-fast-image": "^8.3.0",
     "react-native-fast-storage": "^0.1.5",
     "react-native-fs": "^2.16.1",
     "react-native-gesture-handler": "^1.6.1",
