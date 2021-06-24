@@ -28,6 +28,7 @@ export const Image = styled(ImageFallback)`
   height: 90;
   border-radius: 90;
   background-color: #000;
+  margin-top: 10;
 `;
 
 export const DetailsTitle = styled.Text`
@@ -70,6 +71,7 @@ export const ScrollerContainer = styled.View`
 export const ScrollerHeader = styled.View`
   flex-direction: row;
   align-items: center;
+  margin-top: 20;
 `;
 
 export const ScrollerHeaderButton = styled(MaterialIcons).attrs({
@@ -81,7 +83,6 @@ export const ScrollerHeaderButton = styled(MaterialIcons).attrs({
 export const ScrollerTitleText = styled.Text`
   font-size: ${hp(3.4)};
   color: #d99207;
-  margin-bottom: 5;
 `;
 
 export const List = styled(FlatList).attrs({

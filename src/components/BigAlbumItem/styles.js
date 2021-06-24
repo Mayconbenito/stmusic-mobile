@@ -9,6 +9,7 @@ export const Container = styled.TouchableOpacity.attrs({
   flex-direction: column;
   align-items: flex-start;
   margin-right: 10;
+  margin-top: 7;
 `;
 
 export const Image = styled(ImageFallback)`
@@ -25,7 +26,7 @@ export const Name = styled.Text.attrs({
   ellipsizeMode: 'tail',
   numberOfLines: 1,
 })`
-  ${props => (props.medium ? 80 : 130)};
+  width: ${props => (props.medium ? 130 : 180)};
   color: #d99207;
   font-size: ${hp(2.6)};
 `;
