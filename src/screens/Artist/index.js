@@ -221,6 +221,7 @@ function Artist({ navigation, route }) {
     {
       title: t('commons.albums'),
       horizontal: true,
+      type: 'albums',
       data: [
         albumsQuery.isSuccess && totalAlbums
           ? albumsQuery?.data?.reduce((acc, val) => acc.concat(val.albums), [])
@@ -271,7 +272,7 @@ function Artist({ navigation, route }) {
           {isLoading() && <Loading size={24} style={{ marginTop: 5 }} />}
 
           {!isLoading() && (
-            <ScrollerContainer style={{ marginTop: 0 }}>
+            <ScrollerContainer>
               <SectionList
                 sections={sections}
                 stickySectionHeadersEnabled={false}
@@ -280,7 +281,11 @@ function Artist({ navigation, route }) {
                 renderSectionHeader={({ section }) => (
                   <>
                     {section.data.length > 0 && (
-                      <ScrollerHeader>
+                      <ScrollerHeader
+                        style={{
+                          marginTop: section.type === 'albums' ? 0 : 20,
+                        }}
+                      >
                         <ScrollerTitleText>{section.title}</ScrollerTitleText>
 
                         {section.type === 'most_played_tracks' && (
