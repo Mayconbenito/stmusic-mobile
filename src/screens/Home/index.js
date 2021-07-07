@@ -13,7 +13,6 @@ import { isLoggedIn } from '~/helpers/isLoggedIn';
 import api from '~/services/api';
 import { Creators as PlayerActions } from '~/store/ducks/player';
 
-import GenreItem from './GenreItem';
 import HomeArtistItem from './HomeArtistItem';
 import {
   Container,
@@ -51,12 +50,6 @@ function Home({ navigation }) {
       }
     );
   }
-
-  const genresQuery = useQuery('genres', async () => {
-    const response = await api.get('/app/genres?page=1&limit=30');
-
-    return response.data;
-  });
 
   const trendingQuery = useQuery('trending', async () => {
     const response = await api.get(
@@ -98,10 +91,6 @@ function Home({ navigation }) {
 
   function isLoading() {
     if (!recentlyPlayedQuery?.isLoading) {
-      return false;
-    }
-
-    if (!genresQuery.isLoading) {
       return false;
     }
 
@@ -180,19 +169,6 @@ function Home({ navigation }) {
                     );
                   }
 
-                  if (item.listType === 'genre') {
-                    return (
-                      <GenreItem
-                        data={{
-                          name: item.name,
-                        }}
-                        onPress={() =>
-                          navigation.navigate('Genre', { id: item.id })
-                        }
-                      />
-                    );
-                  }
-
                   <BigTrackItem
                     data={item}
                     onPress={() =>
@@ -229,26 +205,6 @@ function Home({ navigation }) {
                   <BigTrackItem
                     data={item}
                     onClick={() => handleQueueTrackPlay(item, 'trending')}
-                  />
-                )}
-                horizontal
-              />
-            </ScrollerContainer>
-          )}
-
-          {genresQuery.data?.genres?.length > 0 && (
-            <ScrollerContainer>
-              <ScrollerTitleText>{t('home.genres')}</ScrollerTitleText>
-
-              <List
-                data={genresQuery.data?.genres}
-                keyExtractor={item => `key-${item.id}`}
-                renderItem={({ item }) => (
-                  <GenreItem
-                    onPress={() =>
-                      navigation.navigate('Genre', { id: item.id })
-                    }
-                    data={item}
                   />
                 )}
                 horizontal

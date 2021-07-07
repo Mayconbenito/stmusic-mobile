@@ -18,7 +18,6 @@ import AuthContext from './contexts/AuthContext';
 import Album from './screens/Album';
 import Artist from './screens/Artist';
 import CreatePlaylist from './screens/CreatePlaylist';
-import Genre from './screens/Genre';
 import Home from './screens/Home';
 import Library from './screens/Library';
 import Login from './screens/Login';
@@ -48,7 +47,6 @@ function HomeStackScreen() {
     >
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="Playlist" component={Playlist} />
-      <Stack.Screen name="Genre" component={Genre} />
       <Stack.Screen name="Artist" component={Artist} />
       <Stack.Screen name="Album" component={Album} />
     </HomeStack.Navigator>
@@ -64,7 +62,6 @@ function SearchStackScreen() {
     >
       <Stack.Screen name="Search" component={Search} />
       <Stack.Screen name="Playlist" component={Playlist} />
-      <Stack.Screen name="Genre" component={Genre} />
       <Stack.Screen name="Artist" component={Artist} />
       <Stack.Screen name="Album" component={Album} />
     </SearchStack.Navigator>
@@ -81,7 +78,6 @@ function LibraryStackScreen() {
       <Stack.Screen name="Library" component={Library} />
       <Stack.Screen name="CreatePlaylist" component={CreatePlaylist} />
       <Stack.Screen name="Playlist" component={Playlist} />
-      <Stack.Screen name="Genre" component={Genre} />
       <Stack.Screen name="Artist" component={Artist} />
       <Stack.Screen name="Album" component={Album} />
     </LibraryStack.Navigator>

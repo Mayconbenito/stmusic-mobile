@@ -40,7 +40,6 @@
     "home": {
       "title": "Home",
       "recently_played": "Play again",
-      "genres": "Genres",
       "trending": "Trending",
       "most_played_tracks": "Most played",
       "most_followed_artists": "Most followed artists"
@@ -105,7 +104,6 @@
       "following": "Following",
       "followers": "Followers",
       "follow": "Follow",
-      "genre": "Genre",
       "album": "Album",
       "add_to_playlist": "Add to playlist",
       "remove_from_playlist": "Remove from playlist",

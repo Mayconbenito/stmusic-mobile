@@ -38,7 +38,6 @@
     "home": {
       "title": "Ínicio",
       "recently_played": "Ouvir novamente",
-      "genres": "Gêneros",
       "trending": "Em alta",
       "most_played_tracks": "Mais tocadas",
       "most_followed_artists": "Artistas mais seguidos"
@@ -104,7 +103,6 @@
       "following": "Seguindo",
       "followers": "Seguidores",
       "follow": "Seguir",
-      "genre": "Gênero",
       "album": "Album",
       "add_to_playlist": "Adicionar à uma Playlist",
       "remove_from_playlist": "Remover da Playlist",
