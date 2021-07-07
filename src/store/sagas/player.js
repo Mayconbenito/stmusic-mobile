@@ -92,10 +92,6 @@ function* loadQueue({ queue, predefinedQueue }) {
         name = queueResponse.data.artist.name;
       }
 
-      if (queueResponse.data.genre) {
-        name = queueResponse.data.genre.name;
-      }
-
       if (queueResponse.data.album) {
         name = queueResponse.data.album.name;
       }
