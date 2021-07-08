@@ -18,7 +18,7 @@ function BigAlbumItem({ data, margin, medium, onPress }) {
         medium={medium}
         fallback={require('~/assets/images/fallback-horizontal.png')}
       />
-      <Details>
+      <Details medium={medium}>
         <Name>{data.name}</Name>
         <TextList>
           <Type>

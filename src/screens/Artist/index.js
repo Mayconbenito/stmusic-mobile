@@ -276,7 +276,7 @@ function Artist({ navigation, route }) {
               <SectionList
                 sections={sections}
                 stickySectionHeadersEnabled={false}
-                initialNumToRender={8}
+                initialNumToRender={16}
                 keyExtractor={item => `key-${item.id}`}
                 renderSectionHeader={({ section }) => (
                   <>
