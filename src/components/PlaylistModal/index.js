@@ -54,7 +54,7 @@ function PlaylistModal() {
       return { playlistId };
     },
     {
-      onSettled: ({ playlistId }) => {
+      onMutate: ({ playlistId }) => {
         queryCache.invalidateQueries('libraryPlaylists');
         queryCache.invalidateQueries(`playlist-${playlistId}-tracks`);
       },

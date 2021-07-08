@@ -23,4 +23,4 @@ function PlaylistItem({ data, onPress, imageBorder }) {
   );
 }
 
-export default PlaylistItem;
+export default React.memo(PlaylistItem);

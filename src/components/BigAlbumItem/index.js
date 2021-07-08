@@ -35,4 +35,4 @@ function BigAlbumItem({ data, margin, medium, onPress }) {
   );
 }
 
-export default BigAlbumItem;
+export default React.memo(BigAlbumItem);

@@ -50,4 +50,4 @@ function TrackItem({
   );
 }
 
-export default TrackItem;
+export default React.memo(TrackItem);
