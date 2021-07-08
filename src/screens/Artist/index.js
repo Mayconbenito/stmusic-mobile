@@ -246,8 +246,8 @@ function Artist({ navigation, route }) {
 
   return (
     <ParentContainer>
-      {artistQuery.isLoading && <Loading />}
-      {artistQuery.isSuccess && (
+      {(artistQuery.isLoading || artistQuery.isFetching) && <Loading />}
+      {artistQuery.isSuccess && !artistQuery.isFetching && (
         <Container>
           <Details>
             <Image
