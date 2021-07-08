@@ -255,4 +255,4 @@ function Player() {
   );
 }
 
-export default Player;
+export default React.memo(Player);

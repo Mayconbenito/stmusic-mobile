@@ -46,15 +46,7 @@ function App() {
       showPlayer: player.active ? player.active : false,
       updateTheme,
     });
-  }, [player.active]);
-
-  useEffect(() => {
-    setTheme({
-      ...theme,
-      showPlayer: player.showPlayer,
-      updateTheme,
-    });
-  }, [player.showPlayer]);
+  }, [player.active, player.showPlayer]);
 
   const [progress, setProgress] = useState(0);
   const [updateModal, setUpdateModal] = useState(false);
